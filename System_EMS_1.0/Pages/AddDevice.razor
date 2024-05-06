@@ -1,0 +1,391 @@
+﻿@page "/adddevice"
+@using Data
+@using Services
+@using Newtonsoft.Json
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@inject HttpClient _httpclient
+
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+
+        <div style="display:flex">
+            <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavDevice" />
+
+            <RadzenText TextStyle="TextStyle.H4"> Add Device</RadzenText>
+
+        </div>
+    </RadzenColumn>
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+    </RadzenColumn>
+</RadzenRow>
+<hr />
+
+<RadzenStack Gap="1.5rem">
+        <RadzenRow>
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Device name" Variant="@variant">
+                        <RadzenTextBox @bind-Value="devicename" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+
+                    @if (listdetype != null)
+                    {
+                    <RadzenFormField Text="Device Type" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" Change="ChangeDeviceType" />
+                    </RadzenFormField>
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Start date" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="startdate" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+                    @if (listprogroup != null)
+                {
+                    <RadzenFormField Text="Product Group" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
+                    </RadzenFormField>
+                }
+                </RadzenStack>
+            </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Device model" Variant="@variant">
+                    <RadzenTextBox @bind-Value="devicemodel" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Serial number" Variant="@variant">
+                    <RadzenTextBox @bind-Value="serialnumber" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+
+        </RadzenRow>
+       
+        <RadzenRow>
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Lr_code" Variant="@variant">
+                        <RadzenTextBox @bind-Value="lr_code" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Company" Variant="@variant">
+                        <RadzenTextBox @bind-Value="company" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                @if (listget != null)
+                {
+                    <RadzenFormField Text="Nation" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
+                    </RadzenFormField>
+                }
+
+            </RadzenStack>
+        </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+           
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Info" Variant="@variant">
+                        <RadzenTextBox @bind-Value="info" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Comcode" Variant="@variant">
+                    <RadzenTextBox @bind-Value="comcode" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+
+            <RadzenStack>
+                
+                @if (devicetype == 0 || devicetype == 2)
+                {
+                    <RadzenFormField Text="Main device" Variant="@variant">
+                        <RadzenNumeric @bind-Value="maindevice" />
+                    </RadzenFormField>                
+                }
+                else if(devicetype == 1)
+                {
+                    @if (listdevice != null)
+                    {
+                        <RadzenFormField Text="Main device" Variant="@variant">
+                            <RadzenDropDownDataGrid @bind-Value="@maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" />
+                        </RadzenFormField>
+                    }
+                }
+            </RadzenStack>
+        </RadzenColumn>
+
+    </RadzenRow>
+
+
+        <RadzenRow>
+            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Buy date" Variant="@variant">
+                        
+                        <RadzenDatePicker @bind-Value="buydate" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Expdate" Variant="@variant">
+                        <RadzenDatePicker @bind-Value="expdate" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+                <RadzenStack>
+                    <RadzenFormField Text="Note" Variant="@variant">
+                        <RadzenTextArea @bind-Value="note" Rows="4" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    <RadzenRow>
+        
+        <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+            <RadzenButton Text="Save Device" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+    </RadzenStack>
+          
+
+@code {
+
+
+    private bool isConnected;
+    private ResponLogin us;
+    private Variant variant = Variant.Outlined;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await Getsession();
+            await GetNation();
+            await GetDeType();
+            await GetProGroup();
+            await GetDevice();
+
+            StateHasChanged();
+        }
+    }
+
+    public string devicename = "";
+    public int devicetype = 0;
+    public int productgroup = 0;
+    public DateTime startdate = new DateTime();
+    public string devicemodel = "";
+    public string serialnumber = "";
+    public string lr_code = "";
+    public string company = "";
+    public int nantional = 0;
+    public string info = "";
+    public string comcode = "";
+    public int maindevice = 0;
+    public DateTime buydate = new DateTime();
+    public DateTime expdate = new DateTime();
+    public string note = "";
+
+    private async Task Getsession()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task NavDevice()
+    {
+        NavigationManager.NavigateTo("/devices");
+
+    }
+
+    private async Task ChangeDeviceType()
+    {
+        maindevice = 0;
+    }
+
+    private async Task SaveDeviceinModal()
+    {
+        try
+        {
+            var request = new
+            {
+                devicename = devicename,
+                devicetype = devicetype,
+                productgroup = productgroup,
+                startdate = startdate.ToString("yyyy-MM-dd"),
+                devicemodel = devicemodel,
+                serialnumber = serialnumber,
+                lr_code = lr_code,
+                company = company,
+                national = nantional,
+                info = info,
+                comcode = comcode,
+                maindevice = maindevice,
+                buydate = buydate.ToString("yyyy-MM-dd"),
+                expdate = expdate.ToString("yyyy-MM-dd"),
+                note = note,
+                token = us.Token
+            };
+            var jsonContent = JsonConvert.SerializeObject(request);
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            var response = await _httpclient.PostAsync("http://192.168.1.252:60227/api/devices", content);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+            if (result.Code == 200)
+            {
+                notification.Notify(NotificationSeverity.Success, result.Message);
+                
+                NavigationManager.NavigateTo("/devices");
+
+
+                
+                //DialogService.Close();
+                //await Reload();
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Warning, result.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private List<ResponNation> listget;
+    private async Task GetNation()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
+            request.Headers.Add("type", "nation");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listget = JsonConvert.DeserializeObject<List<ResponNation>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private List<ResponDeType> listdetype;
+    private async Task GetDeType()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
+            request.Headers.Add("type", "devicetype");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listdetype = JsonConvert.DeserializeObject<List<ResponDeType>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private List<ResponProGroup> listprogroup;
+    private async Task GetProGroup()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
+            request.Headers.Add("type", "productgroup");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listprogroup = JsonConvert.DeserializeObject<List<ResponProGroup>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    private List<DeviceModel> listdevice;
+    private async Task GetDevice()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
+
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+   
+   
+  
+
+}

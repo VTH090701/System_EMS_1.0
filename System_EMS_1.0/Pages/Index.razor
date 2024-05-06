@@ -1,0 +1,58 @@
+﻿@page "/"
+@layout Login
+@inject IApiService ApiService
+@inject NavigationManager navigationmanager
+@inject NotificationService notification
+@using Data
+@using Services
+
+<PageTitle>Login</PageTitle>
+
+
+
+
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
+    <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
+        <RadzenLogin AllowRegister="false" AllowResetPassword="true" Username=@userName Password=@password
+                     AllowRememberMe="false" RememberMe="@rememberMe"
+                     Login=@(args => OnLogin(args, "Login with default values"))
+                     ResetPassword=@(args => OnResetPassword(args, "Login with default values"))
+                     Register=@(args => OnRegister("Login with default values")) />
+    </RadzenTemplateForm>
+</RadzenCard>
+
+@code {
+
+    private string userName = "";
+    private string password = "";
+    bool rememberMe = false;
+
+
+    private ResponLogin response;
+    async Task OnLogin(LoginArgs args, string name)
+    {
+
+        if (!string.IsNullOrEmpty(args.Username) && !string.IsNullOrEmpty(args.Password))
+        {
+            response = await ApiService.Login(userName = args.Username, args.Password);
+            if (response.Code == 200)
+            {
+                notification.Notify(NotificationSeverity.Success, response.Message);
+                navigationmanager.NavigateTo("/dashboard");
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Warning, response.Message);
+            }
+        }
+    }
+
+    void OnRegister(string name)
+    {
+
+    }
+
+    void OnResetPassword(string value, string name)
+    {
+    }
+}

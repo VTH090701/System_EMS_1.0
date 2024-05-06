@@ -1,0 +1,96 @@
+﻿@page "/profile/{id}"
+@using Data
+@using Services
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@using Newtonsoft.Json
+@inject HttpClient _httpclient
+
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+        <RadzenText TextStyle="TextStyle.H4"> Infor User</RadzenText>
+    </RadzenColumn>
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+        <RadzenButton Text=" Change Password" Style="float:right" Icon="password" Click="ChangePass"></RadzenButton>
+    </RadzenColumn>
+</RadzenRow>
+<hr />
+
+
+
+
+
+@code {
+    private ResponLogin us;
+    private bool isConnected;
+    [Parameter] public string id { set; get; }
+    private Variant variant = Variant.Outlined;
+
+    private async Task ChangePass()
+    {
+        var result = await DialogService.OpenAsync("Add User", ds =>
+    {
+    string passwordold = "";
+    string passwordnew = "";
+
+
+        return @<RadzenStack Gap="1.5rem">
+        <RadzenStack>
+            <RadzenFormField Text="Password old" Variant="@variant">
+                <RadzenPassword @bind-Value="@passwordold" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Password new" Variant="@variant">
+                <RadzenPassword @bind-Value="@passwordnew" />
+            </RadzenFormField>
+        </RadzenStack>
+
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Add" Click="() => SavePassword(passwordold,passwordnew)" Style="width: 80px;" />
+        </RadzenStack>
+    </RadzenStack>
+    ;
+    });
+    }
+    private ResponLogout responChangePassword;
+    private async Task SavePassword( string passold, string passnew)
+    {
+        responChangePassword = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);
+
+        if (responChangePassword.Code == 200)
+        {
+            DialogService.Close();
+            notification.Notify(NotificationSeverity.Success, responChangePassword.Message);
+        }
+        else
+        {
+
+            notification.Notify(NotificationSeverity.Warning, responChangePassword.Message);
+        }
+
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await Getsession();
+            StateHasChanged();
+        }
+    }
+    private async Task Getsession()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

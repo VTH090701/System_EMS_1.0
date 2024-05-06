@@ -1,0 +1,499 @@
+﻿@page "/user"
+@using Data
+@using Services
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@using Newtonsoft.Json
+@inject IJSRuntime JSRuntime
+
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+        @* <RadzenText TextStyle="TextStyle.H4"> List User</RadzenText> *@
+    </RadzenColumn>
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+        <RadzenButton Text="Add User" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium"></RadzenButton>
+        @if (user != null)
+        {
+            <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium"></RadzenButton>
+
+            @if (user.Status == true)
+            {
+                <RadzenButton Style="float:right;color: green" Icon="lock_open" Click="()=>Lockuser(user.Userid)" class="rz-mr-2" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Medium"></RadzenButton>
+            }
+            else
+            {
+                <RadzenButton Style="float:right;color: red" Icon="lock" Click="()=>Unlockuser(user.Userid)" class="rz-mr-2" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Medium"></RadzenButton>
+
+                
+            }
+        }
+
+    </RadzenColumn>
+</RadzenRow>
+<hr />
+
+
+
+<RadzenRow>
+
+    <RadzenColumn SizeLG="3" SizeMD="3" SizeSM="4" Size=" 12">
+        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem" Class="rz-p-4 rz-mb-6 rz-border-radius-1" Style="border: var(--rz-grid-cell-border);">
+            <RadzenText Style="font-size:18px;font-weight:bold">List User</RadzenText>
+            <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                           Data=@responGetUser TextProperty="Username" ValueProperty="Userid" AllowClear="true" @bind-Value=value_user
+                           Style="width: 100%; max-width: 320px; height: 400px" Change="@(() => UserValueChanged(value_user))" />
+        </RadzenStack>
+
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="9" SizeMD="9" SizeSM="8" Size=" 12">
+        <RadzenRow Gap="1rem">
+            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size=" 12">
+                <RadzenStack>
+                    @if (user != null)
+                    {
+                        <RadzenFormField Text="User id" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Userid" Disabled />
+                        </RadzenFormField>
+                        <RadzenFormField Text="User name" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Username" Disabled />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Display name" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
+                        </RadzenFormField>
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size=" 12">
+                <RadzenStack>
+                    @if (user != null)
+                    {
+                        <RadzenFormField Text="Phone number" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Phonenumber" Disabled />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Email" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Email" Disabled />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Department" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Deparmentname" Disabled />
+                        </RadzenFormField>
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+
+
+          @*   <RadzenColumn SizeLG="1" SizeMD="1" SizeSM="12" Size=" 12">
+                @if (user != null)
+                {
+                    @if (user.Status == true)
+                    {
+                        <RadzenStack>
+                            <RadzenButton Icon="lock" class="rz-mt-2 rz-p-2" Click="Adduser" Size="ButtonSize.Medium" ></RadzenButton>
+                        </RadzenStack>
+                 
+                    }
+                }
+            </RadzenColumn> *@
+        
+        </RadzenRow>
+
+
+
+
+
+
+        @if (listRoles != null)
+        {
+            <div class="row mt-3 " id="reloadPartial">
+                <div class="col-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Description</th>
+
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in listRoles)
+                            {
+                                <tr>
+                                    <td>@item.Rolename</td>
+                                    <td>@item.Description</td>
+                                    <td>
+
+                                        @if (listRolesUser != null)
+                                        {
+                                            @if (listRolesUser.Any(item1 => item1.Rolename == item.Rolename) == true)
+                                            {
+                                                var checktrue = true;
+                                                <input type="checkbox" @bind="checktrue" @onclick="()=> RevokeUser(item.Rolename )" />
+                                            }
+                                            else
+                                            {
+                                                var checkfalse = false;
+                                                <input type="checkbox" @bind="checkfalse" @onclick="()=>GrantUser(item.Rolename)" />
+                                            }
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+
+
+    </RadzenColumn>
+</RadzenRow>
+
+
+
+
+@code {
+
+
+    private bool isConnected;
+    private ResponLogin us;
+    private string value_user = "";
+    private Variant variant = Variant.Outlined;
+    private List<DepartmentModel> responDepartment;
+    private ResponLogout responSaveUser;
+    private ResponLogout responUpdateUser;
+    private ResponLogout responGrantRolesUser;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await Getsession();
+            await GetListUser();
+            await GetDepartment();
+
+            //await GetListRoles();
+            //await GetListRolesUser();
+            StateHasChanged();
+        }
+    }
+    private async Task NavRolesUser(string id)
+    {
+
+        NavigationManager.NavigateTo($"userroles/{id}");
+    }
+    private async Task Getsession()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+    private async Task GetDepartment()
+    {
+        var result = await ApiService.GetDepartment(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
+        }
+    }
+    private List<UserModel> responGetUser;
+    private async Task GetListUser()
+    {
+    //responGetUser = await ApiService.GetUser(us.Token);
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
+
+    private ResponLogout responLock;
+    private ResponLogout responUnlock;
+    private async Task Lockuser(string userid)
+    {
+        responLock = await ApiService.ChangeStatus(userid, false, us.Token);
+        if (responLock.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responLock.Message);
+            await GetListUser();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, responLock.Message);
+        }
+        await ReloadUser(userid);
+
+    }
+    private async Task Unlockuser(string userid)
+    {
+        responUnlock = await ApiService.ChangeStatus(userid, true, us.Token);
+        if (responUnlock.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responUnlock.Message);
+            await GetListUser();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, responUnlock.Message);
+        }
+        await ReloadUser(userid);
+
+    }
+
+    private UserModel user;
+    private async Task UserValueChanged(string id)
+    {
+        user = responGetUser.FirstOrDefault(item => item.Userid == id);
+
+        await GetListRoles();
+        await GetListRolesUser();
+    }
+    private List<RoleUser> listRolesUser;
+    private List<RoleUser> listRoles;
+
+    private async Task GetListRoles()
+    {
+    //listRoles = await ApiService.ListRoles(us.Token);
+        var result = await ApiService.ListRoles(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            listRoles = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
+        }
+        else if (result.Code == 404)
+        {
+
+        }
+    }
+
+    private async Task GetListRolesUser()
+    {
+    // listRolesUser = await ApiService.ListRolesUser(id, us.Token);
+
+        var result = await ApiService.ListRolesUser(user.Userid, us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
+            listRolesUser = res;
+        }
+        else if (result.Code == 404)
+        {
+
+        }
+
+    }
+
+    private async Task GrantUser(string roleName)
+    {
+        responGrantRolesUser = await ApiService.GrantRolesUser("grant", value_user, roleName, us.Token);
+
+        if (responGrantRolesUser.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responGrantRolesUser.Message);
+        }
+        else
+        {
+
+            notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
+        }
+
+        ReloadList();
+
+
+    }
+
+    private async Task RevokeUser(string roleName)
+    {
+        responGrantRolesUser = await ApiService.GrantRolesUser("revoke", value_user, roleName, us.Token);
+        if (responGrantRolesUser.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responGrantRolesUser.Message);
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
+        }
+        ReloadList();
+
+        //StateHasChanged();
+
+    }
+
+    private async Task ReloadList()
+    {
+        await GetListRoles();
+        await GetListRolesUser();
+        StateHasChanged();
+    }
+
+    private async Task Adduser()
+    {
+        var result = await DialogService.OpenAsync("Add User", ds =>
+                    {
+    string name = "";
+    string password = "";
+    string display = "";
+    string email = "";
+    string phonenumber = "";
+    string department = "";
+
+    return @<RadzenStack Gap="1.5rem">
+        <RadzenStack>
+            <RadzenFormField Text="User name" Variant="@variant">
+                <RadzenTextBox @bind-Value="@name" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Password" Variant="@variant">
+                <RadzenPassword @bind-Value="@password" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Display name" Variant="@variant">
+                <RadzenTextBox @bind-Value="@display" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Email" Variant="@variant">
+                <RadzenTextBox @bind-Value="@email" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Number phone" Variant="@variant">
+                <RadzenTextBox @bind-Value="@phonenumber" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            @if (responDepartment != null)
+        {
+            <RadzenFormField Text="Department" Variant="@variant">
+                <RadzenDropDownDataGrid @bind-Value="@department" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Select Department" />
+            </RadzenFormField>
+        }
+        </RadzenStack>
+
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Add" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
+        </RadzenStack>
+    </RadzenStack>
+                ;
+                    });
+
+    }
+
+    private async Task SaveUserinModal(string name, string pass, string display, string email, string phone, string depart)
+    {
+        responSaveUser = await ApiService.SaveUser(name, pass, display, email, phone, depart, us.Token);
+        if (responSaveUser.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responSaveUser.Message);
+            DialogService.Close();
+            await GetListUser();
+        }
+        else
+        {
+
+            notification.Notify(NotificationSeverity.Warning, responSaveUser.Message);
+
+        }
+    }
+
+    private async Task Edituser()
+    {
+        string deid = "";
+        if (user != null)
+        {
+            var result = await DialogService.OpenAsync("Edit User", ds =>
+        {
+    return @<RadzenStack Gap="1.5rem">
+        <RadzenStack>
+            <RadzenFormField Text="Display name" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Displayname" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Email" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Email" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Phone number" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Phonenumber" />
+            </RadzenFormField>
+        </RadzenStack>
+        <RadzenStack>
+            <RadzenFormField Text="Email" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Email" />
+            </RadzenFormField>
+        </RadzenStack>
+        @if (responDepartment != null)
+    {
+        <RadzenStack>
+            <RadzenFormField Text="Department" Variant="@variant">
+                <RadzenDropDownDataGrid @bind-Value="@user.Departmentid" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Select Department" />
+            </RadzenFormField>
+        </RadzenStack>
+    }
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Edit" Click="() => UpdateUserinModal(user.Userid, user.Displayname,user.Email,user.Phonenumber,user.Departmentid)" Style="width: 80px;" />
+        </RadzenStack>
+
+    </RadzenStack>
+    ;
+    });
+
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, "Hãy chọn bệnh nhân");
+
+        }
+    }
+
+    private async Task UpdateUserinModal(string id, string display, string email, string phone, string deid)
+    {
+        responUpdateUser = await ApiService.UpdateUser(id, display, email, phone, deid, us.Token);
+        if (responUpdateUser.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, responUpdateUser.Message);
+            DialogService.Close();
+            //await GetUser();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, responUpdateUser.Message);
+
+        }
+        await ReloadUser(id);
+
+    }
+
+    //user = responGetUser.FirstOrDefault(item => item.Userid == id);
+
+    private async Task ReloadUser(string id)
+    {
+        await GetListUser();
+        await GetUser(id);
+        StateHasChanged();
+    }
+
+    private async Task GetUser(string id)
+    {
+        var result = responGetUser.FirstOrDefault(item => item.Userid == id);
+        user = result;
+    }
+}

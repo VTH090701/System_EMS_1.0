@@ -1,0 +1,150 @@
+﻿@inherits LayoutComponentBase
+@using Data
+@using Services
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+
+<RadzenComponents />
+<PageTitle>System_EMS_1.0</PageTitle>
+
+
+<RadzenLayout style="position: relative;grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0">
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                <RadzenLabel Text="VASD" class="cus_text_header" />
+            </RadzenStack>
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                @if (us != null)
+                {
+                    if (us.Displayname != null)
+                    {
+                        <radzentext>@us.Displayname </radzentext>
+                    }
+                    else
+                    {
+                        <radzentext>chưa lấy được tên</radzentext>
+                    }
+                }
+                else
+                {
+                    <radzentext>Chưa đăng nhập</radzentext>
+                }
+                <RadzenProfileMenu class="">
+                    <Template>
+                        <RadzenGravatar >
+                            
+                        </RadzenGravatar>
+                    </Template>
+                    <ChildContent>
+                        <button @onclick="Logout" class="rz-background-color-white" style="border: none;">
+                            <div style="display:flex;">
+                                <RadzenIcon Icon="logout" />Logout
+                            </div>
+                        </button>
+                        <br />
+
+                        <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
+                            
+                            <div style="display:flex;">
+                                <RadzenIcon Icon="account_circle" />Profile
+                            </div>
+                        </button>
+                    </ChildContent>
+                </RadzenProfileMenu>
+            </RadzenStack>
+
+        </RadzenStack>
+
+    </RadzenHeader>
+
+
+
+    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute; z-index: 3">
+        <RadzenStack AlignItems="AlignItems.End" Class="rz-p-2">
+            <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary" Click="@(() => sidebarExpanded = false)" />
+        </RadzenStack>
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" Path="dashboard" />
+            <RadzenPanelMenuItem Text="Department" Icon="class" Path="department" />
+            <RadzenPanelMenuItem Text="Group" Icon="group_work" Path="group" />
+            <RadzenPanelMenuItem Text="Users" Icon="account_box" Path="user" />
+            <RadzenPanelMenuItem Text="Devices" Icon="account_box" Path="devices" />
+
+            <RadzenPanelMenuItem Text="Rotation" Icon="3d_rotation" Path="rotation" />
+
+        </RadzenPanelMenu>
+        <div class="rz-p-4">
+            @* Sidebar *@
+        </div>
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+    @if (sidebarExpanded)
+    {
+        <div @onclick="@(() => sidebarExpanded = false)" class="rz-dialog-mask" style="position: absolute; z-index: 2"></div>
+    }
+</RadzenLayout>
+
+
+@code {
+    bool sidebarExpanded = false;
+    private ResponLogin us;
+    private bool isConnected;
+    private ResponLogout responlogout;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await Getsession();
+            StateHasChanged();
+        }
+    }
+    private async Task Getsession()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task Logout()
+    {
+        if (us.Userid != null)
+        {
+            responlogout = await ApiService.Logout(us.Userid);
+            if (responlogout.Code == 200)
+            {
+                notification.Notify(NotificationSeverity.Success, responlogout.Message);
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Warning, responlogout.Message);
+            }
+        }
+    }
+    
+    private async Task NaveProfile()
+    {
+        if (us.Userid != null)
+        {
+            NavigationManager.NavigateTo($"/profile/{us.Userid}");
+
+        }
+    }
+
+
+
+}
