@@ -24,7 +24,7 @@
 
 
 @code {
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     private bool isConnected;
     [Parameter] public string id { set; get; }
     private Variant variant = Variant.Outlined;
@@ -58,7 +58,7 @@
     ;
     });
     }
-    private ResponLogout responChangePassword;
+    private ResponLogout responChangePassword = new ResponLogout();
     private async Task SavePassword( string passold, string passnew)
     {
         responChangePassword = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);

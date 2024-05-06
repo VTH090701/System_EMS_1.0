@@ -11,7 +11,7 @@
 
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        @* <RadzenText TextStyle="TextStyle.H4"> List User</RadzenText> *@
+        <RadzenText TextStyle="TextStyle.H4"> Manage User</RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text="Add User" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium"></RadzenButton>
@@ -26,8 +26,6 @@
             else
             {
                 <RadzenButton Style="float:right;color: red" Icon="lock" Click="()=>Unlockuser(user.Userid)" class="rz-mr-2" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Medium"></RadzenButton>
-
-                
             }
         }
 
@@ -86,19 +84,19 @@
             </RadzenColumn>
 
 
-          @*   <RadzenColumn SizeLG="1" SizeMD="1" SizeSM="12" Size=" 12">
-                @if (user != null)
-                {
-                    @if (user.Status == true)
-                    {
-                        <RadzenStack>
-                            <RadzenButton Icon="lock" class="rz-mt-2 rz-p-2" Click="Adduser" Size="ButtonSize.Medium" ></RadzenButton>
-                        </RadzenStack>
-                 
-                    }
-                }
+            @*   <RadzenColumn SizeLG="1" SizeMD="1" SizeSM="12" Size=" 12">
+            @if (user != null)
+            {
+            @if (user.Status == true)
+            {
+            <RadzenStack>
+            <RadzenButton Icon="lock" class="rz-mt-2 rz-p-2" Click="Adduser" Size="ButtonSize.Medium" ></RadzenButton>
+            </RadzenStack>
+
+            }
+            }
             </RadzenColumn> *@
-        
+
         </RadzenRow>
 
 
@@ -163,13 +161,13 @@
 
 
     private bool isConnected;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     private string value_user = "";
     private Variant variant = Variant.Outlined;
-    private List<DepartmentModel> responDepartment;
-    private ResponLogout responSaveUser;
-    private ResponLogout responUpdateUser;
-    private ResponLogout responGrantRolesUser;
+    private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
+    private ResponLogout responSaveUser = new ResponLogout();
+    private ResponLogout responUpdateUser = new ResponLogout();
+    private ResponLogout responGrantRolesUser = new ResponLogout();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -185,10 +183,10 @@
             StateHasChanged();
         }
     }
-    private async Task NavRolesUser(string id)
+    private void NavRolesUser(string id)
     {
 
-        NavigationManager.NavigateTo($"userroles/{id}");
+         NavigationManager.NavigateTo($"userroles/{id}");
     }
     private async Task Getsession()
     {
@@ -206,7 +204,7 @@
             responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
         }
     }
-    private List<UserModel> responGetUser;
+    private List<UserModel> responGetUser = new List<UserModel>();
     private async Task GetListUser()
     {
     //responGetUser = await ApiService.GetUser(us.Token);
@@ -218,8 +216,8 @@
         }
     }
 
-    private ResponLogout responLock;
-    private ResponLogout responUnlock;
+    private ResponLogout responLock = new ResponLogout();
+    private ResponLogout responUnlock = new ResponLogout();
     private async Task Lockuser(string userid)
     {
         responLock = await ApiService.ChangeStatus(userid, false, us.Token);
@@ -251,7 +249,7 @@
 
     }
 
-    private UserModel user;
+    private UserModel user = new UserModel();
     private async Task UserValueChanged(string id)
     {
         user = responGetUser.FirstOrDefault(item => item.Userid == id);
@@ -259,8 +257,8 @@
         await GetListRoles();
         await GetListRolesUser();
     }
-    private List<RoleUser> listRolesUser;
-    private List<RoleUser> listRoles;
+    private List<RoleUser> listRolesUser = new List<RoleUser>();
+    private List<RoleUser> listRoles = new List<RoleUser>();
 
     private async Task GetListRoles()
     {
@@ -307,7 +305,7 @@
             notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
         }
 
-        ReloadList();
+        await ReloadList();
 
 
     }
@@ -323,7 +321,7 @@
         {
             notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
         }
-        ReloadList();
+        await ReloadList();
 
         //StateHasChanged();
 
@@ -339,7 +337,7 @@
     private async Task Adduser()
     {
         var result = await DialogService.OpenAsync("Add User", ds =>
-                    {
+                            {
     string name = "";
     string password = "";
     string display = "";
@@ -388,8 +386,8 @@
             <RadzenButton Text="Add" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-                ;
-                    });
+        ;
+                                    });
 
     }
 
@@ -412,11 +410,10 @@
 
     private async Task Edituser()
     {
-        string deid = "";
         if (user != null)
         {
             var result = await DialogService.OpenAsync("Edit User", ds =>
-        {
+                {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Display name" Variant="@variant">
@@ -454,7 +451,7 @@
 
     </RadzenStack>
     ;
-    });
+            });
 
         }
         else

@@ -97,9 +97,9 @@
 
 @code {
     bool sidebarExpanded = false;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     private bool isConnected;
-    private ResponLogout responlogout;
+    private ResponLogout responlogout = new ResponLogout();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -136,7 +136,7 @@
         }
     }
     
-    private async Task NaveProfile()
+    private void NaveProfile()
     {
         if (us.Userid != null)
         {

@@ -54,7 +54,7 @@ else
 @code {
     private Variant variant = Variant.Outlined;
     private bool isConnected;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -80,7 +80,7 @@ else
         }
     }
 
-    private async Task AddDevice()
+    private void AddDevice()
     {
 
         NavigationManager.NavigateTo("/adddevice");
@@ -297,7 +297,7 @@ else
         }
     }
 
-    private List<ResponNation> listget;
+    private List<ResponNation> listget = new List<ResponNation>();
     private async Task GetNation()
     {
         try
@@ -320,7 +320,7 @@ else
         }
     }
 
-    private List<ResponDeType> listdetype;
+    private List<ResponDeType> listdetype = new List<ResponDeType>();
     private async Task GetDeType()
     {
         try
@@ -343,7 +343,7 @@ else
         }
     }
 
-    private List<ResponProGroup> listprogroup;
+    private List<ResponProGroup> listprogroup = new List<ResponProGroup>();
     private async Task GetProGroup()
     {
         try
@@ -366,7 +366,7 @@ else
         }
     }
 
-    private List<DeviceModel> listdevice;
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
         try
@@ -390,7 +390,7 @@ else
     }
 
 
-    private async Task EditDevice(int id)
+    private void EditDevice(int id)
     {
         NavigationManager.NavigateTo($"/editdevice/{id}");
     //     var result = await DialogService.OpenAsync("Edit Device", ds =>
@@ -595,7 +595,7 @@ else
         StateHasChanged();
     }
 
-    private DeviceModel devicedetails;
+    private DeviceModel devicedetails = new DeviceModel();
     private async Task ViewDevice(int id)
     {
         try

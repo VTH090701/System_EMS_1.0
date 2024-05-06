@@ -52,11 +52,11 @@ else
 @code {
     private bool isConnected;
     private Variant variant = Variant.Outlined;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     //private ResponseApi responGroup;
 
-    private ResponLogout responseSaveGroup;
-    private ResponLogout responseUpdateGroup;
+    private ResponLogout responseSaveGroup = new ResponLogout();
+    private ResponLogout responseUpdateGroup = new ResponLogout();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -65,7 +65,6 @@ else
             isConnected = true;
             await Getsession();
             await Getgroup();
-
 
             StateHasChanged();
         }
@@ -79,11 +78,11 @@ else
         }
     }
 
-    private async Task NavGroup(string id)
+    private void NavGroup(string id)
     {
         NavigationManager.NavigateTo($"/usersgroup/{id}");
     }
-    private List<GroupModel> responGroup; 
+    private List<GroupModel> responGroup = new List<GroupModel>(); 
     private async Task Getgroup()
     {
         //responGroup = await ApiService.GetGroup(us.Token);

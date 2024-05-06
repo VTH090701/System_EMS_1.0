@@ -188,7 +188,7 @@
 
 
     private bool isConnected;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     private Variant variant = Variant.Outlined;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -231,13 +231,13 @@
         }
     }
 
-    private async Task NavDevice()
+    private void NavDevice()
     {
         NavigationManager.NavigateTo("/devices");
 
     }
 
-    private async Task ChangeDeviceType()
+    private void ChangeDeviceType()
     {
         maindevice = 0;
     }
@@ -292,7 +292,7 @@
         }
     }
 
-    private List<ResponNation> listget;
+    private List<ResponNation> listget = new List<ResponNation>();
     private async Task GetNation()
     {
         try
@@ -315,7 +315,7 @@
         }
     }
 
-    private List<ResponDeType> listdetype;
+    private List<ResponDeType> listdetype = new List<ResponDeType>();
     private async Task GetDeType()
     {
         try
@@ -338,7 +338,7 @@
         }
     }
 
-    private List<ResponProGroup> listprogroup;
+    private List<ResponProGroup> listprogroup = new List<ResponProGroup>();
     private async Task GetProGroup()
     {
         try
@@ -362,7 +362,7 @@
     }
 
 
-    private List<DeviceModel> listdevice;
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
         try

@@ -192,7 +192,7 @@
     [Parameter] public int id { set; get; }
     private Variant variant = Variant.Outlined;
     private bool isConnected;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -210,9 +210,9 @@
         }
     }
 
-    private async Task ChangeDeviceType()
+    private void ChangeDeviceType()
     {
-        if (device.Devicetype != null)
+        if (device.Devicetype != 0)
         {
             device.Maindevice = 0;
         }
@@ -227,13 +227,13 @@
         }
     }
 
-    private async Task NavDevice()
+    private void NavDevice()
     {
         NavigationManager.NavigateTo("/devices");
 
     }
 
-    private List<ResponNation> listget;
+    private List<ResponNation> listget = new List<ResponNation>();
     private async Task GetNation()
     {
         try
@@ -256,7 +256,7 @@
         }
     }
 
-    private List<ResponDeType> listdetype;
+    private List<ResponDeType> listdetype = new List<ResponDeType>();
     private async Task GetDeType()
     {
         try
@@ -279,7 +279,7 @@
         }
     }
 
-    private List<ResponProGroup> listprogroup;
+    private List<ResponProGroup> listprogroup = new List<ResponProGroup>();
     private async Task GetProGroup()
     {
         try
@@ -303,7 +303,7 @@
     }
 
 
-    private List<DeviceModel> listdevice;
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
         try
@@ -327,12 +327,11 @@
     }
 
 
-    private DeviceModel device;
+    private DeviceModel device = new DeviceModel();
 
-
-    private DateTime start_date;
-    private DateTime buy_date;
-    private DateTime exp_date;
+    private DateTime start_date = new DateTime();
+    private DateTime buy_date = new DateTime();
+    private DateTime exp_date = new DateTime();
     private async Task GetDeviceEdit()
     {
         if (listdevice != null)
@@ -341,12 +340,12 @@
 
             if(device != null)
             {
+
                 DateTime.TryParse(device.Startdate, out start_date);
                 DateTime.TryParse(device.Buydate, out buy_date);
                 DateTime.TryParse(device.Expdate, out exp_date);
 
             }
-      
         }
     }
 

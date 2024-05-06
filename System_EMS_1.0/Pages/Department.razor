@@ -33,7 +33,7 @@
             <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                 <Template Context="DepartmentModel">
                     <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
-                    EditDepartment(DepartmentModel.Departmentid , DepartmentModel.Departmentname,DepartmentModel.Departmentdescription,DepartmentModel.Departmentsortname) )"></RadzenButton>
+                    EditDepartment(DepartmentModel.Departmentid , DepartmentModel.Departmentname, DepartmentModel.Departmentdescription,DepartmentModel.Departmentsortname) )"></RadzenButton>
 
                 </Template>
             </RadzenDataGridColumn>
@@ -73,12 +73,12 @@ else
 
 
     private Variant variant = Variant.Outlined;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
 
     //private ResponseApi responDepartment;
 
-    private ResponSaveDepartment responSaveDepartment;
-    private ResponLogout responUpdateDepartment;
+    private ResponSaveDepartment responSaveDepartment = new ResponSaveDepartment();
+    private ResponLogout responUpdateDepartment = new ResponLogout();
 
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -88,7 +88,6 @@ else
             isConnected = true;
             await Getsession();
             await GetDepartment();
-
 
 
             StateHasChanged();
@@ -104,7 +103,7 @@ else
             NavigationManager.NavigateTo("/");
         }
     }
-    private List<DepartmentModel> responDepartment;
+    private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
     private async Task GetDepartment()
     {
         var result = await ApiService.GetDepartment(us.Token);
@@ -168,7 +167,7 @@ else
 
     }
 
-    private DepartmentModel departmentEdit;
+    private DepartmentModel departmentEdit = new DepartmentModel();
 
     private async Task EditDepartment(string id, string name, string desc, string sort)
     {
