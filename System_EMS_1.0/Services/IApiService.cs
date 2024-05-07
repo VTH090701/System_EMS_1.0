@@ -37,5 +37,7 @@ namespace System_EMS_1._0.Services
 
         Task<ResponLogout> ChangeStatus(string userid, bool status,string token);
 
+        Task<ResponseApi> ResetPass(string userid, string token);
+
     }
 }

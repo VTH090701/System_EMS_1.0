@@ -42,7 +42,7 @@
             <RadzenText Style="font-size:18px;font-weight:bold">List User</RadzenText>
             <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                            Data=@responGetUser TextProperty="Username" ValueProperty="Userid" AllowClear="true" @bind-Value=value_user
-                           Style="width: 100%; max-width: 320px; height: 400px" Change="@(() => UserValueChanged(value_user))" />
+                           Style="width: 100%; max-width: 320px; height: 470px" Change="@(() => UserValueChanged(value_user))" />
         </RadzenStack>
 
     </RadzenColumn>
@@ -94,8 +94,8 @@
         {
             <div class="row mt-3 " id="reloadPartial">
                 <div class="col-12">
-                    <table class="table table-bordered">
-                        <thead>
+                    <table class="table caption-top" >
+                        <thead class="table-primary">
                             <tr>
                                 <th>Role Name</th>
                                 <th>Description</th>
@@ -158,7 +158,6 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
    
-
         if (firstRender)
         {
             bool isReturn = await ReturnIndex();
@@ -194,14 +193,7 @@
 
         NavigationManager.NavigateTo($"userroles/{id}");
     }
-    private async Task Getsession()
-    {
-        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
-        if (us == null)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
+
     private async Task GetDepartment()
     {
         var result = await ApiService.GetDepartment(us.Token);
@@ -297,7 +289,6 @@
     private async Task GrantUser(string roleName)
     {
         responGrantRolesUser = await ApiService.GrantRolesUser("grant", value_user, roleName, us.Token);
-
         if (responGrantRolesUser.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responGrantRolesUser.Message);

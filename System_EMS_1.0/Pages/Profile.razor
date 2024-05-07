@@ -15,6 +15,8 @@
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text=" Change Password" Style="float:right" Icon="password" Click="ChangePass"></RadzenButton>
+        <RadzenButton Text=" Reset Password" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
+
     </RadzenColumn>
 </RadzenRow>
 <hr />
@@ -31,13 +33,12 @@
 
     private async Task ChangePass()
     {
-        var result = await DialogService.OpenAsync("Add User", ds =>
-    {
+        var result = await DialogService.OpenAsync("Change Password", ds =>
+        {
     string passwordold = "";
     string passwordnew = "";
 
-
-        return @<RadzenStack Gap="1.5rem">
+    return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Password old" Variant="@variant">
                 <RadzenPassword @bind-Value="@passwordold" />
@@ -52,14 +53,31 @@
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Add" Click="() => SavePassword(passwordold,passwordnew)" Style="width: 80px;" />
+            <RadzenButton Text="Change" Click="() => SavePassword(passwordold,passwordnew)" Style="width: 100px;" />
         </RadzenStack>
     </RadzenStack>
-    ;
-    });
+        ;
+        });
     }
+
+    private ResponseApi responReset;
+    private async Task ResetPassword()
+    {
+        responReset = await ApiService.ResetPass(us.Userid, us.Token);
+        if (responReset.Code == 200)
+        {
+            DialogService.Close();
+            notification.Notify(NotificationSeverity.Success, responReset.Message);
+        }
+        else
+        {
+
+            notification.Notify(NotificationSeverity.Warning, responReset.Message);
+        }
+    }
+
     private ResponLogout responChangePassword = new ResponLogout();
-    private async Task SavePassword( string passold, string passnew)
+    private async Task SavePassword(string passold, string passnew)
     {
         responChangePassword = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);
 
@@ -75,7 +93,7 @@
         }
 
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

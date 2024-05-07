@@ -478,7 +478,28 @@ namespace System_EMS_1._0.Services
             }
         }
 
+        public async Task<ResponseApi> ResetPass(string userid, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    userid = userid,
+                    token = token
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user/reset_pass", content);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
 
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
 
