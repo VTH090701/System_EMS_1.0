@@ -25,25 +25,25 @@
 <hr />
 
 <RadzenStack Gap="1.5rem">
-        <RadzenRow>
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Device name" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicename" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
+    <RadzenRow>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Device name" Variant="@variant">
+                    <RadzenTextBox @bind-Value="devicename" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
 
-                    @if (listdetype != null)
-                    {
+                @if (listdetype != null)
+                {
                     <RadzenFormField Text="Device Type" Variant="@variant">
                         <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" Change="ChangeDeviceType" />
                     </RadzenFormField>
-                    }
-                </RadzenStack>
-            </RadzenColumn>
+                }
+            </RadzenStack>
+        </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
                 <RadzenFormField Text="Start date" Variant="@variant">
@@ -51,18 +51,18 @@
                 </RadzenFormField>
             </RadzenStack>
         </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
-                    @if (listprogroup != null)
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                @if (listprogroup != null)
                 {
                     <RadzenFormField Text="Product Group" Variant="@variant">
                         <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
                     </RadzenFormField>
                 }
-                </RadzenStack>
-            </RadzenColumn>
+            </RadzenStack>
+        </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
                 <RadzenFormField Text="Device model" Variant="@variant">
@@ -78,23 +78,23 @@
             </RadzenStack>
         </RadzenColumn>
 
-        </RadzenRow>
-       
-        <RadzenRow>
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Lr_code" Variant="@variant">
-                        <RadzenTextBox @bind-Value="lr_code" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Company" Variant="@variant">
-                        <RadzenTextBox @bind-Value="company" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Lr_code" Variant="@variant">
+                    <RadzenTextBox @bind-Value="lr_code" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Company" Variant="@variant">
+                    <RadzenTextBox @bind-Value="company" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
                 @if (listget != null)
@@ -106,16 +106,16 @@
 
             </RadzenStack>
         </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-           
-            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Info" Variant="@variant">
-                        <RadzenTextBox @bind-Value="info" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+
+        <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Info" Variant="@variant">
+                    <RadzenTextBox @bind-Value="info" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
                 <RadzenFormField Text="Comcode" Variant="@variant">
@@ -127,14 +127,14 @@
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
 
             <RadzenStack>
-                
+
                 @if (devicetype == 0 || devicetype == 2)
                 {
                     <RadzenFormField Text="Main device" Variant="@variant">
                         <RadzenNumeric @bind-Value="maindevice" />
-                    </RadzenFormField>                
+                    </RadzenFormField>
                 }
-                else if(devicetype == 1)
+                else if (devicetype == 1)
                 {
                     @if (listdevice != null)
                     {
@@ -149,40 +149,40 @@
     </RadzenRow>
 
 
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Buy date" Variant="@variant">
-                        
-                        <RadzenDatePicker @bind-Value="buydate" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Expdate" Variant="@variant">
-                        <RadzenDatePicker @bind-Value="expdate" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Note" Variant="@variant">
-                        <RadzenTextArea @bind-Value="note" Rows="4" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
     <RadzenRow>
-        
+        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Buy date" Variant="@variant">
+
+                    <RadzenDatePicker @bind-Value="buydate" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Expdate" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="expdate" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="Note" Variant="@variant">
+                    <RadzenTextArea @bind-Value="note" Rows="4" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+
         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
             <RadzenButton Text="Save Device" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
         </RadzenColumn>
     </RadzenRow>
-    </RadzenStack>
-          
+</RadzenStack>
+
 
 @code {
 
@@ -193,18 +193,40 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await GetNation();
-            await GetDeType();
-            await GetProGroup();
-            await GetDevice();
-
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetNation();
+                await GetDeType();
+                await GetProGroup();
+                await GetDevice();
+            }
             StateHasChanged();
         }
     }
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+
 
     public string devicename = "";
     public int devicetype = 0;
@@ -222,14 +244,6 @@
     public DateTime expdate = new DateTime();
     public string note = "";
 
-    private async Task Getsession()
-    {
-        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
-        if (us == null)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
 
     private void NavDevice()
     {
@@ -273,11 +287,11 @@
             if (result.Code == 200)
             {
                 notification.Notify(NotificationSeverity.Success, result.Message);
-                
+
                 NavigationManager.NavigateTo("/devices");
 
 
-                
+
                 //DialogService.Close();
                 //await Reload();
             }
@@ -384,8 +398,8 @@
             throw new NotImplementedException();
         }
     }
-   
-   
-  
+
+
+
 
 }

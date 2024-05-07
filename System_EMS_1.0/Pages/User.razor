@@ -83,20 +83,6 @@
                 </RadzenStack>
             </RadzenColumn>
 
-
-            @*   <RadzenColumn SizeLG="1" SizeMD="1" SizeSM="12" Size=" 12">
-            @if (user != null)
-            {
-            @if (user.Status == true)
-            {
-            <RadzenStack>
-            <RadzenButton Icon="lock" class="rz-mt-2 rz-p-2" Click="Adduser" Size="ButtonSize.Medium" ></RadzenButton>
-            </RadzenStack>
-
-            }
-            }
-            </RadzenColumn> *@
-
         </RadzenRow>
 
 
@@ -171,22 +157,42 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+   
+
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await GetListUser();
-            await GetDepartment();
-
-            //await GetListRoles();
-            //await GetListRolesUser();
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetListUser();
+                await GetDepartment();
+            }
             StateHasChanged();
         }
     }
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void NavRolesUser(string id)
     {
 
-         NavigationManager.NavigateTo($"userroles/{id}");
+        NavigationManager.NavigateTo($"userroles/{id}");
     }
     private async Task Getsession()
     {
@@ -207,7 +213,6 @@
     private List<UserModel> responGetUser = new List<UserModel>();
     private async Task GetListUser()
     {
-    //responGetUser = await ApiService.GetUser(us.Token);
         var result = await ApiService.GetUser(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -249,7 +254,7 @@
 
     }
 
-    private UserModel user = new UserModel();
+    private UserModel user;
     private async Task UserValueChanged(string id)
     {
         user = responGetUser.FirstOrDefault(item => item.Userid == id);
@@ -258,11 +263,10 @@
         await GetListRolesUser();
     }
     private List<RoleUser> listRolesUser = new List<RoleUser>();
-    private List<RoleUser> listRoles = new List<RoleUser>();
+    private List<RoleUser> listRoles;
 
     private async Task GetListRoles()
     {
-    //listRoles = await ApiService.ListRoles(us.Token);
         var result = await ApiService.ListRoles(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -276,7 +280,6 @@
 
     private async Task GetListRolesUser()
     {
-    // listRolesUser = await ApiService.ListRolesUser(id, us.Token);
 
         var result = await ApiService.ListRolesUser(user.Userid, us.Token);
         if (result != null && result.Code == 200)
@@ -323,7 +326,6 @@
         }
         await ReloadList();
 
-        //StateHasChanged();
 
     }
 
@@ -337,7 +339,7 @@
     private async Task Adduser()
     {
         var result = await DialogService.OpenAsync("Add User", ds =>
-                            {
+                                {
     string name = "";
     string password = "";
     string display = "";
@@ -386,8 +388,8 @@
             <RadzenButton Text="Add" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-        ;
-                                    });
+                        ;
+                                            });
 
     }
 
@@ -413,7 +415,7 @@
         if (user != null)
         {
             var result = await DialogService.OpenAsync("Edit User", ds =>
-                {
+                    {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Display name" Variant="@variant">
@@ -451,7 +453,7 @@
 
     </RadzenStack>
     ;
-            });
+                });
 
         }
         else
@@ -479,7 +481,6 @@
 
     }
 
-    //user = responGetUser.FirstOrDefault(item => item.Userid == id);
 
     private async Task ReloadUser(string id)
     {

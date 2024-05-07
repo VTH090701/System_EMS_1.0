@@ -80,17 +80,32 @@
     {
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+
+            }
             StateHasChanged();
         }
     }
-    private async Task Getsession()
+
+
+    public async Task<bool> ReturnIndex()
     {
         us = await sessionStorage.GetItemAsync<ResponLogin>("us");
         if (us == null)
         {
-            NavigationManager.NavigateTo("/");
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
+
 }

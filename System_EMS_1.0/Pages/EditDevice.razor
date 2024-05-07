@@ -49,7 +49,7 @@
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
                     <RadzenFormField Text="Start date" Variant="@variant">
-                   
+
                         <RadzenDatePicker @bind-Value="@start_date" />
 
                     </RadzenFormField>
@@ -155,7 +155,7 @@
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                 <RadzenStack>
                     <RadzenFormField Text="Buy date" Variant="@variant">
-                       
+
                         <RadzenDatePicker @bind-Value="buy_date" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -163,7 +163,7 @@
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                 <RadzenStack>
                     <RadzenFormField Text="Expdate" Variant="@variant">
-                       
+
                         <RadzenDatePicker @bind-Value="exp_date" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -196,19 +196,41 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await GetNation();
-            await GetDeType();
-            await GetProGroup();
-            await GetDevice();
-            await GetDeviceEdit();
-
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetNation();
+                await GetDeType();
+                await GetProGroup();
+                await GetDevice();
+                await GetDeviceEdit();
+            }
             StateHasChanged();
         }
+
     }
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     private void ChangeDeviceType()
     {
@@ -218,14 +240,6 @@
         }
     }
 
-    private async Task Getsession()
-    {
-        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
-        if (us == null)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
 
     private void NavDevice()
     {
@@ -338,7 +352,7 @@
         {
             device = listdevice.FirstOrDefault(item => item.Deviceid == id);
 
-            if(device != null)
+            if (device != null)
             {
 
                 DateTime.TryParse(device.Startdate, out start_date);
@@ -381,7 +395,7 @@
             if (result.Code == 200)
             {
                 notification.Notify(NotificationSeverity.Success, result.Message);
-             
+
                 NavigationManager.NavigateTo("/devices");
 
             }

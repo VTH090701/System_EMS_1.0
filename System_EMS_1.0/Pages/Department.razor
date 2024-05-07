@@ -40,7 +40,7 @@
         </Columns>
     </RadzenDataGrid>
 
-@*     <RadzenDataGrid Data="@responDepartment" TItem="DepartmentModel" AllowVirtualization=" true"
+    @*     <RadzenDataGrid Data="@responDepartment" TItem="DepartmentModel" AllowVirtualization=" true"
                     AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                     AllowSorting="true">
         <Columns>
@@ -83,29 +83,41 @@ else
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+   
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await GetDepartment();
-
-
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetDepartment();
+            }
             StateHasChanged();
         }
     }
 
-
-    private async Task Getsession()
+    public async Task<bool> ReturnIndex()
     {
         us = await sessionStorage.GetItemAsync<ResponLogin>("us");
         if (us == null)
         {
-            NavigationManager.NavigateTo("/");
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
+
+
     private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
     private async Task GetDepartment()
     {
+
         var result = await ApiService.GetDepartment(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -117,7 +129,7 @@ else
     private async Task AddDepartment()
     {
         var result = await DialogService.OpenAsync("Add Department", ds =>
-        {
+            {
     string departmentname = "";
     string departmentdescription = "";
     string departmentsortname = "";
@@ -144,8 +156,8 @@ else
             <RadzenButton Text="Add" Click="() => SaveDepartmentinModal(departmentname,departmentdescription,departmentsortname)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-        ;
-        });
+            ;
+            });
 
     }
 

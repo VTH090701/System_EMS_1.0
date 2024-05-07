@@ -87,7 +87,7 @@
                                                 <input type="checkbox" @onchange="()=>GrantGroup(item.Rolename)" />
                                             }
                                         }
-                                        else if( listRolesGroup == null)
+                                        else if (listRolesGroup == null)
                                         {
                                             <input type="checkbox" @onchange="()=>GrantGroup(item.Rolename)" />
 
@@ -123,17 +123,40 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await GetUserinGr();
-            await GetUser();
-            await GetListRoles();
-            await GetListRolesGroup();
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetUserinGr();
+                await GetUser();
+                await GetListRoles();
+                await GetListRolesGroup();
+            }
             StateHasChanged();
         }
     }
+
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     private void NavUserGr()
     {
@@ -144,7 +167,6 @@
     private List<RoleUser> listRoles = new List<RoleUser>();
     private async Task GetListRoles()
     {
-        //listRoles = await ApiService.ListRoles(us.Token);
         var result = await ApiService.ListRoles(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -167,7 +189,7 @@
 
     public async Task GrantGroup(string rolename)
     {
-    
+
         responGrantRolesGroup = await ApiService.GrantRolesGroup("grant", id, rolename, us.Token);
         if (responGrantRolesGroup.Code == 200)
         {
@@ -200,18 +222,11 @@
 
 
     }
-    private async Task Getsession()
-    {
-        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
-        if (us == null)
-        {
-            NavigationManager.NavigateTo("/");
-        }
-    }
+    
 
     private async Task GetUserinGr()
     {
-        //responUserinGroup = await ApiService.GetUsersInGroup(id, us.Token);
+    //responUserinGroup = await ApiService.GetUsersInGroup(id, us.Token);
 
         var result = await ApiService.GetUsersInGroup(id, us.Token);
         if (result.Code == 200)
@@ -229,7 +244,7 @@
 
     private async Task GetUser()
     {
-        //responGetUser = await ApiService.GetUser(us.Token);
+    //responGetUser = await ApiService.GetUser(us.Token);
         var result = await ApiService.GetUser(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -240,7 +255,7 @@
     private async Task AddUserInGr()
     {
         var result = await DialogService.OpenAsync("Add User In Group", ds =>
-                {
+                    {
     string userid = "";
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
@@ -261,7 +276,7 @@
         </RadzenStack>
     </RadzenStack>
     ;
-            });
+                });
 
     }
 

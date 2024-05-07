@@ -37,8 +37,8 @@
                 }
                 <RadzenProfileMenu class="">
                     <Template>
-                        <RadzenGravatar >
-                            
+                        <RadzenGravatar>
+
                         </RadzenGravatar>
                     </Template>
                     <ChildContent>
@@ -50,7 +50,7 @@
                         <br />
 
                         <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
-                            
+
                             <div style="display:flex;">
                                 <RadzenIcon Icon="account_circle" />Profile
                             </div>
@@ -97,7 +97,7 @@
 
 @code {
     bool sidebarExpanded = false;
-    private ResponLogin us = new ResponLogin();
+    private ResponLogin us;
     private bool isConnected;
     private ResponLogout responlogout = new ResponLogout();
 
@@ -105,19 +105,35 @@
     {
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+
+            }
             StateHasChanged();
         }
     }
-    private async Task Getsession()
+
+
+    public async Task<bool> ReturnIndex()
     {
         us = await sessionStorage.GetItemAsync<ResponLogin>("us");
         if (us == null)
         {
-            NavigationManager.NavigateTo("/");
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
+
+
 
     private async Task Logout()
     {
@@ -135,7 +151,7 @@
             }
         }
     }
-    
+
     private void NaveProfile()
     {
         if (us.Userid != null)

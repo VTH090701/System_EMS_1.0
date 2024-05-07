@@ -50,33 +50,47 @@ else
 }
 
 @code {
-    private bool isConnected;
     private Variant variant = Variant.Outlined;
     private ResponLogin us = new ResponLogin();
-    //private ResponseApi responGroup;
 
     private ResponLogout responseSaveGroup = new ResponLogout();
     private ResponLogout responseUpdateGroup = new ResponLogout();
 
+
+    private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
-            isConnected = true;
-            await Getsession();
-            await Getgroup();
-
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await Getgroup();
+            }
             StateHasChanged();
         }
     }
-    private async Task Getsession()
+
+    public async Task<bool> ReturnIndex()
     {
         us = await sessionStorage.GetItemAsync<ResponLogin>("us");
         if (us == null)
         {
-            NavigationManager.NavigateTo("/");
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
+
+
 
     private void NavGroup(string id)
     {
@@ -85,8 +99,6 @@ else
     private List<GroupModel> responGroup = new List<GroupModel>(); 
     private async Task Getgroup()
     {
-        //responGroup = await ApiService.GetGroup(us.Token);
-
         var result = await ApiService.GetGroup(us.Token);
         if (result != null && result.Code == 200)
         {
