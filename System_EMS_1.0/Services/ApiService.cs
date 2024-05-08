@@ -22,7 +22,6 @@ namespace System_EMS_1._0.Services
             _sessionStorageService = sessionStorageService;
             apiSettings = apiSettingsOptions.Value;
         }
-
         public async Task<ResponLogout> SaveUser(string name, string pass, string display, string email, string phone, string de, string token)
         {
             try
@@ -49,8 +48,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
-        //public async Task<ResponseApi<DepartmentModel>> GetDepartment(string token)
         public async Task<ResponseApi> GetDepartment(string token)
         {
             try
@@ -67,8 +64,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
-        //public  async Task<ResponseApi<GroupModel>> GetGroup(string token)
         public async Task<ResponseApi> GetGroup(string token)
         {
             try
@@ -85,8 +80,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
-        //public async Task<ResponseApi<UserModel>> GetUser(string token)
         public async Task<ResponseApi> GetUser(string token)
         {
             try
@@ -103,7 +96,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogin> Login(string userName, string passWord)
         {
             try
@@ -158,7 +150,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponSaveDepartment> SaveDepartment(string name, string desc, string sort, string token)
         {
             try
@@ -181,7 +172,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> SaveGroup(string name, string desc, string token)
         {
             try
@@ -204,7 +194,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> UpdateDepartment(string id, string name, string desc, string sort, string token)
         {
             try
@@ -228,7 +217,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> UpdateGroup(string id, string name, string desc, string token)
         {
             try
@@ -251,7 +239,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> UpdateUser(string id, string display, string email, string  phone, string deid, string token)
         {
             try
@@ -277,8 +264,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
-        //public async Task<ResponseApi<RoleUser>> ListRoles(string token)
         public async Task<ResponseApi> ListRoles(string token)
         {
             try
@@ -295,9 +280,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
-        //public async Task<ResponseApi<RoleUser>> ListRolesUser(string id, string token)
-
         public async Task<ResponseApi> ListRolesUser(string id, string token)
         {
             try
@@ -315,7 +297,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> GrantRolesUser(string type, string id, string rolename, string token)
         {
             try
@@ -341,8 +322,6 @@ namespace System_EMS_1._0.Services
             }
         }
 
-
-        //public async Task<ResponseApi<UsersinGroup>> GetUsersInGroup(string id, string token)
         public async Task<ResponseApi> GetUsersInGroup(string id, string token)
         {
             try

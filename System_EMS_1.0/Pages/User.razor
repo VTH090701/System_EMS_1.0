@@ -48,7 +48,7 @@
     </RadzenColumn>
 
     <RadzenColumn SizeLG="9" SizeMD="9" SizeSM="8" Size=" 12">
-        <RadzenRow Gap="1rem">
+        <RadzenRow Gap="1rem" class="rz-mb-4">
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size=" 12">
                 <RadzenStack>
                     @if (user != null)
@@ -88,54 +88,86 @@
 
 
 
-
-
-        @if (listRoles != null)
+        @*         @if (listRoles != null)
         {
-            <div class="row mt-3 " id="reloadPartial">
-                <div class="col-12">
-                    <table class="table caption-top" >
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Role Name</th>
-                                <th>Description</th>
+        <div class="row mt-3 " id="reloadPartial">
+        <div class="col-12">
+        <table class="table caption-top" >
+        <thead class="table-primary">
+        <tr>
+        <th>Role Name</th>
+        <th>Description</th>
 
-                                <th></th>
-                            </tr>
-                        </thead>
+        <th></th>
+        </tr>
+        </thead>
 
-                        <tbody>
-                            @foreach (var item in listRoles)
-                            {
-                                <tr>
-                                    <td>@item.Rolename</td>
-                                    <td>@item.Description</td>
-                                    <td>
+        <tbody>
+        @foreach (var item in listRoles)
+        {
+        <tr>
+        <td>@item.Rolename</td>
+        <td>@item.Description</td>
+        <td>
 
-                                        @if (listRolesUser != null)
-                                        {
-                                            @if (listRolesUser.Any(item1 => item1.Rolename == item.Rolename) == true)
-                                            {
-                                                var checktrue = true;
-                                                <input type="checkbox" @bind="checktrue" @onclick="()=> RevokeUser(item.Rolename )" />
-                                            }
-                                            else
-                                            {
-                                                var checkfalse = false;
-                                                <input type="checkbox" @bind="checkfalse" @onclick="()=>GrantUser(item.Rolename)" />
-                                            }
-                                        }
-
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        @if (listRolesUser != null)
+        {
+        @if (listRolesUser.Any(item1 => item1.Rolename == item.Rolename) == true)
+        {
+        var checktrue = true;
+        <input type="checkbox" @bind="checktrue" @onclick="()=> RevokeUser(item.Rolename )" />
+        }
+        else
+        {
+        var checkfalse = false;
+        <input type="checkbox" @bind="checkfalse" @onclick="()=>GrantUser(item.Rolename)" />
+        }
         }
 
+        </td>
+        </tr>
+        }
+        </tbody>
+        </table>
+        </div>
+        </div>
+        }
+        *@
+        @if (listRoles != null)
+        {
+            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@listRoles" TItem="RoleUser" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
 
+                    <RadzenDataGridColumn TItem="RoleUser" Width="70px">
+
+                        <Template Context="data">
+
+                            @if (listRolesUser != null)
+                            {
+
+                                @if (listRolesUser.Any(item1 => item1.Rolename == data.Rolename) == true)
+                                {
+                                    var checktrue = true;
+                                    <RadzenCheckBox TriState="false" Value="checktrue"
+                                                    TValue="bool" Change="()=>RevokeUser(data.Rolename)" />
+                                }
+                                else
+                                {
+                                    var checkfalse = false;
+                                    <RadzenCheckBox TriState="false" Value="checkfalse"
+                                                    TValue="bool" Change="()=>GrantUser(data.Rolename)" />
+                                }
+                            }
+
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+        }
 
     </RadzenColumn>
 </RadzenRow>
@@ -157,7 +189,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-   
+
         if (firstRender)
         {
             bool isReturn = await ReturnIndex();
@@ -330,7 +362,7 @@
     private async Task Adduser()
     {
         var result = await DialogService.OpenAsync("Add User", ds =>
-                                {
+                                    {
     string name = "";
     string password = "";
     string display = "";
@@ -379,8 +411,8 @@
             <RadzenButton Text="Add" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-                        ;
-                                            });
+        ;
+                                                    });
 
     }
 
@@ -406,7 +438,7 @@
         if (user != null)
         {
             var result = await DialogService.OpenAsync("Edit User", ds =>
-                    {
+                        {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Display name" Variant="@variant">
@@ -444,7 +476,7 @@
 
     </RadzenStack>
     ;
-                });
+                    });
 
         }
         else

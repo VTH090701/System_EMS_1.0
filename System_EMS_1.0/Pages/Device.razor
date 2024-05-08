@@ -22,7 +22,6 @@
 @if (listdevice != null)
 {
 
-
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                     Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
         <Columns>
@@ -92,219 +91,7 @@ else
     }
     private void AddDevice()
     {
-
         NavigationManager.NavigateTo("/adddevice");
-
-        //     var result = await DialogService.OpenAsync("Add Device", ds =>
-        //              {
-        // int devicetype = 0;
-        // string devicename = "";
-        // int productgroup = 0;
-        // DateTime startdate = new DateTime();
-        // string devicemodel = "";
-        // string serialnumber = "";
-        // string lr_code = "";
-        // string company = "";
-        // int nantional = 0;
-        // string info = "";
-        // string comcode = "";
-        // int maindevice = 0;
-        // DateTime buydate = new DateTime();
-        // DateTime expdate = new DateTime();
-        // string note = "";
-
-        //  return @<RadzenStack Gap="1.5rem">
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Device name" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="devicename" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-
-        //                 @if (listdetype != null)
-        //                 {
-        //                 <RadzenFormField Text="Device Type" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type"   />
-        //                 </RadzenFormField>
-        //                 }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Start date" Variant="@variant">
-        //                     <RadzenDatePicker @bind-Value="startdate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 @if (listprogroup != null)
-        //             {
-        //                 <RadzenFormField Text="Product Group" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
-        //                 </RadzenFormField>
-        //             }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Device model" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="devicemodel" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Serial number" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="serialnumber" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Lr_code" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="lr_code" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Company" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="company" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 @if (listget != null)
-        //             {
-        //                 <RadzenFormField Text="Nation" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
-        //                 </RadzenFormField>
-        //             }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Info" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="info" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Comcode" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="comcode" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Main device" Variant="@variant">
-        //                     <RadzenNumeric @bind-Value="maindevice" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Buy date" Variant="@variant">
-
-        //                     <RadzenDatePicker @bind-Value="buydate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Expdate" Variant="@variant">
-        //                     <RadzenDatePicker @bind-Value="expdate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Note" Variant="@variant">
-        //                     <RadzenTextArea @bind-Value="note" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-        //         <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-        //         <RadzenButton Text="Add" Click="() => SaveDeviceinModal(devicename, devicetype, productgroup,startdate,
-        //             devicemodel,serialnumber ,lr_code,company,nantional, info,comcode, maindevice,buydate,expdate,note)" Style="width: 80px;" />
-        //     </RadzenStack>
-        // </RadzenStack>
-        //         ;
-        //     });
-    }
-
-
-    private async Task SaveDeviceinModal(string devicename, int devicetype, int productgroup, DateTime startdate,
-                   string devicemodel, string serialnumber, string lr_code, string company, int nantional, string info, string comcode, int maindevice, DateTime buydate, DateTime expdate, string note)
-    {
-        try
-        {
-            var request = new
-            {
-                devicename = devicename,
-                devicetype = devicetype,
-                productgroup = productgroup,
-                startdate = startdate.ToString("yyyy-MM-dd"),
-                devicemodel = devicemodel,
-                serialnumber = serialnumber,
-                lr_code = lr_code,
-                company = company,
-                nantional = nantional,
-                info = info,
-                comcode = comcode,
-                maindevice = maindevice,
-                buydate = buydate.ToString("yyyy-MM-dd"),
-                expdate = expdate.ToString("yyyy-MM-dd"),
-                note = note,
-                token = us.Token
-            };
-            var jsonContent = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-            var response = await _httpclient.PostAsync("http://192.168.1.252:60227/api/devices", content);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
-            if (result.Code == 200)
-            {
-                notification.Notify(NotificationSeverity.Success, result.Message);
-                DialogService.Close();
-
-                await Reload();
-            }
-            else
-            {
-                notification.Notify(NotificationSeverity.Warning, result.Message);
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     private List<ResponNation> listget = new List<ResponNation>();
@@ -403,201 +190,9 @@ else
     private void EditDevice(int id)
     {
         NavigationManager.NavigateTo($"/editdevice/{id}");
-        //     var result = await DialogService.OpenAsync("Edit Device", ds =>
-        //                  {
-        //  DateTime.TryParse(startdateedit, out DateTime startdate);
-        //  DateTime.TryParse(buydateedit, out DateTime buydate);
-        //  DateTime.TryParse(expdateedit, out DateTime expdate);
 
-        //  return @<RadzenStack Gap="1.5rem">
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Device name" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="devicename" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-
-        //                 @if (listdetype != null)
-        //             {
-        //                 <RadzenFormField Text="Device Type" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" />
-        //                 </RadzenFormField>
-        //             }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Start date" Variant="@variant">
-        //                     <RadzenDatePicker @bind-Value="startdate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 @if (listprogroup != null)
-        //             {
-        //                 <RadzenFormField Text="Product Group" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
-        //                 </RadzenFormField>
-        //             }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Device model" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="devicemodel" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Serial number" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="serialnumber" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Lr_code" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="lr_code" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Company" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="company" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 @if (listget != null)
-        //             {
-        //                 <RadzenFormField Text="Nation" Variant="@variant">
-        //                     <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
-        //                 </RadzenFormField>
-        //             }
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Info" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="info" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Comcode" Variant="@variant">
-        //                     <RadzenTextBox @bind-Value="comcode" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Main device" Variant="@variant">
-        //                     <RadzenNumeric @bind-Value="maindevice" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Buy date" Variant="@variant">
-        //                     <RadzenDatePicker @bind-Value="buydate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Expdate" Variant="@variant">
-        //                     <RadzenDatePicker @bind-Value="expdate" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenRow>
-        //         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-        //             <RadzenStack>
-        //                 <RadzenFormField Text="Note" Variant="@variant">
-        //                     <RadzenTextArea @bind-Value="note" />
-        //                 </RadzenFormField>
-        //             </RadzenStack>
-        //         </RadzenColumn>
-        //     </RadzenRow>
-        //     <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-        //         <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-        //         <RadzenButton Text="Edit" Click="() => UpdateDeviceinModal(deviceid,devicename, devicetype, productgroup,startdate,
-        //             devicemodel,serialnumber ,lr_code,company,nantional, info,comcode, maindevice,buydate,expdate,note)" Style="width: 80px;" />
-        //     </RadzenStack>
-        // </RadzenStack>
-        //                 ;
-        //                  });
     }
 
-    private async Task UpdateDeviceinModal(int deviceid, string devicename, int devicetype, int productgroup, DateTime startdate,
-           string devicemodel, string serialnumber, string lr_code, string company, int nantional, string info, string comcode, int maindevice, DateTime buydate, DateTime expdate, string note)
-    {
-        try
-        {
-            var request = new
-            {
-                id = deviceid,
-                devicename = devicename,
-                devicetype = devicetype,
-                productgroup = productgroup,
-                startdate = startdate.ToString(),
-                devicemodel = devicemodel,
-                serialnumber = serialnumber,
-                lr_code = lr_code,
-                company = company,
-                nantional = nantional,
-                info = info,
-                comcode = comcode,
-                maindevice = maindevice,
-                buydate = buydate.ToString(),
-                expdate = expdate.ToString(),
-                note = note,
-                token = us.Token
-            };
-            var jsonContent = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-            var response = await _httpclient.PutAsync("http://192.168.1.252:60227/api/devices", content);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
-            if (result.Code == 200)
-            {
-                notification.Notify(NotificationSeverity.Success, result.Message);
-                DialogService.Close();
-
-                await Reload();
-            }
-            else
-            {
-                notification.Notify(NotificationSeverity.Warning, result.Message);
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     private async Task Reload()
     {
@@ -623,14 +218,13 @@ else
                 if (devicedetails != null)
                 {
                     var resultdialog = await DialogService.OpenAsync("Details Device", ds =>
-           {
-       DateTime.TryParse(devicedetails.Startdate, out DateTime startdate);
-       DateTime.TryParse(devicedetails.Buydate, out DateTime buydate);
-       DateTime.TryParse(devicedetails.Expdate, out DateTime expdate);
+                    {
+                        DateTime.TryParse(devicedetails.Startdate, out DateTime startdate);
+                        DateTime.TryParse(devicedetails.Buydate, out DateTime buydate);
+                        DateTime.TryParse(devicedetails.Expdate, out DateTime expdate);
 
 
        return @<RadzenStack Gap="1.5rem">
-
         <RadzenRow>
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                 <RadzenStack>
@@ -668,9 +262,7 @@ else
                         <RadzenDropDownDataGrid @bind-Value="@devicedetails.Productgroup" Disabled Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
                     </RadzenFormField>
                 }
-
                 </RadzenStack>
-
 
             </RadzenColumn>
         </RadzenRow>

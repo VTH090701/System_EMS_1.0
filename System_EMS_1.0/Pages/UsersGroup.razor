@@ -54,8 +54,7 @@
 
     </RadzenColumn>
     <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-
-        <div class="row ">
+@*         <div class="row ">
             <div class="col-12">
                 <table class="table caption-top">
                     <thead class="table-primary">
@@ -101,9 +100,43 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> *@
 
+        @if (listRoles != null)
+        {
+            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@listRoles" TItem="RoleUser" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
 
+                    <RadzenDataGridColumn TItem="RoleUser" Width="70px">
+
+                        <Template Context="data">
+
+                            @if (listRolesGroup != null)
+                            {
+
+                                @if (listRolesGroup.Any(item1 => item1.Rolename == data.Rolename) == true)
+                                {
+                                    var checktrue = true;
+                                    <RadzenCheckBox TriState="false" Value="checktrue"
+                                                    TValue="bool" Change="()=>RevokeGroup(data.Rolename)" />
+                                }
+                                else
+                                {
+                                    var checkfalse = false;
+                                    <RadzenCheckBox TriState="false" Value="checkfalse"
+                                                    TValue="bool" Change="()=>GrantGroup(data.Rolename)" />
+                                }
+                            }
+
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+        }
     </RadzenColumn>
 </RadzenRow>
 
@@ -181,6 +214,8 @@
         if (result != null && result.Code == 200)
         {
             listRolesGroup = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
+        } else if(result != null && result.Code == 404){
+            listRolesGroup = new List<RoleUser>();
         }
     }
 
@@ -194,14 +229,14 @@
         if (responGrantRolesGroup.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responGrantRolesGroup.Message);
-            await GetListRoles();
-            await GetListRolesGroup();
+           
 
         }
         else
         {
             notification.Notify(NotificationSeverity.Warning, responGrantRolesGroup.Message);
         }
+        await ReloadList();
 
     }
     public async Task RevokeGroup(string rolename)
@@ -211,8 +246,7 @@
         if (responRevokeRolesGroup.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responRevokeRolesGroup.Message);
-            await GetListRoles();
-            await GetListRolesGroup();
+         
 
         }
         else
@@ -220,9 +254,15 @@
             notification.Notify(NotificationSeverity.Warning, responRevokeRolesGroup.Message);
         }
 
+        await ReloadList();
 
     }
-    
+    private async Task ReloadList()
+    {
+        await GetListRoles();
+        await GetListRolesGroup();
+        StateHasChanged();
+    }
 
     private async Task GetUserinGr()
     {
