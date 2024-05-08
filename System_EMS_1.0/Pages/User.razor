@@ -49,7 +49,7 @@
 
     <RadzenColumn SizeLG="9" SizeMD="9" SizeSM="8" Size=" 12">
         <RadzenRow Gap="1rem" class="rz-mb-4">
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size=" 12">
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
                 <RadzenStack>
                     @if (user != null)
                     {
@@ -59,20 +59,30 @@
                         <RadzenFormField Text="User name" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Username" Disabled />
                         </RadzenFormField>
-                        <RadzenFormField Text="Display name" Variant="@variant">
-                            <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
-                        </RadzenFormField>
+                        
                     }
                 </RadzenStack>
             </RadzenColumn>
 
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size=" 12">
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
                 <RadzenStack>
                     @if (user != null)
                     {
+                        <RadzenFormField Text="Display name" Variant="@variant">
+                            <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
+                        </RadzenFormField>
                         <RadzenFormField Text="Phone number" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Phonenumber" Disabled />
                         </RadzenFormField>
+                      
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
+                <RadzenStack>
+                    @if (user != null)
+                    {
                         <RadzenFormField Text="Email" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Email" Disabled />
                         </RadzenFormField>
@@ -82,65 +92,20 @@
                     }
                 </RadzenStack>
             </RadzenColumn>
-
         </RadzenRow>
 
 
-
-
-        @*         @if (listRoles != null)
-        {
-        <div class="row mt-3 " id="reloadPartial">
-        <div class="col-12">
-        <table class="table caption-top" >
-        <thead class="table-primary">
-        <tr>
-        <th>Role Name</th>
-        <th>Description</th>
-
-        <th></th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach (var item in listRoles)
-        {
-        <tr>
-        <td>@item.Rolename</td>
-        <td>@item.Description</td>
-        <td>
-
-        @if (listRolesUser != null)
-        {
-        @if (listRolesUser.Any(item1 => item1.Rolename == item.Rolename) == true)
-        {
-        var checktrue = true;
-        <input type="checkbox" @bind="checktrue" @onclick="()=> RevokeUser(item.Rolename )" />
-        }
-        else
-        {
-        var checkfalse = false;
-        <input type="checkbox" @bind="checkfalse" @onclick="()=>GrantUser(item.Rolename)" />
-        }
-        }
-
-        </td>
-        </tr>
-        }
-        </tbody>
-        </table>
-        </div>
-        </div>
-        }
-        *@
         @if (listRoles != null)
         {
-            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                            Data="@listRoles" TItem="RoleUser" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+  
+
+
+            <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:450px"
+                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowSorting="true">
                 <Columns>
                     <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
                     <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
-
                     <RadzenDataGridColumn TItem="RoleUser" Width="70px">
 
                         <Template Context="data">
@@ -164,6 +129,7 @@
 
                         </Template>
                     </RadzenDataGridColumn>
+
 
                 </Columns>
             </RadzenDataGrid>

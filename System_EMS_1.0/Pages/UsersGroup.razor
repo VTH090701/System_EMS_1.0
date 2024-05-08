@@ -104,14 +104,16 @@
 
         @if (listRoles != null)
         {
-            <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                            Data="@listRoles" TItem="RoleUser" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+
+
+            <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:550px"
+                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowSorting="true">
                 <Columns>
                     <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
                     <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
-
                     <RadzenDataGridColumn TItem="RoleUser" Width="70px">
-
+                         
                         <Template Context="data">
 
                             @if (listRolesGroup != null)
@@ -134,6 +136,7 @@
                         </Template>
                     </RadzenDataGridColumn>
 
+                 
                 </Columns>
             </RadzenDataGrid>
         }
