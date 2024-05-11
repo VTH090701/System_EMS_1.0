@@ -12,11 +12,11 @@
 
 <RadzenLayout style="position: relative;grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
     <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0" class="rz-background-color-info-dark">
 
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-                <RadzenLabel Text="VASD" class="cus_text_header" />
+                <RadzenLabel Text="VASD" Style="font-weight:600;font-size:22px" />
             </RadzenStack>
 
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
@@ -35,24 +35,23 @@
                 {
                     <radzentext>Chưa đăng nhập</radzentext>
                 }
-                <RadzenProfileMenu class="">
+                <RadzenProfileMenu class="rz-background-color-info-dark">
                     <Template>
+                        @* <RadzenIcon Icon="account_circle" ></RadzenIcon> *@
                         <RadzenGravatar>
-
                         </RadzenGravatar>
                     </Template>
                     <ChildContent>
-                        <button @onclick="Logout" class="rz-background-color-white" style="border: none;">
-                            <div style="display:flex;">
-                                <RadzenIcon Icon="logout" />Logout
-                            </div>
-                        </button>
-                        <br />
-
                         <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
 
                             <div style="display:flex;">
-                                <RadzenIcon Icon="account_circle" />Profile
+                                <RadzenIcon Icon="account_circle" />Hồ sơ
+                            </div>
+                        </button>
+                        <br />
+                        <button @onclick="Logout" class="rz-background-color-white" style="border: none;">
+                            <div style="display:flex;">
+                                <RadzenIcon Icon="logout" />Đăng xuất
                             </div>
                         </button>
                     </ChildContent>
@@ -70,13 +69,13 @@
             <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary" Click="@(() => sidebarExpanded = false)" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" Path="dashboard" />
-            <RadzenPanelMenuItem Text="Department" Icon="class" Path="department" />
-            <RadzenPanelMenuItem Text="Group" Icon="group_work" Path="group" />
-            <RadzenPanelMenuItem Text="Users" Icon="account_box" Path="user" />
-            <RadzenPanelMenuItem Text="Devices" Icon="account_box" Path="devices" />
+            <RadzenPanelMenuItem Text="Trang chủ" Icon="dashboard" Path="dashboard" />
+            <RadzenPanelMenuItem Text="Phòng ban" Icon="class" Path="department" />
+            <RadzenPanelMenuItem Text="Nhóm" Icon="group_work" Path="group" />
+            <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" />
+            <RadzenPanelMenuItem Text="Thiết bị" Icon="build" Path="devices" />
 
-            <RadzenPanelMenuItem Text="Rotation" Icon="3d_rotation" Path="rotation" />
+            <RadzenPanelMenuItem Text="Vận chuyển" Icon="3d_rotation" Path="rotation" />
 
         </RadzenPanelMenu>
         <div class="rz-p-4">

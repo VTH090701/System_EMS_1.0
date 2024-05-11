@@ -9,23 +9,85 @@
 @using Newtonsoft.Json
 @inject HttpClient _httpclient
 
+
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> Infor User</RadzenText>
+        <RadzenText TextStyle="TextStyle.H4"> Hồ sơ người dùng </RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text=" Change Password" Style="float:right" Icon="password" Click="ChangePass"></RadzenButton>
-        <RadzenButton Text=" Reset Password" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
 
+        @*<RadzenButton Text=" Thay đổi mật khẩu" Style="float:right" Icon="password" Click="ChangePass" class="rz-background-color-info-light"></RadzenButton>
+        <RadzenButton Text="  Mật khẩu" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2 rz-background-color-info-darker" ButtonStyle="ButtonStyle.Dark"></RadzenButton>*@
+        
     </RadzenColumn>
 </RadzenRow>
 <hr />
 
+<RadzenRow>
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
+        <RadzenStack>
 
+            @*   <RadzenImage Path="https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png"
+            Style="width:90%" class="rz-ml-5"></RadzenImage> *@
+            <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Username" Disabled />
+            </RadzenFormField>
+            <RadzenFormField Text="Email" Variant="@variant">
+                <RadzenTextBox @bind-Value="@user.Email" Disabled />
+            </RadzenFormField>
+        </RadzenStack>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12" >
+        <RadzenStack>
+            @if (user != null)
+            {
+             
+                <RadzenFormField Text="Tên người dùng" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
+                </RadzenFormField>
+                <RadzenFormField Text="Số điện thoại" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@user.Phonenumber" Disabled />
+                </RadzenFormField>
+                
+            }
+        </RadzenStack>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12" >
+        <RadzenStack>
+            @if (user != null)
+            {
+              
+                <RadzenFormField Text="Phòng ban" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@user.Deparmentname" Disabled />
+                </RadzenFormField>
+                <RadzenFormField Text="Id" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@user.Userid" Disabled />
+                </RadzenFormField>
+
+            }
+        </RadzenStack>
+
+
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+
+    </RadzenColumn>
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+        <RadzenButton Text="Thay đổi mật khẩu" Style="float:right" Icon="password" Click="ChangePass" class=" rz-mt-4 rz-background-color-info-light"></RadzenButton>
+        <RadzenButton Text="Mật khẩu" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2 rz-mt-4 rz-background-color-info-darker" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
+        <RadzenButton Text="Chỉnh sửa" Style="float:right" Icon="edit" Click="ResetPassword" class="rz-mr-2 rz-mt-4 rz-background-color-danger" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
+    </RadzenColumn>
+</RadzenRow>
 
 
 
 @code {
+
+    //private bool isedit = false;
     private ResponLogin us = new ResponLogin();
     private bool isConnected;
     [Parameter] public string id { set; get; }
@@ -33,27 +95,27 @@
 
     private async Task ChangePass()
     {
-        var result = await DialogService.OpenAsync("Change Password", ds =>
-        {
+        var result = await DialogService.OpenAsync("Thay đổi mật khẩu", ds =>
+            {
     string passwordold = "";
     string passwordnew = "";
 
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Password old" Variant="@variant">
+            <RadzenFormField Text="Mật khẩu cũ" Variant="@variant">
                 <RadzenPassword @bind-Value="@passwordold" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Password new" Variant="@variant">
+            <RadzenFormField Text="Mật khẩu mới" Variant="@variant">
                 <RadzenPassword @bind-Value="@passwordnew" />
             </RadzenFormField>
         </RadzenStack>
 
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Change" Click="() => SavePassword(passwordold,passwordnew)" Style="width: 100px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Thay đổi" Click="() => SavePassword(passwordold,passwordnew)" Style="width: 120px;" />
         </RadzenStack>
     </RadzenStack>
         ;
@@ -106,11 +168,30 @@
             else
             {
                 isConnected = true;
-
+                await GetListUser();
+                await GetUser();
             }
             StateHasChanged();
         }
     }
+
+    private UserModel user;
+    private async Task GetUser()
+    {
+        var result = responGetUser.FirstOrDefault(item => item.Userid == us.Userid);
+        user = result;
+    }
+    private List<UserModel> responGetUser = new List<UserModel>();
+    private async Task GetListUser()
+    {
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
+
 
 
     public async Task<bool> ReturnIndex()

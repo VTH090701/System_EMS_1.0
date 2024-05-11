@@ -26,7 +26,6 @@
         public string? Token { get; set; }
         public string? Userid { get; set; }
         public string? Username { get; set; }
-
         public string? Displayname { get; set; }
         public string? Message { get; set; }
         public dynamic? Role { get; set; }
@@ -128,9 +127,7 @@
     {
         public int Typeid { get; set; }
         public string Typename { get; set; }
-
         public string Display { get; set; }
-
     }
 
     public class ResponProGroup

@@ -10,10 +10,10 @@
 
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> List Department</RadzenText>
+        <RadzenText TextStyle="TextStyle.H4"> Danh sách phòng ban</RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Add Department" Style="float:right" Icon="add" Click="AddDepartment"></RadzenButton>
+        <RadzenButton Text="Thêm phòng ban" Style="float:right" Icon="add" Click="AddDepartment" class="rz-background-color-info-dark"></RadzenButton>
     </RadzenColumn>
 </RadzenRow>
 <hr />
@@ -21,18 +21,18 @@
 
 @if (responDepartment != null)
 {
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    <RadzenDataGrid  AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                     Data="@responDepartment" TItem="DepartmentModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
         <Columns>
             <RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentname" Title="Department Name" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentdescription" Title="Department Description" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentsortname" Title="Department Sortname" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Datecreate" Title="Date Create" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Createdby" Title="Create by" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentname" Title="Tên phòng ban" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentdescription" Title="Mô tả" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentsortname" Title="Tên ngắn" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Property="Datecreate" Title="Ngày tạo" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Property="Createdby" Title="Người tạo" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                 <Template Context="DepartmentModel">
-                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
+                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
                     EditDepartment(DepartmentModel.Departmentid , DepartmentModel.Departmentname, DepartmentModel.Departmentdescription,DepartmentModel.Departmentsortname) )"></RadzenButton>
 
                 </Template>
@@ -108,7 +108,7 @@ else
 
     private async Task AddDepartment()
     {
-        var result = await DialogService.OpenAsync("Add Department", ds =>
+        var result = await DialogService.OpenAsync("Thêm phòng ban", ds =>
             {
     string departmentname = "";
     string departmentdescription = "";
@@ -117,23 +117,23 @@ else
 
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Department Name" Variant="@variant">
+            <RadzenFormField Text="Tên phòng ban" Variant="@variant">
                 <RadzenTextBox @bind-Value="@departmentname" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Department Description" Variant="@variant">
+            <RadzenFormField Text="Mô tả" Variant="@variant">
                 <RadzenTextBox @bind-Value="@departmentdescription" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Department Sortname" Variant="@variant">
+            <RadzenFormField Text="Tên ngắn" Variant="@variant">
                 <RadzenTextBox @bind-Value="@departmentsortname" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Add" Click="() => SaveDepartmentinModal(departmentname,departmentdescription,departmentsortname)" Style="width: 80px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Thêm" Click="() => SaveDepartmentinModal(departmentname,departmentdescription,departmentsortname)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
             ;
@@ -163,28 +163,28 @@ else
 
     private async Task EditDepartment(string id, string name, string desc, string sort)
     {
-        var result = await DialogService.OpenAsync("Edit Department", ds =>
+        var result = await DialogService.OpenAsync("Cập nhật phòng ban", ds =>
     @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Department Name" Variant="@variant">
+            <RadzenFormField Text="Tên phòng ban" Variant="@variant">
                 <RadzenTextBox @bind-Value="@name" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Department Description" Variant="@variant">
+            <RadzenFormField Text="Mô tả" Variant="@variant">
                 <RadzenTextBox @bind-Value="@desc" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Department Sortname" Variant="@variant">
+            <RadzenFormField Text="Tên ngắn" Variant="@variant">
                 <RadzenTextBox @bind-Value="@sort" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenStack Orientation="Orientation.Horizontal">
-                <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
-            <RadzenButton Text="Edit" Click="() => UpdateDepartmentinModal(id,name,desc,sort)" Style="width: 80px;" />
+            <RadzenButton Text="Cập nhật" Click="() => UpdateDepartmentinModal(id,name,desc,sort)" Style="width: 120px;" />
         </RadzenStack>
     </RadzenStack>
     );

@@ -11,10 +11,10 @@
 
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> Manage User</RadzenText>
+        <RadzenText TextStyle="TextStyle.H4"> Quản lý người dùng</RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Add User" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium"></RadzenButton>
+        <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium" class="rz-background-color-info-dark"></RadzenButton>
         @if (user != null)
         {
             <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium"></RadzenButton>
@@ -39,7 +39,7 @@
 
     <RadzenColumn SizeLG="3" SizeMD="3" SizeSM="4" Size=" 12">
         <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem" Class="rz-p-4 rz-mb-6 rz-border-radius-1" Style="border: var(--rz-grid-cell-border);">
-            <RadzenText Style="font-size:18px;font-weight:bold">List User</RadzenText>
+            <RadzenText Style="font-size:18px;font-weight:bold">Danh sách người dùng</RadzenText>
             <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
                            Data=@responGetUser TextProperty="Username" ValueProperty="Userid" AllowClear="true" @bind-Value=value_user
                            Style="width: 100%; max-width: 320px; height: 470px" Change="@(() => UserValueChanged(value_user))" />
@@ -53,10 +53,10 @@
                 <RadzenStack>
                     @if (user != null)
                     {
-                        <RadzenFormField Text="User id" Variant="@variant">
+                        <RadzenFormField Text="Id" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Userid" Disabled />
                         </RadzenFormField>
-                        <RadzenFormField Text="User name" Variant="@variant">
+                        <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Username" Disabled />
                         </RadzenFormField>
                         
@@ -68,10 +68,10 @@
                 <RadzenStack>
                     @if (user != null)
                     {
-                        <RadzenFormField Text="Display name" Variant="@variant">
+                        <RadzenFormField Text="Tên người dùng" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
                         </RadzenFormField>
-                        <RadzenFormField Text="Phone number" Variant="@variant">
+                        <RadzenFormField Text="Số điện thoại" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Phonenumber" Disabled />
                         </RadzenFormField>
                       
@@ -86,7 +86,7 @@
                         <RadzenFormField Text="Email" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Email" Disabled />
                         </RadzenFormField>
-                        <RadzenFormField Text="Department" Variant="@variant">
+                        <RadzenFormField Text="Phòng ban" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Deparmentname" Disabled />
                         </RadzenFormField>
                     }
@@ -97,19 +97,14 @@
 
         @if (listRoles != null)
         {
-  
-
-
             <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:450px"
                             AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Tên quyền" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Mô tả quyền" />
                     <RadzenDataGridColumn TItem="RoleUser" Width="70px">
-
                         <Template Context="data">
-
                             @if (listRolesUser != null)
                             {
 
@@ -126,15 +121,11 @@
                                                     TValue="bool" Change="()=>GrantUser(data.Rolename)" />
                                 }
                             }
-
                         </Template>
                     </RadzenDataGridColumn>
-
-
                 </Columns>
             </RadzenDataGrid>
         }
-
     </RadzenColumn>
 </RadzenRow>
 
@@ -142,7 +133,6 @@
 
 
 @code {
-
 
     private bool isConnected;
     private ResponLogin us = new ResponLogin();
@@ -228,6 +218,7 @@
         await ReloadUser(userid);
 
     }
+
     private async Task Unlockuser(string userid)
     {
         responUnlock = await ApiService.ChangeStatus(userid, true, us.Token);
@@ -243,8 +234,8 @@
         await ReloadUser(userid);
 
     }
-
     private UserModel user;
+    
     private async Task UserValueChanged(string id)
     {
         user = responGetUser.FirstOrDefault(item => item.Userid == id);
@@ -252,9 +243,8 @@
         await GetListRoles();
         await GetListRolesUser();
     }
-    private List<RoleUser> listRolesUser = new List<RoleUser>();
+    
     private List<RoleUser> listRoles;
-
     private async Task GetListRoles()
     {
         var result = await ApiService.ListRoles(us.Token);
@@ -268,6 +258,7 @@
         }
     }
 
+    private List<RoleUser> listRolesUser = new List<RoleUser>();
     private async Task GetListRolesUser()
     {
 
@@ -327,7 +318,7 @@
 
     private async Task Adduser()
     {
-        var result = await DialogService.OpenAsync("Add User", ds =>
+        var result = await DialogService.OpenAsync("Thêm người dùng", ds =>
                                     {
     string name = "";
     string password = "";
@@ -338,17 +329,17 @@
 
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="User name" Variant="@variant">
+            <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
                 <RadzenTextBox @bind-Value="@name" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Password" Variant="@variant">
+            <RadzenFormField Text="Mật khẩu" Variant="@variant">
                 <RadzenPassword @bind-Value="@password" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Display name" Variant="@variant">
+            <RadzenFormField Text="Tên người dùng" Variant="@variant">
                 <RadzenTextBox @bind-Value="@display" />
             </RadzenFormField>
         </RadzenStack>
@@ -358,23 +349,23 @@
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Number phone" Variant="@variant">
+            <RadzenFormField Text="Số điện thoại" Variant="@variant">
                 <RadzenTextBox @bind-Value="@phonenumber" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
             @if (responDepartment != null)
         {
-            <RadzenFormField Text="Department" Variant="@variant">
-                <RadzenDropDownDataGrid @bind-Value="@department" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Select Department" />
+            <RadzenFormField Text="Phòng ban" Variant="@variant">
+                <RadzenDropDownDataGrid @bind-Value="@department" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Chọn phòng ban" />
             </RadzenFormField>
         }
         </RadzenStack>
 
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Add" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Thêm" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
         ;
@@ -393,7 +384,6 @@
         }
         else
         {
-
             notification.Notify(NotificationSeverity.Warning, responSaveUser.Message);
 
         }
@@ -403,11 +393,11 @@
     {
         if (user != null)
         {
-            var result = await DialogService.OpenAsync("Edit User", ds =>
+            var result = await DialogService.OpenAsync("Cập nhật người dùng", ds =>
                         {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Display name" Variant="@variant">
+            <RadzenFormField Text="Tên người dùng" Variant="@variant">
                 <RadzenTextBox @bind-Value="@user.Displayname" />
             </RadzenFormField>
         </RadzenStack>
@@ -417,15 +407,11 @@
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Phone number" Variant="@variant">
+            <RadzenFormField Text="Số điện thoại" Variant="@variant">
                 <RadzenTextBox @bind-Value="@user.Phonenumber" />
             </RadzenFormField>
         </RadzenStack>
-        <RadzenStack>
-            <RadzenFormField Text="Email" Variant="@variant">
-                <RadzenTextBox @bind-Value="@user.Email" />
-            </RadzenFormField>
-        </RadzenStack>
+        
         @if (responDepartment != null)
     {
         <RadzenStack>
@@ -469,7 +455,6 @@
         await ReloadUser(id);
 
     }
-
 
     private async Task ReloadUser(string id)
     {

@@ -16,7 +16,7 @@
         <div style="display:flex">
             <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavDevice" />
 
-            <RadzenText TextStyle="TextStyle.H4"> Edit Device</RadzenText>
+            <RadzenText TextStyle="TextStyle.H4">Cập nhật thiết bị</RadzenText>
 
         </div>
     </RadzenColumn>
@@ -30,7 +30,7 @@
         <RadzenRow>
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Device name" Variant="@variant">
+                    <RadzenFormField Text="Tên thiết bị" Variant="@variant">
                         <RadzenTextBox @bind-Value="device.Devicename" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -40,7 +40,7 @@
 
                     @if (listdetype != null)
                     {
-                        <RadzenFormField Text="Device Type" Variant="@variant">
+                        <RadzenFormField Text="Loại thiết bị" Variant="@variant">
                             <RadzenDropDownDataGrid @bind-Value="@device.Devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" Change="ChangeDeviceType" />
                         </RadzenFormField>
                     }
@@ -48,7 +48,7 @@
             </RadzenColumn>
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Start date" Variant="@variant">
+                    <RadzenFormField Text="Ngày bắt đầu" Variant="@variant">
 
                         <RadzenDatePicker @bind-Value="@start_date" />
 
@@ -61,7 +61,7 @@
                 <RadzenStack>
                     @if (listprogroup != null)
                     {
-                        <RadzenFormField Text="Product Group" Variant="@variant">
+                        <RadzenFormField Text="Nhóm sản phẩm" Variant="@variant">
                             <RadzenDropDownDataGrid @bind-Value="@device.Productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
                         </RadzenFormField>
                     }
@@ -69,14 +69,14 @@
             </RadzenColumn>
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Device model" Variant="@variant">
+                    <RadzenFormField Text="Mô hình thiết bị" Variant="@variant">
                         <RadzenTextBox @bind-Value="device.Devicemodel" />
                     </RadzenFormField>
                 </RadzenStack>
             </RadzenColumn>
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Serial number" Variant="@variant">
+                    <RadzenFormField Text="Số Serial" Variant="@variant">
                         <RadzenTextBox @bind-Value="device.Serialnumber" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -94,7 +94,7 @@
             </RadzenColumn>
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Company" Variant="@variant">
+                    <RadzenFormField Text="Công ty" Variant="@variant">
                         <RadzenTextBox @bind-Value="device.Company" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -103,7 +103,7 @@
                 <RadzenStack>
                     @if (listget != null)
                     {
-                        <RadzenFormField Text="Nation" Variant="@variant">
+                        <RadzenFormField Text="Quốc gia" Variant="@variant">
                             <RadzenDropDownDataGrid @bind-Value="@device.National" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
                         </RadzenFormField>
                     }
@@ -115,7 +115,7 @@
 
             <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Info" Variant="@variant">
+                    <RadzenFormField Text="Thông tin" Variant="@variant">
                         <RadzenTextBox @bind-Value="device.Info" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -132,7 +132,7 @@
                 <RadzenStack>
                     @if (device.Devicetype == 0 || device.Devicetype == 2)
                     {
-                        <RadzenFormField Text="Main device" Variant="@variant">
+                        <RadzenFormField Text="Thiết bị chính" Variant="@variant">
                             <RadzenNumeric @bind-Value="device.Maindevice" />
                         </RadzenFormField>
                     }
@@ -140,7 +140,7 @@
                     {
                         @if (listdevice != null)
                         {
-                            <RadzenFormField Text="Main device" Variant="@variant">
+                            <RadzenFormField Text="Thiết bị chính" Variant="@variant">
                                 <RadzenDropDownDataGrid @bind-Value="device.Maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" />
                             </RadzenFormField>
                         }
@@ -154,7 +154,7 @@
         <RadzenRow>
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Buy date" Variant="@variant">
+                    <RadzenFormField Text="Ngày mua" Variant="@variant">
 
                         <RadzenDatePicker @bind-Value="buy_date" />
                     </RadzenFormField>
@@ -162,7 +162,7 @@
             </RadzenColumn>
             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Expdate" Variant="@variant">
+                    <RadzenFormField Text="Ngày hết hạn" Variant="@variant">
 
                         <RadzenDatePicker @bind-Value="exp_date" />
                     </RadzenFormField>
@@ -172,7 +172,7 @@
         <RadzenRow>
             <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
                 <RadzenStack>
-                    <RadzenFormField Text="Note" Variant="@variant">
+                    <RadzenFormField Text="Ghi chú" Variant="@variant">
                         <RadzenTextArea @bind-Value="device.Note" Rows="4" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -181,7 +181,7 @@
         <RadzenRow>
 
             <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-                <RadzenButton Text="Update Device" Style="float:right" Icon="save" Click="UpdateDeviceinModal"></RadzenButton>
+                <RadzenButton Text="Cập nhật thiết bị" Style="float:right" Icon="save" Click="UpdateDeviceinModal"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenStack>

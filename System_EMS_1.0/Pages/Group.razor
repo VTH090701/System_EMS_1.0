@@ -10,10 +10,10 @@
 
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> List Group</RadzenText>
+        <RadzenText TextStyle="TextStyle.H4"> Danh sách nhóm</RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Add Group" Style="float:right" Icon="add" Click="Addgroup"></RadzenButton>
+        <RadzenButton Text="Thêm nhóm" Style="float:right" Icon="add" Click="Addgroup" class="rz-background-color-info-dark"></RadzenButton>
     </RadzenColumn>
 </RadzenRow>
 <hr />
@@ -25,17 +25,17 @@
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                     Data="@responGroup" TItem="GroupModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
         <Columns>
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupid" Title="Group Id" Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupname" Title="Group Name" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupdescription" Title="Group Description" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Datecreate" Title="Date Create" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Createdby" Title="Create by" />
-            <RadzenDataGridColumn TItem="GroupModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+            <RadzenDataGridColumn TItem="GroupModel" Property="Groupid" Title=" Id" Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="GroupModel" Property="Groupname" Title="Tên nhóm " />
+            <RadzenDataGridColumn TItem="GroupModel" Property="Groupdescription" Title="Mô tả" />
+            <RadzenDataGridColumn TItem="GroupModel" Property="Datecreate" Title="Ngày tạo" />
+            <RadzenDataGridColumn TItem="GroupModel" Property="Createdby" Title="Người tạo" />
+            <RadzenDataGridColumn TItem="GroupModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                 <Template Context="GroupModel">
-                    <RadzenButton Icon="group_work" Variant="Variant.Flat" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Info" Click="@((args) =>
+                    <RadzenButton Icon="group_work" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Info" Click="@((args) =>
                     NavGroup(GroupModel.Groupid ) )"></RadzenButton>
                     |
-                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
+                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
                     EditGroup(GroupModel.Groupid , GroupModel.Groupname,GroupModel.Groupdescription) )"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
@@ -108,7 +108,7 @@ else
     }
     private async Task Addgroup()
     {
-        var result = await DialogService.OpenAsync("Add Group", ds =>
+        var result = await DialogService.OpenAsync("Thêm nhóm", ds =>
                        {
     string name = "";
     string description = "";
@@ -116,19 +116,19 @@ else
 
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Group Name" Variant="@variant">
+            <RadzenFormField Text="Tên nhóm" Variant="@variant">
                 <RadzenTextBox @bind-Value="@name" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Group Description" Variant="@variant">
+            <RadzenFormField Text="Mô tả" Variant="@variant">
                 <RadzenTextBox @bind-Value="@description" />
             </RadzenFormField>
         </RadzenStack>
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Add" Click="() => SaveGroupinModal(name,description)" Style="width: 80px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Thêm" Click="() => SaveGroupinModal(name,description)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
       ;
@@ -152,23 +152,23 @@ else
 
     private async Task EditGroup(string id, string name, string desc)
     {
-        var result = await DialogService.OpenAsync("Add Group", ds =>
+        var result = await DialogService.OpenAsync("Cập nhật nhóm", ds =>
     {
         return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
-            <RadzenFormField Text="Group Name" Variant="@variant">
+            <RadzenFormField Text=" Tên nhóm" Variant="@variant">
                 <RadzenTextBox @bind-Value="@name" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
-            <RadzenFormField Text="Group Description" Variant="@variant">
+            <RadzenFormField Text="Mô tả" Variant="@variant">
                 <RadzenTextBox @bind-Value="@desc" />
             </RadzenFormField>
         </RadzenStack>
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Edit" Click="() => UpdateGroupinModal(id,name,desc)" Style="width: 80px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Cập nhật" Click="() => UpdateGroupinModal(id,name,desc)" Style="width: 120px;" />
         </RadzenStack>
     </RadzenStack>
           ;

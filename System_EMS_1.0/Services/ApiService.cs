@@ -321,7 +321,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponseApi> GetUsersInGroup(string id, string token)
         {
             try

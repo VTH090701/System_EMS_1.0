@@ -14,9 +14,7 @@
 
         <div style="display:flex">
             <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavDevice" />
-
-            <RadzenText TextStyle="TextStyle.H4"> Add Device</RadzenText>
-
+            <RadzenText TextStyle="TextStyle.H4">Thêm thiết bị</RadzenText>
         </div>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
@@ -28,7 +26,7 @@
     <RadzenRow>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Device name" Variant="@variant">
+                <RadzenFormField Text="Tên thiết bị" Variant="@variant">
                     <RadzenTextBox @bind-Value="devicename" />
                 </RadzenFormField>
             </RadzenStack>
@@ -38,15 +36,15 @@
 
                 @if (listdetype != null)
                 {
-                    <RadzenFormField Text="Device Type" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" Change="ChangeDeviceType" />
+                    <RadzenFormField Text="Loại thiết bị" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Chọn loại thiết bị" Change="ChangeDeviceType" />
                     </RadzenFormField>
                 }
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Start date" Variant="@variant">
+                <RadzenFormField Text="Ngày bắt đầu" Variant="@variant">
                     <RadzenDatePicker @bind-Value="startdate" />
                 </RadzenFormField>
             </RadzenStack>
@@ -57,22 +55,22 @@
             <RadzenStack>
                 @if (listprogroup != null)
                 {
-                    <RadzenFormField Text="Product Group" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
+                    <RadzenFormField Text="Nhóm sản phẩm" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Chọn nhóm sản phẩm" />
                     </RadzenFormField>
                 }
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Device model" Variant="@variant">
+                <RadzenFormField Text="Mô hình thiết bị" Variant="@variant">
                     <RadzenTextBox @bind-Value="devicemodel" />
                 </RadzenFormField>
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Serial number" Variant="@variant">
+                <RadzenFormField Text="Số serial" Variant="@variant">
                     <RadzenTextBox @bind-Value="serialnumber" />
                 </RadzenFormField>
             </RadzenStack>
@@ -90,7 +88,7 @@
         </RadzenColumn>
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Company" Variant="@variant">
+                <RadzenFormField Text="Công ty" Variant="@variant">
                     <RadzenTextBox @bind-Value="company" />
                 </RadzenFormField>
             </RadzenStack>
@@ -99,8 +97,8 @@
             <RadzenStack>
                 @if (listget != null)
                 {
-                    <RadzenFormField Text="Nation" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
+                    <RadzenFormField Text="Quốc gia" Variant="@variant">
+                        <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Chọn quốc gia" />
                     </RadzenFormField>
                 }
 
@@ -111,7 +109,7 @@
 
         <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Info" Variant="@variant">
+                <RadzenFormField Text="Thông tin" Variant="@variant">
                     <RadzenTextBox @bind-Value="info" />
                 </RadzenFormField>
             </RadzenStack>
@@ -130,7 +128,7 @@
 
                 @if (devicetype == 0 || devicetype == 2)
                 {
-                    <RadzenFormField Text="Main device" Variant="@variant">
+                    <RadzenFormField Text="Thiết bị chính" Variant="@variant">
                         <RadzenNumeric @bind-Value="maindevice" />
                     </RadzenFormField>
                 }
@@ -138,7 +136,7 @@
                 {
                     @if (listdevice != null)
                     {
-                        <RadzenFormField Text="Main device" Variant="@variant">
+                        <RadzenFormField Text="Thiết bị chính" Variant="@variant">
                             <RadzenDropDownDataGrid @bind-Value="@maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" />
                         </RadzenFormField>
                     }
@@ -152,7 +150,7 @@
     <RadzenRow>
         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Buy date" Variant="@variant">
+                <RadzenFormField Text="Ngày mua" Variant="@variant">
 
                     <RadzenDatePicker @bind-Value="buydate" />
                 </RadzenFormField>
@@ -160,7 +158,7 @@
         </RadzenColumn>
         <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Expdate" Variant="@variant">
+                <RadzenFormField Text="Ngày hết hạn" Variant="@variant">
                     <RadzenDatePicker @bind-Value="expdate" />
                 </RadzenFormField>
             </RadzenStack>
@@ -169,7 +167,7 @@
     <RadzenRow>
         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
             <RadzenStack>
-                <RadzenFormField Text="Note" Variant="@variant">
+                <RadzenFormField Text="Ghi chú" Variant="@variant">
                     <RadzenTextArea @bind-Value="note" Rows="4" />
                 </RadzenFormField>
             </RadzenStack>
@@ -178,7 +176,7 @@
     <RadzenRow>
 
         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-            <RadzenButton Text="Save Device" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
+            <RadzenButton Text="Lưu thiết bị" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
@@ -226,23 +224,21 @@
     }
 
 
-
-
-    public string devicename = "";
-    public int devicetype = 0;
-    public int productgroup = 0;
+    public string devicename { get; set; } = "";
+    public int devicetype { get; set; } = 0;
+    public int productgroup { get; set; } = 0;
     public DateTime startdate = new DateTime();
-    public string devicemodel = "";
-    public string serialnumber = "";
-    public string lr_code = "";
-    public string company = "";
-    public int nantional = 0;
-    public string info = "";
-    public string comcode = "";
-    public int maindevice = 0;
+    public string devicemodel { get; set; } = "";
+    public string serialnumber { get; set; } = "";
+    public string lr_code { get; set; } = "";
+    public string company { get; set; } = "";
+    public int nantional { get; set; } = 0;
+    public string info { get; set; } = "";
+    public string comcode { get; set; } = "";
+    public int maindevice { get; set; } = 0;
     public DateTime buydate = new DateTime();
     public DateTime expdate = new DateTime();
-    public string note = "";
+    public string note { get; set; } = "";
 
 
     private void NavDevice()
@@ -260,6 +256,8 @@
     {
         try
         {
+
+
             var request = new
             {
                 devicename = devicename,
@@ -278,7 +276,8 @@
                 expdate = expdate.ToString("yyyy-MM-dd"),
                 note = note,
                 token = us.Token
-            };
+            };  
+
             var jsonContent = JsonConvert.SerializeObject(request);
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
             var response = await _httpclient.PostAsync("http://192.168.1.252:60227/api/devices", content);
@@ -287,13 +286,8 @@
             if (result.Code == 200)
             {
                 notification.Notify(NotificationSeverity.Success, result.Message);
-
                 NavigationManager.NavigateTo("/devices");
 
-
-
-                //DialogService.Close();
-                //await Reload();
             }
             else
             {
@@ -374,7 +368,6 @@
             throw new NotImplementedException();
         }
     }
-
 
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()

@@ -14,28 +14,28 @@
         <div style="display:flex">
             <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavUserGr" />
 
-            <RadzenText TextStyle="TextStyle.H4"> Infor in Group</RadzenText>
+            <RadzenText TextStyle="TextStyle.H4"> Thông tin trong nhóm</RadzenText>
 
         </div>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Add User in Group" Style="float:right" Icon="add" Click="AddUserInGr"></RadzenButton>
+        <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="AddUserInGr"></RadzenButton>
     </RadzenColumn>
 </RadzenRow>
 <hr />
 <RadzenRow>
-    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
         @if (responUserinGroup != null && responUserinGroup.Count > 0)
         {
             <RadzenDataGrid Data="@responUserinGroup" TItem="UsersinGroup" AllowVirtualization=" true"
                             AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Userid" Title="User Id" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Displayname" Title="Display Name" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Phonenumber" Title="Phone Name" />
+                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Userid" Title=" Id" />
+                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Displayname" Title="Tên" />
+                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Phonenumber" Title="Số điện thoại" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Email" Title="Email" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Time Join" />
+                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Thời gian vào" />
 
                     <RadzenDataGridColumn TItem="UsersinGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                         <Template Context="UsersinGroup">
@@ -53,55 +53,8 @@
         }
 
     </RadzenColumn>
-    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-@*         <div class="row ">
-            <div class="col-12">
-                <table class="table caption-top">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Role Name</th>
-                            <th>Description</th>
-
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (listRoles != null)
-                        {
-                            @foreach (var item in listRoles)
-                            {
-
-                                <tr>
-                                    <td>@item.Rolename</td>
-                                    <td>@item.Description</td>
-                                    <td>
-                                        @if (listRolesGroup != null)
-                                        {
-                                            @if (listRolesGroup.Any(item1 => item1.Rolename == item.Rolename) == true)
-                                            {
-                                                <input type="checkbox" checked @onchange="()=> RevokeGroup(item.Rolename)" />
-                                            }
-                                            else
-                                            {
-                                                <input type="checkbox" @onchange="()=>GrantGroup(item.Rolename)" />
-                                            }
-                                        }
-                                        else if (listRolesGroup == null)
-                                        {
-                                            <input type="checkbox" @onchange="()=>GrantGroup(item.Rolename)" />
-
-                                        }
-
-                                    </td>
-                                </tr>
-                            }
-                        }
-
-                    </tbody>
-                </table>
-            </div>
-        </div> *@
-
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+   
         @if (listRoles != null)
         {
 
@@ -110,15 +63,14 @@
                             AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Role Name" />
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Role Description" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Tên quyền" />
+                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Mô tả quyền" />
                     <RadzenDataGridColumn TItem="RoleUser" Width="70px">
-                         
+
                         <Template Context="data">
 
                             @if (listRolesGroup != null)
                             {
-
                                 @if (listRolesGroup.Any(item1 => item1.Rolename == data.Rolename) == true)
                                 {
                                     var checktrue = true;
@@ -136,7 +88,7 @@
                         </Template>
                     </RadzenDataGridColumn>
 
-                 
+
                 </Columns>
             </RadzenDataGrid>
         }
@@ -217,7 +169,9 @@
         if (result != null && result.Code == 200)
         {
             listRolesGroup = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
-        } else if(result != null && result.Code == 404){
+        }
+        else if (result != null && result.Code == 404)
+        {
             listRolesGroup = new List<RoleUser>();
         }
     }
@@ -232,7 +186,7 @@
         if (responGrantRolesGroup.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responGrantRolesGroup.Message);
-           
+
 
         }
         else
@@ -249,7 +203,7 @@
         if (responRevokeRolesGroup.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responRevokeRolesGroup.Message);
-         
+
 
         }
         else
@@ -297,15 +251,15 @@
 
     private async Task AddUserInGr()
     {
-        var result = await DialogService.OpenAsync("Add User In Group", ds =>
-                    {
+        var result = await DialogService.OpenAsync("Thêm người dùng vào nhóm", ds =>
+                        {
     string userid = "";
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             @if (responGetUser != null)
         {
-            <RadzenFormField Text="User" Variant="@variant">
-                <RadzenDropDownDataGrid @bind-Value="@userid" Data=@responGetUser TextProperty="Displayname" ValueProperty="Userid" Placeholder="Select User" />
+            <RadzenFormField Text="Người dùng" Variant="@variant">
+                <RadzenDropDownDataGrid @bind-Value="@userid" Data=@responGetUser TextProperty="Displayname" ValueProperty="Userid" Placeholder="Chọn người dùng" />
             </RadzenFormField>
         }
 
@@ -314,12 +268,12 @@
 
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Add" Click="() => SaveUserinGr(userid)" Style="width: 80px;" />
+            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            <RadzenButton Text="Thêm" Click="() => SaveUserinGr(userid)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
     ;
-                });
+                    });
 
     }
 
