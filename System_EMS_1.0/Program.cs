@@ -19,6 +19,8 @@ builder.Services.AddTransient<IApiService, ApiService>();
 //Config
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

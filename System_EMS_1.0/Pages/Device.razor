@@ -1,137 +1,158 @@
 ﻿@page "/devices"
 @using Data
 @using Services
+@using Newtonsoft.Json
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject IApiService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
-@using Newtonsoft.Json
 @inject HttpClient _httpclient
 
-<RadzenRow>
-    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> Danh sách thiết bị</RadzenText>
-    </RadzenColumn>
-    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Thêm thiết bị" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
-    </RadzenColumn>
-</RadzenRow>
-<hr />
 
-@if (listdevice != null)
+
+
+@if (isshowedit == false)
 {
+    <RadzenRow>
+        <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+            <RadzenText TextStyle="TextStyle.H4"> Danh mục thiết bị</RadzenText>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+            <RadzenButton Text="Thêm thiết bị" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+    <hr />
+    @if (listdevice != null)
+    {
+        <RadzenDataGrid AllowGrouping="false" AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+            <GroupHeaderTemplate>
+                @{
 
-    <RadzenDataGrid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                    Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
-
-        <GroupHeaderTemplate>
-            @{
-
-                if (@context.GroupDescriptor.GetTitle() == "Nhóm sản phẩm")
-                {
-
-                    @if (listprogroup != null)
+                    if (@context.GroupDescriptor.GetTitle() == "Nhóm sản phẩm")
                     {
-                        ResponProGroup product = listprogroup.FirstOrDefault(item1 => item1.Id == @context.Data.Key);
+
+                        @if (listprogroup != null)
+                        {
+                            ResponProGroup product = listprogroup.FirstOrDefault(item1 => item1.Id == @context.Data.Key);
+                            @if (product != null)
+                            {
+                                <span>Nhóm sản phẩm: @product.Display</span>
+                            }
+                        }
+
+                    }
+                    else if (@context.GroupDescriptor.GetTitle() == "Loại thiết bị")
+                    {
+
+                        @if (listdetype != null)
+                        {
+                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == @context.Data.Key);
+                            @if (type != null)
+                            {
+                                <span>Nhóm loại: @type.Display</span>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @context.GroupDescriptor.GetTitle()
+                        <span>: </span>
+                        @context.Data.Key
+                        ;
+                    }
+                }
+
+            </GroupHeaderTemplate>
+            <Columns>
+                @* <RadzenDataGridColumn Filterable="false" Property="Deviceid" Title="Id" Frozen="true" Width="80px" TextAlign="TextAlign.Center" /> *@
+                <RadzenDataGridColumn TItem="DeviceModel" Property="Devicename" Title="Tên thiết bị" />
+                <RadzenDataGridColumn TItem="DeviceModel" Property="Devicemodel" Title="Mô hình thiết bị" />
+                <RadzenDataGridColumn TItem="DeviceModel" Title="Nhóm sản phẩm" Property="Productgroup">
+                    <Template Context="data">
+                        @{
+                            ResponProGroup product = listprogroup.FirstOrDefault(item => item.Id == data.Productgroup);
+                        }
                         @if (product != null)
                         {
-                            <span>Nhóm sản phẩm: @product.Display</span>
+                            <span>@product.Display</span>
                         }
-                    }
+                        else
+                        {
+                            <span></span>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
 
-                }
-                else if (@context.GroupDescriptor.GetTitle() == "Loại thiết bị")
-                {
-
-                    @if (listdetype != null)
-                    {
-                        ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == @context.Data.Key);
+                <RadzenDataGridColumn TItem="DeviceModel" Title="Loại thiết bị" Property="Devicetype">
+                    <Template Context="data">
+                        @{
+                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
+                        }
                         @if (type != null)
                         {
-                            <span>Nhóm loại: @type.Display</span>
+                            <span>@type.Display</span>
                         }
-                    }
+                        else
+                        {
+                            <span></span>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="DeviceModel" Property="Lr_code" Title="Lr_code" />
+                <RadzenDataGridColumn TItem="DeviceModel" Property="Company" Title="Công ty" />
+                <RadzenDataGridColumn TItem="DeviceModel" Title="Thiết bị chính" Property="Maindevice">
+                    <Template Context="data">
+                        @{
+                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
+                            if (type.Typeid == 2)
+                            {
+                                <span>@data.Maindevice</span>
 
-                }
-                else
-                {
-                    @context.GroupDescriptor.GetTitle()
-                    <span>: </span>
-                    @context.Data.Key
-                    ;
-                }
-            }
+                            }
+                            else if (type.Typeid == 1)
+                            {
+                                var main = listdevice.FirstOrDefault(item => item.Deviceid == data.Maindevice);
+                                var maindev = main.Devicename;
+                                <span>@maindev</span>
 
-        </GroupHeaderTemplate>
-        <Columns>
-            <RadzenDataGridColumn Filterable="false" Property="Deviceid" Title="Id" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="DeviceModel" Property="Devicename" Title="Tên thiết bị" />
-            <RadzenDataGridColumn TItem="DeviceModel" Property="Devicemodel" Title="Mô hình thiết bị" />
-            <RadzenDataGridColumn TItem="DeviceModel" Title="Nhóm sản phẩm" Property="Productgroup">
-                <Template Context="data">
-                    @{
-                        ResponProGroup product = listprogroup.FirstOrDefault(item => item.Id == data.Productgroup);
-                    }
-                    @if (product != null)
-                    {
-                        <span>@product.Display</span>
-                    }
-                    else
-                    {
-                        <span></span>
-                    }
-                </Template>
-            </RadzenDataGridColumn>
-
-            <RadzenDataGridColumn TItem="DeviceModel" Title="Loại thiết bị" Property="Devicetype">
-                <Template Context="data">
-                    @{
-                        ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
-                    }
-                    @if (type != null)
-                    {
-                        <span>@type.Display</span>
-                    }
-                    else
-                    {
-                        <span></span>
-                    }
-                </Template>
-            </RadzenDataGridColumn>
+                            }
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
 
 
-            <RadzenDataGridColumn TItem="DeviceModel" Property="Lr_code" Title="Lr_code" />
-            <RadzenDataGridColumn TItem="DeviceModel" Property="Company" Title="Công ty" />
-            <RadzenDataGridColumn TItem="DeviceModel" Property="Maindevice" Title="Thiết bị chính" />
+                <RadzenDataGridColumn TItem="DeviceModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
+                    <Template Context="DeviceModel">
+
+                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => ViewDevice(DeviceModel.Deviceid ) )"></RadzenButton>
+                        |
+                        <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => EditDevice(DeviceModel.Deviceid ) )"></RadzenButton>
 
 
-
-            <RadzenDataGridColumn TItem="DeviceModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
-                <Template Context="DeviceModel">
-
-                    <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@((args) =>
-                    ViewDevice(DeviceModel.Deviceid ) )"></RadzenButton>
-                    |
-                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
-                    EditDevice(DeviceModel.Deviceid ) )"></RadzenButton>
-
-
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+    else
+    {
+        <span>Không có dữ liệu</span>
+    }
 }
 else
 {
-    <span>Không có dữ liệu</span>
+    <EditDevice id="@device_id" ButtonCallBack="NavCallBack"></EditDevice>
 }
+
 
 
 @code {
     private Variant variant = Variant.Outlined;
     private bool isConnected;
     private ResponLogin us = new ResponLogin();
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -150,6 +171,7 @@ else
                 await GetDeType();
                 await GetProGroup();
                 await GetDevice();
+
             }
             StateHasChanged();
         }
@@ -167,6 +189,24 @@ else
             return false;
         }
     }
+
+    //Edit
+    private bool isshowedit = false;
+    private int device_id = 0;
+    private void EditDevice(int id)
+    {
+        if (id != 0)
+        {
+            isshowedit = true;
+            device_id = id;
+        }
+    }
+    private void NavCallBack()
+    {
+        isshowedit = false;
+    }
+
+
     private void AddDevice()
     {
         NavigationManager.NavigateTo("/adddevice");
@@ -177,13 +217,8 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "nation");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-
+           
+            var result = await ApiService.ApiConfig("nation ", us.Token);
             if (result != null && result.Code == 200)
             {
                 listget = JsonConvert.DeserializeObject<List<ResponNation>>(result.Value.ToString());
@@ -200,12 +235,8 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "devicetype");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+            
+            var result = await ApiService.ApiConfig("devicetype", us.Token);
 
             if (result != null && result.Code == 200)
             {
@@ -223,13 +254,8 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "productgroup");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-
+          
+            var result = await ApiService.ApiConfig("productgroup", us.Token);
             if (result != null && result.Code == 200)
             {
                 listprogroup = JsonConvert.DeserializeObject<List<ResponProGroup>>(result.Value.ToString());
@@ -244,33 +270,17 @@ else
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
-        try
+        var result = await ApiService.GetListDevice(us.Token);
+
+        if (result != null && result.Code == 200)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-
-            if (result != null && result.Code == 200)
-            {
-                listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
-
-            }
+            listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
         }
-        catch (Exception ex)
+        else
         {
-            throw new NotImplementedException();
+            listdevice = new List<DeviceModel>();
         }
     }
-
-
-    private void EditDevice(int id)
-    {
-        NavigationManager.NavigateTo($"/editdevice/{id}");
-
-    }
-
 
     private async Task Reload()
     {
@@ -283,20 +293,15 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices/details");
-            request.Headers.Add("deviceid", id.ToString());
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
 
+            var result = await ApiService.DetailsDevice(id.ToString(), us.Token);
             if (result != null && result.Code == 200)
             {
                 devicedetails = JsonConvert.DeserializeObject<DeviceModel>(result.Value.ToString());
                 if (devicedetails != null)
                 {
                     var resultdialog = await DialogService.OpenAsync("Chi tiết trang thiết bị", ds =>
-                                        {
+                                                            {
        DateTime.TryParse(devicedetails.Startdate, out DateTime startdate);
        DateTime.TryParse(devicedetails.Buydate, out DateTime buydate);
        DateTime.TryParse(devicedetails.Expdate, out DateTime expdate);
@@ -456,8 +461,8 @@ else
 
         </RadzenStack>
     </RadzenStack>
-    ;
-                                    });
+                    ;
+                });
                 }
             }
         }

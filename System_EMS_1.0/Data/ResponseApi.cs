@@ -136,7 +136,47 @@
         public int Value { get; set; }
         public string Code { get; set; }
         public string Display { get; set; }
-
     }
 
+
+    public class RotationModel
+    {
+        public string Departmentid { get; set; }
+        public string Rotafrom { get; set; }  
+        public string Rotato { get; set;}
+        public string Daterotation { get; set; }
+        public string Dateend { get; set; }
+        public bool Status { get; set; }
+        public string Uid { get; set; }
+    }
+
+
+    public class DeviceDepart
+    {
+        public int Deviceid { get; set; }
+        public string Rotafrom { get; set; }
+    }
+
+    public class TypeRepair
+    {
+        public string Type { get; set;}
+        public string Display { get; set; }
+    }
+
+    public class RepairDetails
+    {
+        public string Id { get; set; }
+        public int Deviceid { get; set; }
+        public double Cost { get; set;}
+        public string Description { get; set; }
+        public string Type { get; set; }
+    }
+
+
+    public class RepairStatus
+    {
+        public string Id { get; set; }
+        public string Uid { get; set; }
+        public string Datecreate {  get; set; }
+    }
 }

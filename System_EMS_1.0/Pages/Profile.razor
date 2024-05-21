@@ -15,20 +15,16 @@
         <RadzenText TextStyle="TextStyle.H4"> Hồ sơ người dùng </RadzenText>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-
-        @*<RadzenButton Text=" Thay đổi mật khẩu" Style="float:right" Icon="password" Click="ChangePass" class="rz-background-color-info-light"></RadzenButton>
-        <RadzenButton Text="  Mật khẩu" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2 rz-background-color-info-darker" ButtonStyle="ButtonStyle.Dark"></RadzenButton>*@
-        
+        <RadzenButton Text=" Thay đổi mật khẩu" Style="float:right" Icon="password" Click="ChangePass" class="rz-background-color-info-light"></RadzenButton>
+        <RadzenButton Text="  Mật khẩu" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2 rz-background-color-info-darker" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
     </RadzenColumn>
 </RadzenRow>
 <hr />
 
-<RadzenRow>
+@* <RadzenRow>
     <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
         <RadzenStack>
 
-            @*   <RadzenImage Path="https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png"
-            Style="width:90%" class="rz-ml-5"></RadzenImage> *@
             <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
                 <RadzenTextBox @bind-Value="@user.Username" Disabled />
             </RadzenFormField>
@@ -42,14 +38,12 @@
         <RadzenStack>
             @if (user != null)
             {
-             
                 <RadzenFormField Text="Tên người dùng" Variant="@variant">
                     <RadzenTextBox @bind-Value="@user.Displayname" Disabled />
                 </RadzenFormField>
                 <RadzenFormField Text="Số điện thoại" Variant="@variant">
                     <RadzenTextBox @bind-Value="@user.Phonenumber" Disabled />
-                </RadzenFormField>
-                
+                </RadzenFormField>   
             }
         </RadzenStack>
     </RadzenColumn>
@@ -68,10 +62,9 @@
 
             }
         </RadzenStack>
-
-
     </RadzenColumn>
 </RadzenRow>
+
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
 
@@ -79,15 +72,14 @@
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text="Thay đổi mật khẩu" Style="float:right" Icon="password" Click="ChangePass" class=" rz-mt-4 rz-background-color-info-light"></RadzenButton>
         <RadzenButton Text="Mật khẩu" Style="float:right" Icon="cached" Click="ResetPassword" class="rz-mr-2 rz-mt-4 rz-background-color-info-darker" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
-        <RadzenButton Text="Chỉnh sửa" Style="float:right" Icon="edit" Click="ResetPassword" class="rz-mr-2 rz-mt-4 rz-background-color-danger" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
+        <RadzenButton Text="Chỉnh sửa" Style="float:right" Icon="edit" class="rz-mr-2 rz-mt-4 rz-background-color-danger" ButtonStyle="ButtonStyle.Dark"></RadzenButton>
     </RadzenColumn>
-</RadzenRow>
+</RadzenRow> *@
 
 
 
 @code {
 
-    //private bool isedit = false;
     private ResponLogin us = new ResponLogin();
     private bool isConnected;
     [Parameter] public string id { set; get; }
@@ -111,7 +103,6 @@
                 <RadzenPassword @bind-Value="@passwordnew" />
             </RadzenFormField>
         </RadzenStack>
-
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
@@ -191,7 +182,6 @@
             responGetUser = res;
         }
     }
-
 
 
     public async Task<bool> ReturnIndex()

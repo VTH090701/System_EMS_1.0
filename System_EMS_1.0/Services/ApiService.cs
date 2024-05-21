@@ -7,6 +7,8 @@ using System.Xml.Linq;
 using System.Numerics;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Options;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.Http;
 namespace System_EMS_1._0.Services
 {
     public class ApiService : IApiService
@@ -100,11 +102,13 @@ namespace System_EMS_1._0.Services
         {
             try
             {
+
                 var request = new
                 {
                     username = userName,
                     password = passWord
                 };
+
                 var jsonContent = JsonConvert.SerializeObject(request);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user/login", content);
@@ -125,6 +129,7 @@ namespace System_EMS_1._0.Services
                         await _sessionStorageService.SetItemAsync("us", data);
                     }
                 }
+                
                 return result;
             }
             catch (Exception ex)
@@ -142,6 +147,14 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                if(result.Code == 200)
+                {
+                    await _sessionStorageService.RemoveItemAsync("us");
+                }
+                else
+                {
+
+                }
                 return result;
 
             }
@@ -339,7 +352,6 @@ namespace System_EMS_1._0.Services
             }
 
         }
-
         public async Task<ResponLogout> Add_RemoveUserInGroup(string type,string idgr, string iduser, string token)
         {
 
@@ -356,14 +368,14 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups/user", content);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ResponLogout>();
+                var result =  await response.Content.ReadFromJsonAsync<ResponLogout>();
+                return result;
             }
             catch (Exception ex)
             {
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponseApi> ListRolesGroup(string groupid, string token)
         {
             try
@@ -381,7 +393,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> GrantRolesGroup(string type, string id, string rolename, string token)
         {
             try
@@ -406,7 +417,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> ChangePassword(string username, string passold, string passnew, string token)
         {
             try
@@ -431,7 +441,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponLogout> ChangeStatus(string userid, bool status, string token)
         {
             try
@@ -455,7 +464,6 @@ namespace System_EMS_1._0.Services
                 throw new NotImplementedException();
             }
         }
-
         public async Task<ResponseApi> ResetPass(string userid, string token)
         {
             try
@@ -472,6 +480,235 @@ namespace System_EMS_1._0.Services
                 var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> GetRotation(int deid, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/rotation");
+                request.Headers.Add("token", token);
+                request.Headers.Add("deviceid", deid.ToString());
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> SaveRotation(int deid, string departid, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    deviceid = deid,
+                    departmentid = departid,
+                    token = token
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/rotation", content);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> GetDeviceDepartment(string deid, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/department");
+                request.Headers.Add("token", token);
+                request.Headers.Add("departmentid", deid);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> SaveRepairDevice(string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair");
+                request.Headers.Add("token", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> UpdateRepairDevice(string id, int deviceid, string desc, double cost, string type, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    id = id,
+                    deviceid = deviceid,
+                    description = desc,
+                    cost = cost,
+                    type = type,
+                    token = token
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair", content);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task<ResponseApi> DetailsRepairDevice(string id, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/details");
+                request.Headers.Add("token", token);
+                request.Headers.Add("repairid", id);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> ApprovedRepairDevice(string id, string status, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    token = token,
+                    repairId = id,
+                    status = status
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/status", content);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> DetailsRepair(string id, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/details");
+                request.Headers.Add("token", token);
+                request.Headers.Add("repairid", id);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> StatusRepair(string status, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair");
+                request.Headers.Add("status", status);
+                request.Headers.Add("token", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> GetListDevice(string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices");
+                request.Headers.Add("token", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> DetailsDevice(string deviceid, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/details");
+                request.Headers.Add("deviceid", deviceid);
+                request.Headers.Add("token",token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<ResponseApi> ApiConfig(string type, string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/config");
+                request.Headers.Add("type", type);
+                request.Headers.Add("token", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
             }
             catch (Exception ex)
             {

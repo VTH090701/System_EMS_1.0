@@ -8,17 +8,13 @@
 
 <RadzenComponents />
 <PageTitle>System_EMS_1.0</PageTitle>
-
-
 <RadzenLayout style="position: relative;grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0" class="rz-background-color-info-dark">
-
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
                 <RadzenLabel Text="VASD" Style="font-weight:600;font-size:22px" />
             </RadzenStack>
-
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
                 @if (us != null)
                 {
@@ -37,7 +33,6 @@
                 }
                 <RadzenProfileMenu class="rz-background-color-info-dark">
                     <Template>
-                        @* <RadzenIcon Icon="account_circle" ></RadzenIcon> *@
                         <RadzenGravatar>
                         </RadzenGravatar>
                     </Template>
@@ -57,45 +52,54 @@
                     </ChildContent>
                 </RadzenProfileMenu>
             </RadzenStack>
-
         </RadzenStack>
-
     </RadzenHeader>
-
-
-
     <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute; z-index: 3">
         <RadzenStack AlignItems="AlignItems.End" Class="rz-p-2">
             <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary" Click="@(() => sidebarExpanded = false)" />
         </RadzenStack>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Trang chủ" Icon="dashboard" Path="dashboard" />
-            <RadzenPanelMenuItem Text="Phòng ban" Icon="class" Path="department" />
-            <RadzenPanelMenuItem Text="Nhóm" Icon="group_work" Path="group" />
-            <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" />
-            <RadzenPanelMenuItem Text="Thiết bị" Icon="build" Path="devices" />
+            <RadzenPanelMenuItem Text="Trang chủ" Icon="dashboard" Path="dashboard" Click="NavitemSiber" />
+            <RadzenPanelMenuItem Text="Phòng ban" Icon="class" Path="department" Click="NavitemSiber" />
+            <RadzenPanelMenuItem Text="Nhóm" Icon="group_work" Path="group" Click="NavitemSiber" />
+            <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" Click="NavitemSiber" />
+            <RadzenPanelMenuItem Text="Thiết bị" Icon="list" Click="NavitemSiber">
+                <RadzenPanelMenuItem Text="Danh mục thiết bị" Icon="build" Path="devices" Click="NavitemSiber" />
+                <RadzenPanelMenuItem Text="Luân chuyển" Icon="3d_rotation" Path="rotation" Click="NavitemSiber" />
+                <RadzenPanelMenuItem Text="Tìm kiếm thiết bị" Icon="find_replace" Path="searchdevice" Click="NavitemSiber" />
+            </RadzenPanelMenuItem>
 
-            <RadzenPanelMenuItem Text="Vận chuyển" Icon="3d_rotation" Path="rotation" />
+
+            <RadzenPanelMenuItem Text="Sửa chữa" Icon="gavel" Path="repairdevice" Click="NavitemSiber" />
+
 
         </RadzenPanelMenu>
-        <div class="rz-p-4">
-            @* Sidebar *@
-        </div>
     </RadzenSidebar>
     <RadzenBody>
         <div class="rz-p-4">
-            @Body
+            @if (isprofile)
+            {
+                <System_EMS_1._0.Pages.Profile id="us.Userid" />
+            }
+            else
+            {
+                @Body
+            }
         </div>
     </RadzenBody>
+
     @if (sidebarExpanded)
     {
         <div @onclick="@(() => sidebarExpanded = false)" class="rz-dialog-mask" style="position: absolute; z-index: 2"></div>
     }
+
 </RadzenLayout>
 
 
+
 @code {
-    bool sidebarExpanded = false;
+    private bool isprofile = false;
+    private bool sidebarExpanded = false;
     private ResponLogin us;
     private bool isConnected;
     private ResponLogout responlogout = new ResponLogout();
@@ -108,6 +112,9 @@
             if (isReturn)
             {
                 NavigationManager.NavigateTo("/");
+
+                isprofile = false;
+
             }
             else
             {
@@ -155,8 +162,16 @@
     {
         if (us.Userid != null)
         {
-            NavigationManager.NavigateTo($"/profile/{us.Userid}");
-
+            //NavigationManager.NavigateTo($"/profile/{us.Userid}");
+            isprofile = true;
+        }
+    }
+    private void NavitemSiber()
+    {
+        if (us.Userid != null)
+        {
+            //NavigationManager.NavigateTo($"/profile/{us.Userid}");
+            isprofile = false;
         }
     }
 

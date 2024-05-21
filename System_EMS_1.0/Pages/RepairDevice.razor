@@ -1,0 +1,280 @@
+﻿@page "/repairdevice"
+@using Data
+@using Services
+@using Newtonsoft.Json
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@inject HttpClient _httpclient
+
+
+@if (isshowrepair == false)
+{
+    <RadzenRow>
+        <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+            <RadzenRow>
+                <RadzenText TextStyle="TextStyle.H5">Danh sách phiếu :</RadzenText>
+
+
+@*                 <InputSelect id="status" @bind-Value="status_repair" class="form-control" style="width:30%" @onclick="GetRepairStatus">
+                    @foreach (var status in Status)
+                    {
+                        <option value="@status.Key">@status.Value</option>
+                    }
+                </InputSelect> *@
+
+                <RadzenDropDown @bind-Value=status_repair Data=@statusRepair AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+                                AllowFiltering="true" TextProperty="Status" ValueProperty="Key" Style="width: 100%; max-width: 300px;" Placeholder="Chọn trạng thái phiếu" Change="GetRepairStatus" />
+
+            
+
+            </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+            <RadzenButton Text="Thêm phiếu mới" Style="float:right" Icon="add" class="rz-background-color-info-dark" Click="NavAddRepair"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+    <hr />
+
+    @if (listrepairstatus != null && listrepairstatus.Count > 0)
+    {
+        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@listrepairstatus" TItem="RepairStatus" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+            <Columns>
+                <RadzenDataGridColumn TItem="RepairStatus" Property="Id" Title="Id" />
+                <RadzenDataGridColumn TItem="RepairStatus" Title="Người tạo" Property="Uid">
+                    <Template Context="data">
+                        @{
+                            UserModel user = responGetUser.FirstOrDefault(item => item.Userid == data.Uid);
+                            if (user != null)
+                            {
+                                <span>@user.Displayname</span>
+                            }
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RepairStatus" Title="Ngày tạo" Property="Datecreate">
+                    <Template Context="data">
+                        @{
+                            DateOnly.TryParse(data.Datecreate, out DateOnly startdate);
+                            <span>@startdate</span>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RepairStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
+                    <Template Context="data">
+                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => DetailsRepairDevice(data.Id ) )"></RadzenButton>
+                        @if (status_repair == "approved")
+                        {
+
+                        }
+                        else
+                        {
+                            <span>|</span>
+                            <RadzenButton Icon="done" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => ApprovedRepair(data.Id ) )"></RadzenButton>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+    else
+    {
+        <span>Không có dữ liệu</span>
+    }
+
+}
+else
+{
+    <DetailsDeviceRepair id="@id_repair" status="@status_repair" OnButtonClick="@HandleButtonClick"></DetailsDeviceRepair>
+
+}
+
+@code {
+
+    //NavDetails, callback
+    private bool isshowrepair = false;
+    string id_repair = "";
+    private void DetailsRepairDevice(string id)
+    {
+        id_repair = id;
+        isshowrepair = true;
+
+    }
+
+    private void HandleButtonClick()
+    {
+        isshowrepair = false;
+        id_repair = "";
+
+    }
+
+
+    private async Task ApprovedRepair(string id)
+    {
+
+        string sta = "";
+        if (status_repair == "request")
+        {
+            sta = "sending";
+        }
+        else if (status_repair == "sending")
+        {
+            sta = "approved";
+
+        }
+
+        var result = await ApiService.ApprovedRepairDevice(id, sta, us.Token);
+        if (result != null && result.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            await GetRepairStatus();
+
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.Message);
+        }
+
+
+    }
+
+    public class StaRepair
+    {
+        public string Key { set; get; }
+        public string Status { set; get; }
+    }
+    private List<StaRepair> statusRepair = new List<StaRepair>();
+    private async Task LoadStaRe()
+    {
+        statusRepair.Add(new StaRepair() { Key = "request", Status = "Yêu cầu" });
+        statusRepair.Add(new StaRepair() { Key = "sending", Status = "Đang gửi duyệt" });
+        statusRepair.Add(new StaRepair() { Key = "approved", Status = "Đã duyệt" });
+    }
+
+
+
+    private Variant variant = Variant.Outlined;
+    private string status_repair = "";
+    private bool isConnected;
+    private ResponLogin us = new ResponLogin();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetDevice();
+                await GetTypeRepair();
+                await GetListUser();
+
+
+                //await GetRepairStatus();
+                await LoadStaRe();
+            }
+            StateHasChanged();
+        }
+    }
+
+
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private List<UserModel> responGetUser = new List<UserModel>();
+    private async Task GetListUser()
+    {
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
+    private async Task GetDevice()
+    {
+        var result = await ApiService.GetListDevice(us.Token);
+
+        if (result != null && result.Code == 200)
+        {
+            listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
+        }
+        else
+        {
+            listdevice = new List<DeviceModel>();
+        }
+    }
+
+    private void NavAddRepair()
+    {
+        NavigationManager.NavigateTo("/addrepairdevice");
+    }
+
+
+    private List<TypeRepair> listtypere = new List<TypeRepair>();
+    private async Task GetTypeRepair()
+    {
+       
+
+        try
+        {
+
+            var result = await ApiService.ApiConfig("typerepair", us.Token);
+            if (result != null && result.Code == 200)
+            {
+                listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
+
+    private List<RepairStatus> listrepairstatus = new List<RepairStatus>();
+    private async Task GetRepairStatus()
+    {
+        
+        if (status_repair != "" && status_repair != null)
+        {
+            var result = await ApiService.StatusRepair(status_repair, us.Token);
+            if (result != null && result.Code == 200)
+            {
+                listrepairstatus = JsonConvert.DeserializeObject<List<RepairStatus>>(result.Value.ToString());
+            }
+            else if (result.Code == 404)
+            {
+                listrepairstatus = new List<RepairStatus>();
+            }
+        }
+        else
+        {
+            listrepairstatus = new List<RepairStatus>();
+        }
+
+    }
+
+}

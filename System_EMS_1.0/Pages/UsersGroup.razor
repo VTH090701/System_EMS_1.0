@@ -1,4 +1,4 @@
-﻿@page "/usersgroup/{id}"
+﻿@* @page "/usersgroup/{id}" *@
 @using Data
 @using Services
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -19,7 +19,7 @@
         </div>
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="AddUserInGr"></RadzenButton>
+        <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="AddUserInGr" class="rz-background-color-info-dark"></RadzenButton>
     </RadzenColumn>
 </RadzenRow>
 <hr />
@@ -28,20 +28,19 @@
         @if (responUserinGroup != null && responUserinGroup.Count > 0)
         {
             <RadzenDataGrid Data="@responUserinGroup" TItem="UsersinGroup" AllowVirtualization=" true"
-                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Userid" Title=" Id" />
+                    @* <RadzenDataGridColumn TItem="UsersinGroup" Property="Userid" Title=" Id" /> *@
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Displayname" Title="Tên" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Phonenumber" Title="Số điện thoại" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Email" Title="Email" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Thời gian vào" />
-
                     <RadzenDataGridColumn TItem="UsersinGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-                        <Template Context="UsersinGroup">
-
+                        <Template Context="UsersinGroup">    
                             <RadzenButton Icon="delete" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
-                        DeleteUserInGr(UsersinGroup.Userid) )"></RadzenButton>
+                                    DeleteUserInGr(UsersinGroup.Userid) )">
+                            </RadzenButton>
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>
@@ -53,14 +52,12 @@
         }
 
     </RadzenColumn>
-    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-   
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">   
         @if (listRoles != null)
         {
 
-
             <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:550px"
-                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
                     <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Tên quyền" />
@@ -84,10 +81,8 @@
                                                     TValue="bool" Change="()=>GrantGroup(data.Rolename)" />
                                 }
                             }
-
                         </Template>
                     </RadzenDataGridColumn>
-
 
                 </Columns>
             </RadzenDataGrid>
@@ -99,14 +94,23 @@
 
 
 
-
 @code {
     [Parameter] public string id { set; get; }
+    [Parameter]
+    public EventCallback OnButtonClick { get; set; }
+
+    private void NavUserGr()
+    {
+        OnButtonClick.InvokeAsync();
+    }
+   
+
+
+
     private bool isConnected;
     private ResponLogin us = new ResponLogin();
     private List<UsersinGroup> responUserinGroup = new List<UsersinGroup>();
     private Variant variant = Variant.Outlined;
-
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -131,7 +135,6 @@
         }
     }
 
-
     public async Task<bool> ReturnIndex()
     {
         us = await sessionStorage.GetItemAsync<ResponLogin>("us");
@@ -145,12 +148,6 @@
         }
     }
 
-
-    private void NavUserGr()
-    {
-        NavigationManager.NavigateTo("/group");
-
-    }
 
     private List<RoleUser> listRoles = new List<RoleUser>();
     private async Task GetListRoles()
@@ -223,8 +220,6 @@
 
     private async Task GetUserinGr()
     {
-    //responUserinGroup = await ApiService.GetUsersInGroup(id, us.Token);
-
         var result = await ApiService.GetUsersInGroup(id, us.Token);
         if (result.Code == 200)
         {
@@ -241,7 +236,6 @@
 
     private async Task GetUser()
     {
-    //responGetUser = await ApiService.GetUser(us.Token);
         var result = await ApiService.GetUser(us.Token);
         if (result != null && result.Code == 200)
         {
@@ -259,21 +253,19 @@
             @if (responGetUser != null)
         {
             <RadzenFormField Text="Người dùng" Variant="@variant">
-                <RadzenDropDownDataGrid @bind-Value="@userid" Data=@responGetUser TextProperty="Displayname" ValueProperty="Userid" Placeholder="Chọn người dùng" />
+
+
+                <RadzenDropDown @bind-Value=userid Data=@responGetUser AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+                                AllowFiltering="true" TextProperty="Displayname" ValueProperty="Userid" Placeholder="Chọn người dùng"/>
             </RadzenFormField>
         }
-
-
         </RadzenStack>
-
-
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             <RadzenButton Text="Thêm" Click="() => SaveUserinGr(userid)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-    ;
-                    });
+    ;});
 
     }
 
@@ -285,6 +277,7 @@
         if (responSaveAddUserInGr.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responSaveAddUserInGr.Message);
+
             DialogService.Close();
             await Reload();
         }
@@ -308,14 +301,16 @@
         if (responSaveRemoveUserInGr.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, responSaveRemoveUserInGr.Message);
+
             DialogService.Close();
             await GetUserinGr();
-
         }
         else
         {
             notification.Notify(NotificationSeverity.Warning, responSaveRemoveUserInGr.Message);
         }
     }
+
+
 
 }

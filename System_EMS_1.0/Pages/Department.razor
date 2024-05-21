@@ -19,17 +19,34 @@
 <hr />
 
 
-@if (responDepartment != null)
+@if (responDepartment != null && responDepartment.Count > 0)
 {
-    <RadzenDataGrid  AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    <RadzenDataGrid  AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                     Data="@responDepartment" TItem="DepartmentModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
-        <Columns>
-            <RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" />
+    
+                    <Columns>
+            @* <RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" /> *@
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentname" Title="Tên phòng ban" />
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentdescription" Title="Mô tả" />
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentsortname" Title="Tên ngắn" />
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Datecreate" Title="Ngày tạo" />
-            <RadzenDataGridColumn TItem="DepartmentModel" Property="Createdby" Title="Người tạo" />
+            <RadzenDataGridColumn TItem="DepartmentModel" Title="Người tạo" Property="Createdby">
+                <Template Context="data">
+                    @{
+                        UserModel user = responGetUser.FirstOrDefault(item => item.Userid == data.Createdby);
+                    }
+                    @if (user != null)
+                    {
+                        <span>@user.Displayname</span>
+                    }
+                    else
+                    {
+                        <span></span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+
+
             <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                 <Template Context="DepartmentModel">
                     <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
@@ -50,20 +67,16 @@ else
 
 
 @code {
-
-
     private Variant variant = Variant.Outlined;
     private ResponLogin us = new ResponLogin();
-
     //private ResponseApi responDepartment;
-
     private ResponSaveDepartment responSaveDepartment = new ResponSaveDepartment();
     private ResponLogout responUpdateDepartment = new ResponLogout();
 
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-   
+
         if (firstRender)
         {
             bool isReturn = await ReturnIndex();
@@ -75,6 +88,7 @@ else
             {
                 isConnected = true;
                 await GetDepartment();
+                await GetListUser();
             }
             StateHasChanged();
         }
@@ -93,6 +107,16 @@ else
         }
     }
 
+    private List<UserModel> responGetUser = new List<UserModel>();
+    private async Task GetListUser()
+    {
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
 
     private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
     private async Task GetDepartment()
@@ -103,6 +127,11 @@ else
         {
             responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
         }
+        else if(result.Code == 401)
+        {
+            notification.Notify(NotificationSeverity.Warning, result.Message);
+
+        }
 
     }
 
@@ -110,6 +139,7 @@ else
     {
         var result = await DialogService.OpenAsync("Thêm phòng ban", ds =>
             {
+            
     string departmentname = "";
     string departmentdescription = "";
     string departmentsortname = "";
@@ -160,7 +190,6 @@ else
     }
 
     private DepartmentModel departmentEdit = new DepartmentModel();
-
     private async Task EditDepartment(string id, string name, string desc, string sort)
     {
         var result = await DialogService.OpenAsync("Cập nhật phòng ban", ds =>
@@ -189,8 +218,6 @@ else
     </RadzenStack>
     );
     }
-
-
 
     private async Task UpdateDepartmentinModal(string id, string name, string desc, string sort)
     {

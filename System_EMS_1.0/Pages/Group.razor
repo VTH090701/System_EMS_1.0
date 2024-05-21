@@ -1,66 +1,94 @@
 ﻿@page "/group"
 @using Data
 @using Services
+@using Newtonsoft.Json
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject IApiService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
-@using Newtonsoft.Json
-
-<RadzenRow>
-    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        <RadzenText TextStyle="TextStyle.H4"> Danh sách nhóm</RadzenText>
-    </RadzenColumn>
-    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        <RadzenButton Text="Thêm nhóm" Style="float:right" Icon="add" Click="Addgroup" class="rz-background-color-info-dark"></RadzenButton>
-    </RadzenColumn>
-</RadzenRow>
-<hr />
 
 
-@if (responGroup != null)
+
+
+@if (isusergroup == false)
 {
+    <RadzenRow>
+        <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+            <RadzenText TextStyle="TextStyle.H4"> Danh sách nhóm</RadzenText>
+        </RadzenColumn>
+        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+            <RadzenButton Text="Thêm nhóm" Style="float:right" Icon="add" Click="Addgroup" class="rz-background-color-info-dark"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+    <hr />
+    @if (responGroup != null && responGroup.Count > 0)
+    {   
+        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@responGroup" TItem="GroupModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+            <Columns>
+             @*    <RadzenDataGridColumn TItem="GroupModel" Property="Groupid" Title=" Id" Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" /> *@
+                <RadzenDataGridColumn TItem="GroupModel" Property="Groupname" Title="Tên nhóm " />
+                <RadzenDataGridColumn TItem="GroupModel" Property="Groupdescription" Title="Mô tả" />
+                <RadzenDataGridColumn TItem="GroupModel" Property="Datecreate" Title="Ngày tạo" />
 
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                    Data="@responGroup" TItem="GroupModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
-        <Columns>
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupid" Title=" Id" Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupname" Title="Tên nhóm " />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Groupdescription" Title="Mô tả" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Datecreate" Title="Ngày tạo" />
-            <RadzenDataGridColumn TItem="GroupModel" Property="Createdby" Title="Người tạo" />
-            <RadzenDataGridColumn TItem="GroupModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
-                <Template Context="GroupModel">
-                    <RadzenButton Icon="group_work" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Info" Click="@((args) =>
+
+                <RadzenDataGridColumn TItem="GroupModel" Title="Người tạo" Property="Createdby">
+                    <Template Context="data">
+                        @{
+                            UserModel user = responGetUser.FirstOrDefault(item => item.Userid == data.Createdby);
+                        }
+                        @if (user != null)
+                        {
+                            <span>@user.Displayname</span>
+                        }
+                        else
+                        {
+                            <span></span>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                
+                <RadzenDataGridColumn TItem="GroupModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
+                    <Template Context="GroupModel">
+                        <RadzenButton Icon="group_work" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Info" Click="@((args) =>
                     NavGroup(GroupModel.Groupid ) )"></RadzenButton>
-                    |
-                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
+                        |
+                        <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
                     EditGroup(GroupModel.Groupid , GroupModel.Groupname,GroupModel.Groupdescription) )"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
-
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+    else
+    {
+        <span>Không có dữ liệu</span>
+    }
 
 }
 else
 {
-    <span>Không có dữ liệu</span>
+
+    if (group_id != "")
+    {
+        <UsersGroup id="@group_id" OnButtonClick="@HandleButtonClick"  ></UsersGroup>
+    }
 }
 
+
+
+
 @code {
+
+
     private Variant variant = Variant.Outlined;
     private ResponLogin us = new ResponLogin();
-
     private ResponLogout responseSaveGroup = new ResponLogout();
     private ResponLogout responseUpdateGroup = new ResponLogout();
-
-
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-
         if (firstRender)
         {
             bool isReturn = await ReturnIndex();
@@ -70,8 +98,10 @@ else
             }
             else
             {
+
                 isConnected = true;
                 await Getgroup();
+                await GetListUser();
             }
             StateHasChanged();
         }
@@ -90,13 +120,38 @@ else
         }
     }
 
+    //UserInGroup
+    private bool isusergroup = false;
+    private string group_id = "";
+    private void HandleButtonClick()
+    {
+        isusergroup = false;
+        group_id = "";
 
-
+    }
     private void NavGroup(string id)
     {
-        NavigationManager.NavigateTo($"/usersgroup/{id}");
+        if (group_id == "")
+        {
+            group_id = id;
+            isusergroup = true;
+        }
     }
-    private List<GroupModel> responGroup = new List<GroupModel>(); 
+
+    private List<UserModel> responGetUser = new List<UserModel>();
+    private async Task GetListUser()
+    {
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
+  
+
+
+    private List<GroupModel> responGroup = new List<GroupModel>();
     private async Task Getgroup()
     {
         var result = await ApiService.GetGroup(us.Token);
@@ -104,12 +159,12 @@ else
         {
             responGroup = JsonConvert.DeserializeObject<List<GroupModel>>(result.Value.ToString());
         }
-
     }
+
     private async Task Addgroup()
     {
         var result = await DialogService.OpenAsync("Thêm nhóm", ds =>
-                       {
+                           {
     string name = "";
     string description = "";
 
@@ -131,10 +186,9 @@ else
             <RadzenButton Text="Thêm" Click="() => SaveGroupinModal(name,description)" Style="width: 80px;" />
         </RadzenStack>
     </RadzenStack>
-      ;
-    });
-
+          ;});
     }
+
     private async Task SaveGroupinModal(string name, string desc)
     {
         responseSaveGroup = await ApiService.SaveGroup(name, desc, us.Token);
@@ -153,8 +207,8 @@ else
     private async Task EditGroup(string id, string name, string desc)
     {
         var result = await DialogService.OpenAsync("Cập nhật nhóm", ds =>
-    {
-        return @<RadzenStack Gap="1.5rem">
+        {
+    return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text=" Tên nhóm" Variant="@variant">
                 <RadzenTextBox @bind-Value="@name" />
@@ -189,4 +243,7 @@ else
             notification.Notify(NotificationSeverity.Warning, responseUpdateGroup.Message);
         }
     }
+
+
+
 }

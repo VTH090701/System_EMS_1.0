@@ -1,0 +1,148 @@
+﻿@page "/searchdevice"
+@using Data
+@using Services
+@using Newtonsoft.Json
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@inject HttpClient _httpclient
+
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="10" Size="12">
+        <RadzenRow>
+            <RadzenText TextStyle="TextStyle.H5">Tìm thiết bị theo bộ phận:</RadzenText>
+           
+            @* <RadzenDropDownDataGrid @bind-Value="@depart_id" Data=@responDepartment AllowVirtualization="true" AllowClear="true"
+            AllowFiltering="true" TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Chọn bộ phận" Change="ChangeDepart" /> *@
+
+            <RadzenDropDown @bind-Value=depart_id Data=@responDepartment AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+                            AllowFiltering="true" TextProperty="Departmentname" ValueProperty="Departmentid" Style="width: 100%; max-width: 300px;" Placeholder="Chọn bộ phận" Change="ChangeDepart" />
+        </RadzenRow>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="2" Size="12">
+    </RadzenColumn>
+
+</RadzenRow>
+<hr />
+@if (listrotadepart != null && listrotadepart.Count > 0)
+{
+    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@listrotadepart" TItem="DeviceDepart" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+        <Columns>
+            <RadzenDataGridColumn TItem="DeviceDepart" Title="Thiết bị" Property="Deviceid">
+                <Template Context="data">
+                    @{
+                        DeviceModel device = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
+                        if (device != null)
+                        {
+                            <span>@device.Devicename</span>
+                        }
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="DeviceDepart" Title="Luân chuyển từ" Property="Rotafrom">
+                <Template Context="data">
+                    @{
+                        DepartmentModel depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Rotafrom);
+                        if (depart != null)
+                        {
+                            <span>@depart.Departmentname</span>
+                        }
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <span>Không có dữ liệu</span>
+}
+@code {
+    private bool isConnected;
+    private ResponLogin us = new ResponLogin();
+    private string depart_id = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetDepartment();
+                await GetDevice();
+            }
+            StateHasChanged();
+        }
+    }
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
+    private async Task GetDevice()
+    {
+        var result = await ApiService.GetListDevice(us.Token);
+
+        if (result != null && result.Code == 200)
+        {
+            listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
+        }
+        else
+        {
+            listdevice = new List<DeviceModel>();
+        }
+    }
+    private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
+    private async Task GetDepartment()
+    {
+
+        var result = await ApiService.GetDepartment(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
+        }
+
+    }
+
+    private List<DeviceDepart> listrotadepart = new List<DeviceDepart>();
+    private async Task ChangeDepart()
+    {
+        if (depart_id != null)
+        {
+            var result = await ApiService.GetDeviceDepartment(depart_id, us.Token);
+            if (result != null && result.Code == 200)
+            {
+                listrotadepart = JsonConvert.DeserializeObject<List<DeviceDepart>>(result.Value.ToString());
+            }
+            else if (result.Code == 404)
+            {
+                listrotadepart = new List<DeviceDepart>();
+            }
+        }
+        else if (depart_id == null)
+        {
+            listrotadepart = new List<DeviceDepart>();
+        }
+    }
+}

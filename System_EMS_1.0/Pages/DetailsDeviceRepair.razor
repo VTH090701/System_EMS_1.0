@@ -1,0 +1,338 @@
+﻿@page "/detailsrepair/{id}"
+
+@using Data
+@using Services
+@using Newtonsoft.Json
+@using System.Globalization
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IApiService ApiService
+@inject NavigationManager NavigationManager
+@inject NotificationService notification
+@inject DialogService DialogService
+@inject HttpClient _httpclient
+
+<RadzenRow class="rz-mb-2">
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="6" Size="12">
+        <RadzenRow>
+            <RadzenText TextStyle="TextStyle.H6">ID phiếu: @id</RadzenText>
+        </RadzenRow>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="6" Size="12">
+        @if (status == "approved" || status == "sending")
+        {
+
+        }
+        else
+        {
+            <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="SaveRepair" class="rz-background-color-success-dark"></RadzenButton>
+            <RadzenButton Text="Thêm phiếu" Style="float:right" Icon="add" Click="AddRepair" class="rz-background-color-info-dark rz-mr-2"></RadzenButton>
+        }
+        <RadzenButton Text="Trở lại" Style="float:right" Icon="exit_to_app" Click="NavRepair" class="rz-background-color-info-primary rz-mr-2"></RadzenButton>
+    
+    </RadzenColumn>
+</RadzenRow>
+
+
+<RadzenRow Gap="1rem" class="">
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
+        <RadzenStack>
+
+            @if (listdevice != null)
+            {
+                <RadzenFormField Text="Thiết bị" Variant="@variant">
+                    @if (status == "request")
+                    {
+                        <RadzenDropDownDataGrid @bind-Value="@deviceid" Data=@listdevice AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị " />
+                    }
+                    else
+                    {
+                        <RadzenDropDownDataGrid @bind-Value="@deviceid" Data=@listdevice AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị " Disabled />
+                    }
+
+                </RadzenFormField>
+            }
+
+        </RadzenStack>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
+        <RadzenStack>
+
+            <RadzenFormField Text="Chi phí" Variant="@variant">
+                @if (status == "request")
+                {
+                    <RadzenNumeric @bind-Value="@cost" />
+
+                }
+                else
+                {
+                    <RadzenNumeric @bind-Value="@cost" Disabled />
+
+                }
+
+            </RadzenFormField>
+        </RadzenStack>
+    </RadzenColumn>
+
+    <RadzenColumn SizeLG="4" SizeMD="4" SizeSM="12" Size=" 12">
+        <RadzenStack>
+            @if (listtypere != null)
+            {
+                <RadzenFormField Text="Loại" Variant="@variant">
+                    @if (status == "request")
+                    {
+                        <RadzenDropDownDataGrid @bind-Value="@type" Data=@listtypere AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Display" ValueProperty="Type" Placeholder="Chọn loại " />
+                    }
+                    else
+                    {
+                        <RadzenDropDownDataGrid @bind-Value="@type" Data=@listtypere AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Display" ValueProperty="Type" Placeholder="Chọn loại " Disabled/>
+                    }
+
+                </RadzenFormField>
+            }
+
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
+    <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size=" 12">
+        <RadzenStack>
+
+            <RadzenFormField Text="Mô tả" Variant="@variant">
+                 @if (status == "request")
+                {
+                    <RadzenTextArea @bind-Value="@desc" Rows="3" />
+
+
+                }
+                else{ 
+                    <RadzenTextArea @bind-Value="@desc" Rows="3" Disabled />
+
+                }
+            </RadzenFormField>
+        </RadzenStack>
+
+    </RadzenColumn>
+</RadzenRow>
+<hr />
+<RadzenText TextStyle="TextStyle.H5" class="rz-m-3">Chi tiết phiếu sửa chữa</RadzenText>
+
+@if (repairDetails != null && repairDetails.Count > 0)
+{
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@repairDetails" TItem="RepairDetails" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:450px">
+        <Columns>
+            <RadzenDataGridColumn TItem="RepairDetails" Title="Thiết bị" Property="Deviceid">
+                <Template Context="data">
+                    @{
+                        DeviceModel dev = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
+                        if (dev != null)
+                        {
+                            <span>@dev.Devicename</span>
+                        }
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="RepairDetails" Title="Chi phí" Property="Cost">
+                <Template Context="data">
+                    @{
+                        var cultureInfo = new CultureInfo("vi-VN");
+                        var formattedAmount = data.Cost.ToString("N0", cultureInfo);
+                    }
+                    <span>@formattedAmount VNĐ</span>
+
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="RepairDetails" Title="Loại" Property="Type">
+                <Template Context="data">
+                    @{
+                        TypeRepair type = listtypere.FirstOrDefault(item => item.Type == data.Type);
+                        if (type != null)
+                        {
+                            <span>@type.Display</span>
+                        }
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="RepairDetails" Property="Description" Title="Mô tả" />
+
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <span class="rz-m-3">Không có dữ liệu</span>
+}
+
+@code {
+    [Parameter] public string id { set; get; }
+    [Parameter] public string status { set; get; }
+    [Parameter] public EventCallback OnButtonClick { get; set; }
+
+    private void NavRepair()
+    {
+        OnButtonClick.InvokeAsync();
+
+    }
+
+    private Variant variant = Variant.Outlined;
+    //private string id_repair = "";
+    private bool isConnected;
+    private ResponLogin us = new ResponLogin();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            bool isReturn = await ReturnIndex();
+            if (isReturn)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                isConnected = true;
+                await GetDevice();
+                await GetTypeRepair();
+
+                await GetDetails();
+
+            }
+            StateHasChanged();
+        }
+    }
+
+    public async Task<bool> ReturnIndex()
+    {
+        us = await sessionStorage.GetItemAsync<ResponLogin>("us");
+        if (us == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private List<DeviceModel> listdevice = new List<DeviceModel>();
+    private async Task GetDevice()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private async Task AddRepair()
+    {
+        var result = await ApiService.SaveRepairDevice(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var id_respon = JsonConvert.DeserializeObject<object>(result.Value.ToString());
+            id = id_respon.id;
+            notification.Notify(NotificationSeverity.Success, result.Message);
+
+        }
+
+    }
+
+    private int deviceid = 0;
+    private string desc = "";
+    private double cost = 0;
+    private string type = "";
+
+
+    private async Task SaveRepair()
+    {
+        var result = await ApiService.UpdateRepairDevice(id, deviceid, desc, cost, type, us.Token);
+        if (result != null && result.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            await Reloadrepair();
+            await GetDetails();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.Message);
+
+        }
+    }
+
+    private async Task Reloadrepair()
+    {
+        deviceid = 0;
+        cost = 0;
+        desc = "";
+        type = "";
+        await GetDevice();
+        await GetTypeRepair();
+        StateHasChanged();
+
+    }
+
+    List<RepairDetails> repairDetails = new List<RepairDetails>();
+    private async Task GetDetails()
+    {
+        if (id != "")
+        {
+            var result = await ApiService.DetailsRepairDevice(id, us.Token);
+            if (result != null && result.Code == 200)
+            {
+
+                repairDetails = JsonConvert.DeserializeObject<List<RepairDetails>>(result.Value.ToString());
+
+            }
+            else
+            {
+                ///repairDetails = new List<RepairDetails>();
+            }
+        }
+    }
+
+    private List<TypeRepair> listtypere = new List<TypeRepair>();
+    private async Task GetTypeRepair()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
+            request.Headers.Add("type", "typerepair");
+            request.Headers.Add("token", us.Token);
+            var response = await _httpclient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            if (result != null && result.Code == 200)
+            {
+                listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
+}

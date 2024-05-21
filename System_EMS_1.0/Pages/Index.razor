@@ -1,5 +1,7 @@
 ﻿@page "/"
 @layout Login
+
+
 @inject IApiService ApiService
 @inject NavigationManager navigationmanager
 @inject NotificationService notification
@@ -32,8 +34,6 @@
     private string userName = "";
     private string passWord = "";
     bool rememberMe = false;
-
-
     private ResponLogin response = new ResponLogin();
     async Task OnLogin(LoginArgs args, string name)
     {
@@ -45,6 +45,10 @@
             {
                 notification.Notify(NotificationSeverity.Success, response.Message);
                 navigationmanager.NavigateTo("/dashboard");
+            }
+            else if (response.Code == 401)
+            {
+                notification.Notify(NotificationSeverity.Warning, "Tài khoản không đúng");
             }
             else
             {
@@ -60,5 +64,6 @@
 
     void OnResetPassword(string value, string name)
     {
+        
     }
 }

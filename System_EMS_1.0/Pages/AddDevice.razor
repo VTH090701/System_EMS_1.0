@@ -37,7 +37,11 @@
                 @if (listdetype != null)
                 {
                     <RadzenFormField Text="Loại thiết bị" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Chọn loại thiết bị" Change="ChangeDeviceType" />
+                        @*<RadzenDropDownDataGrid @bind-Value="@devicetype" Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Chọn loại thiết bị" Change="ChangeDeviceType" /> *@
+                        
+                        <RadzenDropDown @bind-Value="@devicetype" Data=@listdetype AllowVirtualization="true" AllowClear="true" AllowFiltering="true" TextProperty="Display" ValueProperty="Typeid" Placeholder="Chọn loại thiết bị" Change="ChangeDeviceType" />
+                        
+                    
                     </RadzenFormField>
                 }
             </RadzenStack>
@@ -56,7 +60,9 @@
                 @if (listprogroup != null)
                 {
                     <RadzenFormField Text="Nhóm sản phẩm" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Chọn nhóm sản phẩm" />
+                        @*<RadzenDropDownDataGrid @bind-Value="@productgroup" Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Chọn nhóm sản phẩm" />*@
+                        <RadzenDropDown @bind-Value="@productgroup"  Data=@listprogroup AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Display" ValueProperty="Id" Placeholder="Chọn nhóm sản phẩm" />
                     </RadzenFormField>
                 }
             </RadzenStack>
@@ -98,7 +104,9 @@
                 @if (listget != null)
                 {
                     <RadzenFormField Text="Quốc gia" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@nantional" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Chọn quốc gia" />
+
+                        <RadzenDropDown @bind-Value="@nantional" Data=@listget AllowVirtualization="true" AllowClear="true"
+                                                AllowFiltering="true" TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Chọn quốc gia" />
                     </RadzenFormField>
                 }
 
@@ -137,7 +145,10 @@
                     @if (listdevice != null)
                     {
                         <RadzenFormField Text="Thiết bị chính" Variant="@variant">
-                            <RadzenDropDownDataGrid @bind-Value="@maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" />
+                            @* <RadzenDropDownDataGrid @bind-Value="@maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" /> *@
+
+                            <RadzenDropDown @bind-Value="@maindevice" Data=@listdevice AllowVirtualization="true" AllowClear="true"
+                                                    AllowFiltering="true" TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị chính" />
                         </RadzenFormField>
                     }
                 }
@@ -176,7 +187,7 @@
     <RadzenRow>
 
         <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-            <RadzenButton Text="Lưu thiết bị" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
+            <RadzenButton Text="Thêm thiết bị" Style="float:right" Icon="save" Click="SaveDeviceinModal"></RadzenButton>
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
@@ -305,13 +316,8 @@
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "nation");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
 
+            var result = await ApiService.ApiConfig("nation ", us.Token);
             if (result != null && result.Code == 200)
             {
                 listget = JsonConvert.DeserializeObject<List<ResponNation>>(result.Value.ToString());
@@ -328,12 +334,8 @@
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "devicetype");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+            var result = await ApiService.ApiConfig("devicetype", us.Token);
 
             if (result != null && result.Code == 200)
             {
@@ -351,13 +353,8 @@
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "productgroup");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
 
+            var result = await ApiService.ApiConfig("productgroup", us.Token);
             if (result != null && result.Code == 200)
             {
                 listprogroup = JsonConvert.DeserializeObject<List<ResponProGroup>>(result.Value.ToString());
@@ -372,23 +369,15 @@
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
-        try
+        var result = await ApiService.GetListDevice(us.Token);
+
+        if (result != null && result.Code == 200)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-
-            if (result != null && result.Code == 200)
-            {
-                listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
-
-            }
+            listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
         }
-        catch (Exception ex)
+        else
         {
-            throw new NotImplementedException();
+            listdevice = new List<DeviceModel>();
         }
     }
 
