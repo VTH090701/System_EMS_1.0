@@ -190,8 +190,10 @@ else
             id_repair = id_respon.id;
             notification.Notify(NotificationSeverity.Success, result.Message);
 
+            await GetDetails(id_repair);
         }
 
+        
     }
 
     private int deviceid = 0;
@@ -207,7 +209,7 @@ else
         {
             notification.Notify(NotificationSeverity.Success, result.Message);
             await Reloadrepair();
-            await GetDetails();
+            await GetDetails(id_repair);
         }
         else
         {
@@ -229,11 +231,11 @@ else
     }
 
     List<RepairDetails> repairDetails = new List<RepairDetails>();
-    private async Task GetDetails()
+    private async Task GetDetails(string id)
     {
-        if (id_repair != "")
+        if (id != "")
         {
-            var result = await ApiService.DetailsRepairDevice(id_repair, us.Token);
+            var result = await ApiService.DetailsRepairDevice(id, us.Token);
             if (result != null && result.Code == 200)
             {
 
@@ -242,7 +244,7 @@ else
             }
             else
             {
-                ///repairDetails = new List<RepairDetails>();
+                repairDetails = new List<RepairDetails>();
             }
         }
     }
