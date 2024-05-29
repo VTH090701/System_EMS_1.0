@@ -15,7 +15,7 @@
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium" class="rz-background-color-info-dark"></RadzenButton>
-        @if (user != null)
+        @if (user.Userid != null)
         {
             <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" Shade="Shade.Lighter"></RadzenButton>
 
@@ -95,7 +95,7 @@
 
         @if (listRoles != null)
         {
-            <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:450px"
+            <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:450px" EmptyText="Không có dữ liệu"
                             AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                             AllowSorting="true">
                 <Columns>
@@ -463,8 +463,8 @@
 
     </RadzenStack>
     ;
-                                                    });
-
+    });
+                                                    
         }
         else
         {
