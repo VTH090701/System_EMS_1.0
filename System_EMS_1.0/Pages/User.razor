@@ -222,7 +222,7 @@
         await ReloadUser(userid);
 
     }
-    private UserModel user;
+    private UserModel user = new UserModel();
 
     private async Task UserValueChanged(string id)
     {
@@ -232,7 +232,7 @@
         await GetListRolesUser();
     }
 
-    private List<RoleUser> listRoles;
+    private List<RoleUser> listRoles = new List<RoleUser>();
     private async Task GetListRoles()
     {
         var result = await ApiService.ListRoles(us.Token);
@@ -422,10 +422,10 @@
     {
         if (user != null)
         {
-            string dis = user.Displayname;
-            string email = user.Email;
-            string phone = user.Phonenumber;
-            string deid = user.Departmentid;
+            string? dis = user.Displayname;
+            string? email = user.Email;
+            string? phone = user.Phonenumber;
+            string? deid = user.Departmentid;
 
             var result = await DialogService.OpenAsync("Cập nhật người dùng", ds =>
                                                         {
@@ -458,7 +458,7 @@
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Cập nhật" Click="() => UpdateUserinModal(user.Userid,dis,email,phone,deid)" Style="width: 120px;" />
+            <RadzenButton Text="Cập nhật" Click="() => UpdateUserinModal( user.Userid ,dis,email,phone,deid)" Style="width: 120px;" />
         </RadzenStack>
 
     </RadzenStack>
