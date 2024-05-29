@@ -173,8 +173,8 @@ else
 }
 
 @code {
-    [Parameter] public string id { set; get; }
-    [Parameter] public string status { set; get; }
+    [Parameter] public string? id { set; get; }
+    [Parameter] public string? status { set; get; }
     [Parameter] public EventCallback OnButtonClick { get; set; }
 
     private void NavRepair()
@@ -257,7 +257,7 @@ else
 
     private async Task SaveRepair()
     {
-        var result = await ApiService.UpdateRepairDevice(id, deviceid, desc, cost, type, us.Token);
+        var result = await ApiService.UpdateRepairDevice(id!, deviceid, desc, cost, type, us.Token);
         if (result != null && result.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, result.Message);
@@ -266,7 +266,7 @@ else
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result.Message);
+            notification.Notify(NotificationSeverity.Warning, result?.Message);
 
         }
     }
@@ -288,7 +288,7 @@ else
     {
         if (id != "")
         {
-            var result = await ApiService.DetailsRepairDevice(id, us.Token);
+            var result = await ApiService.DetailsRepairDevice(id!, us.Token);
             if (result != null && result.Code == 200)
             {
                 repairDetails = JsonConvert.DeserializeObject<List<RepairDetails>>(result.Value.ToString());

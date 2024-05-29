@@ -15,7 +15,7 @@
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium" class="rz-background-color-info-dark"></RadzenButton>
-        @if (user.Userid != null)
+        @if (user?.Userid != null)
         {
             <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" Shade="Shade.Lighter"></RadzenButton>
 
@@ -110,13 +110,31 @@
                                 {
                                     var checktrue = true;
                                     <RadzenCheckBox TriState="false" Value="checktrue"
-                                                    TValue="bool" Change="()=>RevokeUser(data.Rolename)" />
+                                                    TValue="bool" Change="()=>
+                                    {
+                                        if (data.Rolename != null)
+                                        {
+                                         RevokeUser(data.Rolename)
+;
+                                        }
+                                    }
+                                 " />
                                 }
                                 else
                                 {
                                     var checkfalse = false;
                                     <RadzenCheckBox TriState="false" Value="checkfalse"
-                                                    TValue="bool" Change="()=>GrantUser(data.Rolename)" />
+                                                    TValue="bool" Change="()=>
+                                   
+
+                                      {
+                                        if (data.Rolename != null)
+                                        {
+                                          GrantUser(data.Rolename);
+;
+                                        }
+                                    }
+" />
                                 }
                             }
                         </Template>
@@ -222,7 +240,7 @@
         await ReloadUser(userid);
 
     }
-    private UserModel user = new UserModel();
+    private UserModel? user = new UserModel();
 
     private async Task UserValueChanged(string id)
     {
@@ -240,7 +258,7 @@
         {
             listRoles = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
         }
-        else if (result.Code == 404)
+        else if (result?.Code == 404)
         {
 
         }
@@ -250,20 +268,20 @@
     private async Task GetListRolesUser()
     {
 
-        var result = await ApiService.ListRolesUser(user.Userid, us.Token);
+        var result = await ApiService.ListRolesUser( user?.Userid ,  us.Token);
         if (result != null && result.Code == 200)
         {
             var res = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
             listRolesUser = res;
         }
-        else if (result.Code == 404)
+        else if (result?.Code == 404)
         {
 
         }
 
     }
 
-    private async Task GrantUser(string roleName)
+    private async void GrantUser(string roleName)
     {
         var result = await ApiService.GrantRolesUser("grant", value_user, roleName, us.Token);
         if (result.Code == 200)
@@ -281,7 +299,7 @@
 
     }
 
-    private async Task RevokeUser(string roleName)
+    private async void RevokeUser(string roleName)
     {
         var result = await ApiService.GrantRolesUser("revoke", value_user, roleName, us.Token);
         if (result.Code == 200)
@@ -308,7 +326,7 @@
     {
         var result = await DialogService.OpenAsync("Thêm người dùng", ds =>
 
-                    {
+                        {
     string password = "";
     UserModel user = new UserModel();
     return
@@ -389,8 +407,8 @@
 
     </RadzenRow>
 
-                                                                                                                                    ;
-    }, new DialogOptions() { Width = "800px" });
+                                                                                                                                                                    ;
+                                                                            }, new DialogOptions() { Width = "800px" });
 
     }
 
@@ -428,7 +446,7 @@
             string? deid = user.Departmentid;
 
             var result = await DialogService.OpenAsync("Cập nhật người dùng", ds =>
-                                                        {
+                                                            {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Tên người dùng" Variant="@variant">
@@ -458,13 +476,21 @@
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Cập nhật" Click="() => UpdateUserinModal( user.Userid ,dis,email,phone,deid)" Style="width: 120px;" />
+            <RadzenButton Text="Cập nhật" Style="width: 120px;" Click="() =>
+            {
+                        if (user.Userid != null && dis != null && email != null && phone != null && deid != null)
+                        {
+                        UpdateUserinModal( user.Userid ,dis,email,phone,deid);
+                        }
+                    }
+
+                    " />
         </RadzenStack>
 
     </RadzenStack>
     ;
-    });
-                                                    
+                                                        });
+
         }
         else
         {
@@ -473,7 +499,7 @@
         }
     }
 
-    private async Task UpdateUserinModal(string id, string display, string email, string phone, string deid)
+    private async void UpdateUserinModal(string id, string display, string email, string phone, string deid)
     {
         var result = await ApiService.UpdateUser(id, display, email, phone, deid, us.Token);
         if (result.Code == 200)
@@ -486,14 +512,14 @@
             notification.Notify(NotificationSeverity.Warning, result.Message);
 
         }
-        await ReloadUser(user.Userid);
+        await ReloadUser(user?.Userid);
 
     }
 
-    private async Task ReloadUser(string id)
+    private async Task ReloadUser(string? id)
     {
         await GetListUser();
-        GetUser(id);
+        GetUser(id!);
         StateHasChanged();
     }
 

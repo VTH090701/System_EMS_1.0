@@ -58,7 +58,16 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="RepairStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                     <Template Context="data">
-                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => DetailsRepairDevice(data.Id ) )" Shade="Shade.Lighter"></RadzenButton>
+                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() =>
+
+                        {
+                            if (data.Id != null)
+                            {
+                                DetailsRepairDevice(data.Id )
+                                ;
+                            }
+                        }
+                        )" Shade="Shade.Lighter"></RadzenButton>
                         @if (status_repair == "approved")
                         {
 
@@ -66,7 +75,18 @@
                         else
                         {
                             <span>|</span>
-                            <RadzenButton Icon="done" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => ApprovedRepair(data.Id ) )" Shade="Shade.Lighter"></RadzenButton>
+                            <RadzenButton Icon="done" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() =>
+
+
+                        {
+                        if (data.Id != null)
+                            {
+                                 ApprovedRepair(data.Id );
+                            }
+                        }
+
+
+                        )" Shade="Shade.Lighter"></RadzenButton>
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -105,7 +125,7 @@ else
     }
 
 
-    private async Task ApprovedRepair(string id)
+    private async void ApprovedRepair(string id)
     {
 
         string sta = "";
@@ -128,7 +148,7 @@ else
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result.Message);
+            notification.Notify(NotificationSeverity.Warning, result?.Message);
         }
 
 
@@ -136,8 +156,8 @@ else
 
     public class StaRepair
     {
-        public string Key { set; get; }
-        public string Status { set; get; }
+        public string? Key { set; get; }
+        public string? Status { set; get; }
     }
     private List<StaRepair> statusRepair = new List<StaRepair>();
     private void LoadStaRe()
@@ -250,7 +270,7 @@ else
             {
                 listrepairstatus = JsonConvert.DeserializeObject<List<RepairStatus>>(result.Value.ToString());
             }
-            else if (result.Code == 404)
+            else if (result?.Code == 404)
             {
                 listrepairstatus = new List<RepairStatus>();
             }

@@ -7,7 +7,7 @@
         public string? Hint { get; set; }
         public string? Message { get; set; }
         //public List<T> Value { get; set; }
-        public dynamic? Value { get; set; }
+        public dynamic Value { get; set; }
     }
 
 
@@ -16,7 +16,7 @@
     {
         public int? Code { get; set; }
         public string? Status { get; set; }
-        public string? Token { get; set; }
+        public string Token { get; set; }
         public string? Userid { get; set; }
         public string? Username { get; set; }
         public string? Displayname { get; set; }

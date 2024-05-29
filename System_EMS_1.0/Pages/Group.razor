@@ -51,10 +51,26 @@
                 <RadzenDataGridColumn TItem="GroupModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                     <Template Context="GroupModel">
                         <RadzenButton Shade="Shade.Lighter" Icon="group_work" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Info" Click="@((args) =>
-                    NavGroup(GroupModel.Groupid ) )"></RadzenButton>
+
+                    {
+                        if (GroupModel.Groupid  != null)
+                        {
+                        NavGroup(GroupModel.Groupid );
+                        }
+                    }
+
+                )"></RadzenButton>
                         |
                         <RadzenButton Shade="Shade.Lighter" Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
-                    EditGroup(GroupModel.Groupid, GroupModel.Groupname, GroupModel.Groupdescription) )"></RadzenButton>
+                
+                    //EditGroup(GroupModel.Groupid, GroupModel.Groupname, GroupModel.Groupdescription) 
+                    {
+                        if (GroupModel.Groupid  != null && GroupModel.Groupname != null && GroupModel.Groupdescription != null)
+                        {
+                            EditGroup(GroupModel.Groupid, GroupModel.Groupname, GroupModel.Groupdescription);
+                        }
+                    }
+                )"></RadzenButton>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
@@ -117,7 +133,7 @@ else
         }
     }
 
-        //UserInGroup
+            //UserInGroup
     private bool isusergroup = false;
     private string group_id = "";
     private void HandleButtonClick()
@@ -160,7 +176,7 @@ else
     private async Task Addgroup()
     {
         var result = await DialogService.OpenAsync("Thêm nhóm", ds =>
-                               {
+                                           {
 
     GroupModel group = new GroupModel();
 
@@ -189,7 +205,8 @@ else
             </RadzenTemplateForm>
         </RadzenColumn>
 
-    </RadzenRow>;});
+    </RadzenRow>;
+                                                           });
     }
 
     async Task OnSubmit(GroupModel group)
@@ -209,15 +226,15 @@ else
 
     void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
     {
-        //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+    //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
     }
 
-   
 
-    private async Task EditGroup(string id, string name, string desc)
+
+    private async void EditGroup(string id, string name, string desc)
     {
         var result = await DialogService.OpenAsync("Cập nhật nhóm", ds =>
-            {
+                        {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text=" Tên nhóm" Variant="@variant">
@@ -236,7 +253,7 @@ else
         </RadzenStack>
     </RadzenStack>
           ;
-        });
+                    });
     }
 
     private async Task UpdateGroupinModal(string id, string name, string desc)

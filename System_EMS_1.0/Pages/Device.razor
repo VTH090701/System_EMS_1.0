@@ -113,15 +113,15 @@
                         <Template Context="data">
                             @{
                                 ResponDeType? type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
-                                if (type.Typeid == 2)
+                                if (type?.Typeid == 2)
                                 {
                                     <span>@data.Maindevice</span>
 
                                 }
-                                else if (type.Typeid == 1)
+                                else if (type?.Typeid == 1)
                                 {
                                     var main = listdevice.FirstOrDefault(item => item.Deviceid == data.Maindevice);
-                                    var maindev = main.Devicename;
+                                    var maindev = main?.Devicename;
                                     <span>@maindev</span>
 
                                 }
@@ -530,7 +530,7 @@ else
 
 
 
-    IList<DeviceModel> selectedDevice;
+    IList<DeviceModel>? selectedDevice;
     private DateOnly startdate = new DateOnly();
     private DateOnly buydate = new DateOnly();
     private DateOnly expdate = new DateOnly();
@@ -785,7 +785,7 @@ else
             {
                 listrotation = JsonConvert.DeserializeObject<List<RotationModel>>(result.Value.ToString());
             }
-            else if (result.Code == 404)
+            else if (result?.Code == 404)
             {
                 listrotation = new List<RotationModel>();
             }
@@ -816,7 +816,7 @@ else
             notification.Notify(NotificationSeverity.Warning, "Chưa chọn bộ phận");
 
         }
-        else if (id == null || id == 0)
+        else if (id == 0)
         {
             notification.Notify(NotificationSeverity.Warning, "Chưa chọn thiết bị");
 
@@ -833,7 +833,7 @@ else
             }
             else
             {
-                notification.Notify(NotificationSeverity.Warning, result.Message);
+                notification.Notify(NotificationSeverity.Warning, result?.Message);
             }
         }
 

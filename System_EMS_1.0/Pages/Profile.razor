@@ -82,7 +82,7 @@
 
     private ResponLogin us = new ResponLogin();
     private bool isConnected;
-    [Parameter] public string id { set; get; }
+    [Parameter] public string? id { set; get; }
     private Variant variant = Variant.Outlined;
 
     private async Task ChangePass()
@@ -113,25 +113,24 @@
         });
     }
 
-    private ResponseApi responReset;
     private async Task ResetPassword()
     {
-        responReset = await ApiService.ResetPass(us.Userid, us.Token);
-        if (responReset.Code == 200)
+        var result = await ApiService.ResetPass(us.Userid!, us.Token);
+        if (result.Code == 200)
         {
             DialogService.Close();
-            notification.Notify(NotificationSeverity.Success, responReset.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
         }
         else
         {
 
-            notification.Notify(NotificationSeverity.Warning, responReset.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
     }
 
     private async Task SavePassword(string passold, string passnew)
     {
-        var result = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);
+        var result = await ApiService.ChangePassword(us.Username!, passold, passnew, us.Token);
 
         if (result.Code == 200)
         {
@@ -165,7 +164,7 @@
         }
     }
 
-    private UserModel user;
+    private UserModel? user = new UserModel();
     private void GetUser()
     {
         user  = responGetUser.FirstOrDefault(item => item.Userid == us.Userid);

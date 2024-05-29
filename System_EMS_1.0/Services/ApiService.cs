@@ -47,7 +47,8 @@ namespace System_EMS_1._0.Services
                 response.EnsureSuccessStatusCode();
                 
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
+                
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -88,7 +89,7 @@ namespace System_EMS_1._0.Services
                 response.EnsureSuccessStatusCode();
 
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -109,7 +110,7 @@ namespace System_EMS_1._0.Services
                 response.EnsureSuccessStatusCode();
 
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -152,7 +153,7 @@ namespace System_EMS_1._0.Services
                     }
                 }
                 
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -182,7 +183,7 @@ namespace System_EMS_1._0.Services
 
                 }
 
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -210,7 +211,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/department", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -236,7 +237,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -264,7 +265,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/department", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -291,7 +292,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -321,7 +322,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -341,7 +342,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -352,7 +353,7 @@ namespace System_EMS_1._0.Services
                 return response;
             }
         }
-        public async Task<ResponseApi> ListRolesUser(string id, string token)
+        public async Task<ResponseApi> ListRolesUser(string? id, string token)
         {
             try
             {
@@ -362,7 +363,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -415,7 +416,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -444,7 +445,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups/user", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -465,7 +466,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -492,7 +493,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/Roles/Group", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -520,7 +521,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/User/change_pass", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -547,7 +548,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/User/status", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -573,7 +574,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user/reset_pass", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -595,7 +596,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -621,7 +622,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/rotation", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -643,7 +644,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -663,7 +664,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -692,7 +693,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -714,7 +715,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -740,7 +741,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/status", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -762,7 +763,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -783,7 +784,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -803,7 +804,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -824,7 +825,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -845,7 +846,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -886,7 +887,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
 
             }
             catch (Exception ex)
@@ -929,7 +930,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices", content);
                 response.EnsureSuccessStatusCode();
                 ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace System_EMS_1._0.Services
         Task<ResponseApi> SaveUser(UserModel user, string password, string token);
         Task<ResponseApi> UpdateUser(string id, string display, string email,string phone,string deid, string token);
         Task<ResponseApi> ListRoles(string token);
-        Task<ResponseApi> ListRolesUser(string id,string token);
+        Task<ResponseApi> ListRolesUser(string? id,string token);
         Task<ResponseApi> GrantRolesUser(string type,string id, string rolename, string token);
         Task<ResponseApi> GetUsersInGroup(string id,string token);
         Task<ResponseApi> Add_RemoveUserInGroup(string type,string idgr,string iduser,string token);
