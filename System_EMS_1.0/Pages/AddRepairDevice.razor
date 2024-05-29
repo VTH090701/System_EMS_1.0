@@ -10,20 +10,20 @@
 @inject HttpClient _httpclient
 @using System.Globalization
 
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="6" Size="12">
+            <RadzenRow>
+                <RadzenText TextStyle="TextStyle.H6">ID phiếu: @id_repair</RadzenText>
+            </RadzenRow>
+        </RadzenColumn>
 
-<RadzenRow class="rz-mb-2">
-    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="6" Size="12">
-        <RadzenRow>
-            <RadzenText TextStyle="TextStyle.H6">ID phiếu: @id_repair</RadzenText>
-        </RadzenRow>
-    </RadzenColumn>
+        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="6" Size="12">
+            <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="SaveRepair" class="rz-background-color-success-dark"></RadzenButton>
+            <RadzenButton Text="Thêm phiếu" Style="float:right" Icon="add" Click="AddRepair" class="rz-background-color-info-dark rz-mr-2"></RadzenButton>
+            <RadzenButton Text="Trở lại" Style="float:right" Icon="exit_to_app" Click="NavRepair" class="rz-background-color-info-primary rz-mr-2"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
 
-    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="6" Size="12">
-        <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="SaveRepair" class="rz-background-color-success-dark"></RadzenButton>
-        <RadzenButton Text="Thêm phiếu" Style="float:right" Icon="add" Click="AddRepair" class="rz-background-color-info-dark rz-mr-2"></RadzenButton>
-        <RadzenButton Text="Trở lại" Style="float:right" Icon="exit_to_app" Click="NavRepair" class="rz-background-color-info-primary rz-mr-2"></RadzenButton>
-    </RadzenColumn>
-</RadzenRow>
 
 
 <RadzenRow Gap="1rem" class="">
@@ -34,7 +34,7 @@
             {
                 <RadzenFormField Text="Thiết bị" Variant="@variant">
                     <RadzenDropDown @bind-Value="@deviceid" Data=@listdevice AllowVirtualization="true" AllowClear="true"
-                                            AllowFiltering="true" TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị " />
+                                    AllowFiltering="true" TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị " FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
                 </RadzenFormField>
             }
 
@@ -57,17 +57,18 @@
                 <RadzenFormField Text="Loại" Variant="@variant">
 
                     <RadzenDropDown @bind-Value="@type" Data=@listtypere AllowVirtualization="true" AllowClear="true"
-                                            AllowFiltering="true" TextProperty="Display" ValueProperty="Type" Placeholder="Chọn loại " />
+                                    AllowFiltering="true" TextProperty="Display" ValueProperty="Type" Placeholder="Chọn loại " FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
                 </RadzenFormField>
             }
 
         </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
+
+
 <RadzenRow>
     <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size=" 12">
         <RadzenStack>
-
             <RadzenFormField Text="Mô tả" Variant="@variant">
                 <RadzenTextArea @bind-Value="@desc" Rows="3" />
             </RadzenFormField>
@@ -75,6 +76,7 @@
 
     </RadzenColumn>
 </RadzenRow>
+
 <hr />
 <RadzenText TextStyle="TextStyle.H5" class="rz-m-3">Chi tiết phiếu sửa chữa</RadzenText>
 
@@ -86,7 +88,7 @@
             <RadzenDataGridColumn TItem="RepairDetails" Title="Thiết bị" Property="Deviceid">
                 <Template Context="data">
                     @{
-                        DeviceModel dev = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
+                        DeviceModel? dev = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
                         if (dev != null)
                         {
                             <span>@dev.Devicename</span>
@@ -108,7 +110,7 @@
             <RadzenDataGridColumn TItem="RepairDetails" Title="Loại" Property="Type">
                 <Template Context="data">
                     @{
-                        TypeRepair type = listtypere.FirstOrDefault(item => item.Type == data.Type);
+                        TypeRepair? type = listtypere.FirstOrDefault(item => item.Type == data.Type);
                         if (type != null)
                         {
                             <span>@type.Display</span>
@@ -116,9 +118,7 @@
                     }
                 </Template>
             </RadzenDataGridColumn>
-
             <RadzenDataGridColumn TItem="RepairDetails" Property="Description" Title="Mô tả" />
-
         </Columns>
     </RadzenDataGrid>
 }
@@ -169,22 +169,15 @@ else
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/devices");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+        var result = await ApiService.GetListDevice(us.Token);
 
-            if (result != null && result.Code == 200)
-            {
-                listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
-            }
-        }
-        catch (Exception ex)
+        if (result != null && result.Code == 200)
         {
-            throw new NotImplementedException();
+            listdevice = JsonConvert.DeserializeObject<List<DeviceModel>>(result.Value.ToString());
+        }
+        else
+        {
+            listdevice = new List<DeviceModel>();
         }
     }
 
@@ -218,7 +211,7 @@ else
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result.Message);
+            notification.Notify(NotificationSeverity.Warning, result?.Message);
 
         }
     }
@@ -255,26 +248,16 @@ else
     }
 
     private List<TypeRepair> listtypere = new List<TypeRepair>();
+    
     private async Task GetTypeRepair()
     {
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.252:60227/api/config");
-            request.Headers.Add("type", "typerepair");
-            request.Headers.Add("token", us.Token);
-            var response = await _httpclient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
 
-            if (result != null && result.Code == 200)
-            {
-                listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
-            }
-        }
-        catch (Exception ex)
+        var result = await ApiService.ApiConfig("typerepair", us.Token);
+        if (result != null && result.Code == 200)
         {
-            throw new NotImplementedException();
+            listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
         }
+
     }
 
 

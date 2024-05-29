@@ -37,8 +37,8 @@
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Email" Title="Email" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Thời gian vào" />
                     <RadzenDataGridColumn TItem="UsersinGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-                        <Template Context="UsersinGroup">    
-                            <RadzenButton Icon="delete" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
+                        <Template Context="UsersinGroup">
+                            <RadzenButton Shade="Shade.Lighter" Icon="delete" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
                                     DeleteUserInGr(UsersinGroup.Userid) )">
                             </RadzenButton>
                         </Template>
@@ -96,8 +96,7 @@
 
 @code {
     [Parameter] public string id { set; get; }
-    [Parameter]
-    public EventCallback OnButtonClick { get; set; }
+    [Parameter] public EventCallback OnButtonClick { get; set; }
 
     private void NavUserGr()
     {
@@ -173,22 +172,20 @@
         }
     }
 
-    private ResponLogout responGrantRolesGroup = new ResponLogout();
-    private ResponLogout responRevokeRolesGroup = new ResponLogout();
+   
 
     public async Task GrantGroup(string rolename)
     {
 
-        responGrantRolesGroup = await ApiService.GrantRolesGroup("grant", id, rolename, us.Token);
-        if (responGrantRolesGroup.Code == 200)
+        var result = await ApiService.GrantRolesGroup("grant", id, rolename, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responGrantRolesGroup.Message);
-
+            notification.Notify(NotificationSeverity.Success, result.Message);
 
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responGrantRolesGroup.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
         await ReloadList();
 
@@ -196,16 +193,15 @@
     public async Task RevokeGroup(string rolename)
     {
 
-        responRevokeRolesGroup = await ApiService.GrantRolesGroup("revoke", id, rolename, us.Token);
-        if (responRevokeRolesGroup.Code == 200)
+        var result = await ApiService.GrantRolesGroup("revoke", id, rolename, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responRevokeRolesGroup.Message);
-
+            notification.Notify(NotificationSeverity.Success, result.Message);
 
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responRevokeRolesGroup.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
 
         await ReloadList();
@@ -255,7 +251,7 @@
             <RadzenFormField Text="Người dùng" Variant="@variant">
 
 
-                <RadzenDropDown @bind-Value=userid Data=@responGetUser AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+                <RadzenDropDown @bind-Value=userid Data=@responGetUser AllowVirtualization="true" AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 AllowFiltering="true" TextProperty="Displayname" ValueProperty="Userid" Placeholder="Chọn người dùng"/>
             </RadzenFormField>
         }
@@ -269,21 +265,21 @@
 
     }
 
-    private ResponLogout responSaveAddUserInGr = new ResponLogout();
+  
 
     private async Task SaveUserinGr(string iduser)
     {
-        responSaveAddUserInGr = await ApiService.Add_RemoveUserInGroup("add", id, iduser, us.Token);
-        if (responSaveAddUserInGr.Code == 200)
+        var result = await ApiService.Add_RemoveUserInGroup("add", id, iduser, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responSaveAddUserInGr.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
 
             DialogService.Close();
             await Reload();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responSaveAddUserInGr.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
     }
 
@@ -293,21 +289,20 @@
         StateHasChanged();
     }
 
-    private ResponLogout responSaveRemoveUserInGr = new ResponLogout();
 
     private async Task DeleteUserInGr(string iduser)
     {
-        responSaveRemoveUserInGr = await ApiService.Add_RemoveUserInGroup("remove", id, iduser, us.Token);
-        if (responSaveRemoveUserInGr.Code == 200)
+        var result = await ApiService.Add_RemoveUserInGroup("remove", id, iduser, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responSaveRemoveUserInGr.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
 
             DialogService.Close();
             await GetUserinGr();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responSaveRemoveUserInGr.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
     }
 

@@ -17,7 +17,7 @@
         <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="Adduser" Size="ButtonSize.Medium" class="rz-background-color-info-dark"></RadzenButton>
         @if (user != null)
         {
-            <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium"></RadzenButton>
+            <RadzenButton Style="float:right" Icon="edit" Click="Edituser" class="rz-mr-2" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" Shade="Shade.Lighter"></RadzenButton>
 
             @if (user.Status == true)
             {
@@ -51,7 +51,7 @@
                 <RadzenStack>
                     @if (user != null)
                     {
-      
+
                         <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Username" Disabled />
                         </RadzenFormField>
@@ -85,10 +85,9 @@
                         <RadzenFormField Text="Email" Variant="@variant">
                             <RadzenTextBox @bind-Value="@user.Email" Disabled />
                         </RadzenFormField>
-                      
+
                     }
                 </RadzenStack>
-                 
 
             </RadzenColumn>
         </RadzenRow>
@@ -138,9 +137,6 @@
     private string value_user = "";
     private Variant variant = Variant.Outlined;
     private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
-    private ResponLogout responSaveUser = new ResponLogout();
-    private ResponLogout responUpdateUser = new ResponLogout();
-    private ResponLogout responGrantRolesUser = new ResponLogout();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -195,19 +191,17 @@
         }
     }
 
-    private ResponLogout responLock = new ResponLogout();
-    private ResponLogout responUnlock = new ResponLogout();
     private async Task Lockuser(string userid)
     {
-        responLock = await ApiService.ChangeStatus(userid, false, us.Token);
-        if (responLock.Code == 200)
+        var result = await ApiService.ChangeStatus(userid, false, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responLock.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
             await GetListUser();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responLock.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
         await ReloadUser(userid);
 
@@ -215,15 +209,15 @@
 
     private async Task Unlockuser(string userid)
     {
-        responUnlock = await ApiService.ChangeStatus(userid, true, us.Token);
-        if (responUnlock.Code == 200)
+        var result = await ApiService.ChangeStatus(userid, true, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responUnlock.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
             await GetListUser();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responUnlock.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
         await ReloadUser(userid);
 
@@ -271,15 +265,15 @@
 
     private async Task GrantUser(string roleName)
     {
-        responGrantRolesUser = await ApiService.GrantRolesUser("grant", value_user, roleName, us.Token);
-        if (responGrantRolesUser.Code == 200)
+        var result = await ApiService.GrantRolesUser("grant", value_user, roleName, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responGrantRolesUser.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
         }
         else
         {
 
-            notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
 
         await ReloadList();
@@ -289,14 +283,14 @@
 
     private async Task RevokeUser(string roleName)
     {
-        responGrantRolesUser = await ApiService.GrantRolesUser("revoke", value_user, roleName, us.Token);
-        if (responGrantRolesUser.Code == 200)
+        var result = await ApiService.GrantRolesUser("revoke", value_user, roleName, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responGrantRolesUser.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responGrantRolesUser.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
         await ReloadList();
 
@@ -313,144 +307,163 @@
     private async Task Adduser()
     {
         var result = await DialogService.OpenAsync("Thêm người dùng", ds =>
-                                        {
-    string name = "";
+
+                    {
     string password = "";
-    string display = "";
-    string email = "";
-    string phonenumber = "";
-    string department = "";
+    UserModel user = new UserModel();
+    return
+    @<RadzenRow>
+        <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+            <RadzenTemplateForm TItem="UserModel" Data=@user Submit="()=>OnSubmit(password,user)" InvalidSubmit=@OnInvalidSubmit>
+                <RadzenRow>
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
+                                <RadzenTextBox @bind-Value="@user.Username" Name="Username" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                        <RadzenRequiredValidator Component="Username" Text="Tên đăng nhập không được trống" Popup=false Style="position: absolute" />
 
-    return @<RadzenStack Gap="1.5rem">
+                    </RadzenColumn>
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Mật khẩu" Variant="@variant">
+                                <RadzenPassword @bind-Value="@password" Name="password" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                        <RadzenRequiredValidator Component="password" Text="Mật khẩu không được trống" Popup=false Style="position: absolute" />
 
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Tên đăng nhập" Variant="@variant">
-                        <RadzenTextBox @bind-Value="@name" />
-                    </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="rz-mt-3">
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Tên người dùng" Variant="@variant">
+                                <RadzenTextBox @bind-Value="@user.Displayname" Name="Displayname" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                        <RadzenRequiredValidator Component="Displayname" Text="Tên người dùng không được trống" Popup=false Style="position: absolute" />
+
+                    </RadzenColumn>
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Email" Variant="@variant">
+                                <RadzenTextBox @bind-Value="@user.Email" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="rz-mt-3">
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Số điện thoại" Variant="@variant">
+                                <RadzenTextBox @bind-Value="@user.Phonenumber" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                    </RadzenColumn>
+                    <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenStack>
+                            @if (responDepartment != null)
+                        {
+                            <RadzenFormField Text="Phòng ban" Variant="@variant">
+
+                                <RadzenDropDown AllowClear="true" @bind-Value=user.Departmentid AllowVirtualization="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                                Name="Departmentid" AllowFiltering="true" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Style="width: 100%;" Placeholder="Chọn phòng ban" />
+                            </RadzenFormField>
+                        }
+                        </RadzenStack>
+                        <RadzenRequiredValidator Component="Departmentid" Text="Phòng ban không được trống" Popup=false Style="position: absolute" />
+
+                    </RadzenColumn>
+                </RadzenRow>
+
+
+                <hr />
+                <RadzenStack class="rz-mt-3" Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+                    <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Thêm" Style="width: 80px;" />
                 </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
 
-                    <RadzenFormField Text="Mật khẩu" Variant="@variant">
-                        <RadzenPassword @bind-Value="@password" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenColumn>
 
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Tên người dùng" Variant="@variant">
-                        <RadzenTextBox @bind-Value="@display" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
+    </RadzenRow>
 
-                    <RadzenFormField Text="Email" Variant="@variant">
-                        <RadzenTextBox @bind-Value="@email" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Số điện thoại" Variant="@variant">
-                        <RadzenTextBox @bind-Value="@phonenumber" />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    @if (responDepartment != null)
-                {
-                    <RadzenFormField Text="Phòng ban" Variant="@variant">
-
-                        <RadzenDropDown AllowClear="true" @bind-Value=department AllowVirtualization="true" Name="DropDownVirtualization"
-                                        AllowFiltering="true" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Style="width: 100%;" Placeholder="Chọn phòng ban" />
-                    </RadzenFormField>
-                }
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-
-
-
-
-        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Thêm" Click="() => SaveUserinModal(name,password,display,email,phonenumber,department)" Style="width: 80px;" />
-        </RadzenStack>
-    </RadzenStack>
-                                ;
-                                                            });
+                                                                                                                                    ;
+    }, new DialogOptions() { Width = "800px" });
 
     }
 
-    private async Task SaveUserinModal(string name, string pass, string display, string email, string phone, string depart)
+    async Task OnSubmit(string password, UserModel user)
     {
-        responSaveUser = await ApiService.SaveUser(name, pass, display, email, phone, depart, us.Token);
-        if (responSaveUser.Code == 200)
+        var result = await ApiService.SaveUser(user, password, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responSaveUser.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
             DialogService.Close();
             await GetListUser();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responSaveUser.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
 
         }
     }
+
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+    //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+    }
+
+
+
 
     private async Task Edituser()
     {
         if (user != null)
         {
+            string dis = user.Displayname;
+            string email = user.Email;
+            string phone = user.Phonenumber;
+            string deid = user.Departmentid;
+
             var result = await DialogService.OpenAsync("Cập nhật người dùng", ds =>
-                            {
+                                                        {
     return @<RadzenStack Gap="1.5rem">
         <RadzenStack>
             <RadzenFormField Text="Tên người dùng" Variant="@variant">
-                <RadzenTextBox @bind-Value="@user.Displayname" />
+                <RadzenTextBox @bind-Value="@dis" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
             <RadzenFormField Text="Email" Variant="@variant">
-                <RadzenTextBox @bind-Value="@user.Email" />
+                <RadzenTextBox @bind-Value="@email" />
             </RadzenFormField>
         </RadzenStack>
         <RadzenStack>
             <RadzenFormField Text="Số điện thoại" Variant="@variant">
-                <RadzenTextBox @bind-Value="@user.Phonenumber" />
+                <RadzenTextBox @bind-Value="@phone" />
             </RadzenFormField>
         </RadzenStack>
 
         @if (responDepartment != null)
-        {
+    {
         <RadzenStack>
             <RadzenFormField Text="Department" Variant="@variant">
-                <RadzenDropDown @bind-Value="@user.Departmentid" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Chọn bộ phận " AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+                <RadzenDropDown @bind-Value="@deid" Data=@responDepartment TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Chọn bộ phận " AllowVirtualization="true" AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 AllowFiltering="true" />
             </RadzenFormField>
         </RadzenStack>
-        }
+    }
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Cập nhật" Click="() => UpdateUserinModal(user.Userid, user.Displayname,user.Email,user.Phonenumber,user.Departmentid)" Style="width: 120px;" />
+            <RadzenButton Text="Cập nhật" Click="() => UpdateUserinModal(user.Userid,dis,email,phone,deid)" Style="width: 120px;" />
         </RadzenStack>
 
     </RadzenStack>
     ;
-                        });
+                                                    });
 
         }
         else
@@ -462,32 +475,30 @@
 
     private async Task UpdateUserinModal(string id, string display, string email, string phone, string deid)
     {
-        responUpdateUser = await ApiService.UpdateUser(id, display, email, phone, deid, us.Token);
-        if (responUpdateUser.Code == 200)
+        var result = await ApiService.UpdateUser(id, display, email, phone, deid, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responUpdateUser.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
             DialogService.Close();
-            //await GetUser();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responUpdateUser.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
 
         }
-        await ReloadUser(id);
+        await ReloadUser(user.Userid);
 
     }
 
     private async Task ReloadUser(string id)
     {
         await GetListUser();
-        await GetUser(id);
+        GetUser(id);
         StateHasChanged();
     }
 
-    private async Task GetUser(string id)
+    private void GetUser(string id)
     {
-        var result = responGetUser.FirstOrDefault(item => item.Userid == id);
-        user = result;
+        user = responGetUser.FirstOrDefault(item => item.Userid == id);
     }
 }

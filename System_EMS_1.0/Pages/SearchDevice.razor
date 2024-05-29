@@ -13,11 +13,8 @@
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="10" Size="12">
         <RadzenRow>
             <RadzenText TextStyle="TextStyle.H5">Tìm thiết bị theo bộ phận:</RadzenText>
-           
-            @* <RadzenDropDownDataGrid @bind-Value="@depart_id" Data=@responDepartment AllowVirtualization="true" AllowClear="true"
-            AllowFiltering="true" TextProperty="Departmentname" ValueProperty="Departmentid" Placeholder="Chọn bộ phận" Change="ChangeDepart" /> *@
 
-            <RadzenDropDown @bind-Value=depart_id Data=@responDepartment AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
+            <RadzenDropDown @bind-Value=depart_id Data=@responDepartment AllowVirtualization="true" AllowClear="true"  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             AllowFiltering="true" TextProperty="Departmentname" ValueProperty="Departmentid" Style="width: 100%; max-width: 300px;" Placeholder="Chọn bộ phận" Change="ChangeDepart" />
         </RadzenRow>
     </RadzenColumn>
@@ -35,7 +32,7 @@
             <RadzenDataGridColumn TItem="DeviceDepart" Title="Thiết bị" Property="Deviceid">
                 <Template Context="data">
                     @{
-                        DeviceModel device = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
+                        DeviceModel? device = listdevice.FirstOrDefault(item => item.Deviceid == data.Deviceid);
                         if (device != null)
                         {
                             <span>@device.Devicename</span>
@@ -46,7 +43,7 @@
             <RadzenDataGridColumn TItem="DeviceDepart" Title="Luân chuyển từ" Property="Rotafrom">
                 <Template Context="data">
                     @{
-                        DepartmentModel depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Rotafrom);
+                        DepartmentModel? depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Rotafrom);
                         if (depart != null)
                         {
                             <span>@depart.Departmentname</span>
@@ -98,7 +95,6 @@ else
             return false;
         }
     }
-
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
@@ -135,7 +131,7 @@ else
             {
                 listrotadepart = JsonConvert.DeserializeObject<List<DeviceDepart>>(result.Value.ToString());
             }
-            else if (result.Code == 404)
+            else if (result?.Code == 404)
             {
                 listrotadepart = new List<DeviceDepart>();
             }
@@ -145,4 +141,6 @@ else
             listrotadepart = new List<DeviceDepart>();
         }
     }
+
+    
 }

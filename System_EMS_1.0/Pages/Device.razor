@@ -9,146 +9,570 @@
 @inject DialogService DialogService
 @inject HttpClient _httpclient
 
+@using System.Globalization
 
 
 
-@if (isshowedit == false)
+<RadzenRow>
+    <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
+        <RadzenText TextStyle="TextStyle.H4"> Danh mục thiết bị</RadzenText>
+    </RadzenColumn>
+    <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
+       
+    </RadzenColumn>
+</RadzenRow>
+<hr />
+@if (listdevice != null)
 {
     <RadzenRow>
         <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-            <RadzenText TextStyle="TextStyle.H4"> Danh mục thiết bị</RadzenText>
-        </RadzenColumn>
-        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-            <RadzenButton Text="Thêm thiết bị" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
-        </RadzenColumn>
-    </RadzenRow>
-    <hr />
-    @if (listdevice != null)
-    {
-        <RadzenDataGrid AllowGrouping="false" AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                        Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
-            <GroupHeaderTemplate>
-                @{
+            <RadzenRow>
+                 <RadzenDataGrid AllowGrouping="false" AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.And" SelectionMode="DataGridSelectionMode.Single" Style="height:500px" @bind-Value=@selectedDevice @onclick="ChangeDevice">
 
-                    if (@context.GroupDescriptor.GetTitle() == "Nhóm sản phẩm")
-                    {
 
-                        @if (listprogroup != null)
-                        {
-                            ResponProGroup product = listprogroup.FirstOrDefault(item1 => item1.Id == @context.Data.Key);
+            @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                            FilterMode="FilterMode.Simple" AllowPaging="true" AllowSorting="true" Data="@listdevice"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And" Style="height:600px" PagerHorizontalAlign="HorizontalAlign.Left" PageSize="10" @bind-Value=@selectedDevice @onclick="ChangeDevice"> *@
+
+            @*<GroupHeaderTemplate>
+            @{
+
+
+            if (@context.GroupDescriptor.GetTitle() == "Nhóm sản phẩm")
+            {
+
+            @if (listprogroup != null)
+            {
+            ResponProGroup product = listprogroup.FirstOrDefault(item1 => item1.Id == @context.Data.Key);
+            @if (product != null)
+            {
+            <span>Nhóm sản phẩm: @product.Display</span>
+            }
+            }
+
+            }
+            else if (@context.GroupDescriptor.GetTitle() == "Loại thiết bị")
+            {
+
+            @if (listdetype != null)
+            {
+            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == @context.Data.Key);
+            @if (type != null)
+            {
+            <span>Nhóm loại: @type.Display</span>
+            }
+            }
+            }
+            else
+            {
+            @context.GroupDescriptor.GetTitle()
+            <span>: </span>
+            @context.Data.Key
+            ;
+            }
+            }
+
+            </GroupHeaderTemplate>*@
+                <Columns>
+                    <RadzenDataGridColumn TItem="DeviceModel" Property="Devicename" Title="Tên thiết bị" Width="220px" />
+                    <RadzenDataGridColumn TItem="DeviceModel" Property="Devicemodel" Title="Mode" />
+                    <RadzenDataGridColumn TItem="DeviceModel" Property="Productgroup" Title="Nhóm sản phẩm">
+                        <Template Context="data">
+                            @{
+                                ResponProGroup? product = listprogroup.FirstOrDefault(item => item.Id == data.Productgroup);
+                            }
                             @if (product != null)
                             {
-                                <span>Nhóm sản phẩm: @product.Display</span>
+                                <span>@product.Display</span>
                             }
-                        }
+                            else
+                            {
+                                <span></span>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
 
-                    }
-                    else if (@context.GroupDescriptor.GetTitle() == "Loại thiết bị")
-                    {
-
-                        @if (listdetype != null)
-                        {
-                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == @context.Data.Key);
+                    <RadzenDataGridColumn TItem="DeviceModel" Title="Loại thiết bị" Property="Devicetype">
+                        <Template Context="data">
+                            @{
+                                ResponDeType? type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
+                            }
                             @if (type != null)
                             {
-                                <span>Nhóm loại: @type.Display</span>
+                                <span>@type.Display</span>
                             }
-                        }
-                    }
-                    else
-                    {
-                        @context.GroupDescriptor.GetTitle()
-                        <span>: </span>
-                        @context.Data.Key
-                        ;
-                    }
-                }
+                            else
+                            {
+                                <span></span>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="DeviceModel" Property="Company" Title="Công ty" />
+                    <RadzenDataGridColumn TItem="DeviceModel" Title="Thiết bị chính" Property="Maindevice">
+                        <Template Context="data">
+                            @{
+                                ResponDeType? type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
+                                if (type.Typeid == 2)
+                                {
+                                    <span>@data.Maindevice</span>
 
-            </GroupHeaderTemplate>
-            <Columns>
-                @* <RadzenDataGridColumn Filterable="false" Property="Deviceid" Title="Id" Frozen="true" Width="80px" TextAlign="TextAlign.Center" /> *@
-                <RadzenDataGridColumn TItem="DeviceModel" Property="Devicename" Title="Tên thiết bị" />
-                <RadzenDataGridColumn TItem="DeviceModel" Property="Devicemodel" Title="Mô hình thiết bị" />
-                <RadzenDataGridColumn TItem="DeviceModel" Title="Nhóm sản phẩm" Property="Productgroup">
-                    <Template Context="data">
-                        @{
-                            ResponProGroup product = listprogroup.FirstOrDefault(item => item.Id == data.Productgroup);
-                        }
-                        @if (product != null)
+                                }
+                                else if (type.Typeid == 1)
+                                {
+                                    var main = listdevice.FirstOrDefault(item => item.Deviceid == data.Maindevice);
+                                    var maindev = main.Devicename;
+                                    <span>@maindev</span>
+
+                                }
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+            </RadzenRow>
+
+            <RadzenRow class="rz-mt-3">
+                <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+                    <RadzenCard>
+                        <RadzenRow>
+
+                            <RadzenText TextStyle="TextStyle.H6" class="rz-mt-2">Luân chuyển:</RadzenText>
+
+                            <RadzenDropDown @bind-Value="@depart_id" Data=@responDepartment AllowVirtualization="true" AllowClear="true" AllowFiltering="false" TextProperty="Departmentname"
+                                            PopupStyle="
+                                                position: absolute;
+                                                bottom: 40px;
+                                                background-color: white;
+                                                min-width: 280px;
+                                                height: 250px;
+                                                z-index: 1;"
+                                            ValueProperty="Departmentid" Placeholder="Chọn bộ phận" Style="width: 100%; max-width: 280px;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+
+                            <RadzenButton Text="Cập nhật" Style="float:right ;" Click="saveRotation" class="rz-background-color-warning rz-mr-2"></RadzenButton>
+
+                        </RadzenRow>
+                        @if (listrotation != null && listrotation.Count > 0)
                         {
-                            <span>@product.Display</span>
+                            <RadzenRow class="rz-mt-3">
+                                <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+                                    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="8" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                                    Data="@listrotation" TItem="RotationModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:200px">
+                                        <Columns>
+                                            <RadzenDataGridColumn TItem="RotationModel" Title="Bộ phận" Property="Departmentid">
+                                                <Template Context="data">
+                                                    @{
+                                                        DepartmentModel? depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Departmentid);
+                                                        if (depart != null)
+                                                        {
+                                                            <span>@depart.Departmentname</span>
+                                                        }
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+
+                                            <RadzenDataGridColumn TItem="RotationModel" Title="Luân chuyển từ" Property="Rotafrom">
+                                                <Template Context="data">
+                                                    @{
+                                                        DepartmentModel? depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Rotafrom);
+                                                        if (depart != null)
+                                                        {
+                                                            <span>@depart.Departmentname</span>
+                                                        }
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+
+                                            <RadzenDataGridColumn TItem="RotationModel" Title="Luân chuyển đến" Property="Rotato">
+                                                <Template Context="data">
+                                                    @{
+                                                        DepartmentModel? depart = responDepartment.FirstOrDefault(item => item.Departmentid == data.Rotato);
+                                                        if (depart != null)
+                                                        {
+                                                            <span>@depart.Departmentname</span>
+                                                        }
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+
+                                            <RadzenDataGridColumn TItem="RotationModel" Title="Ngày luân chuyển" Property="Daterotation">
+                                                <Template Context="data">
+                                                    @{
+                                                        DateOnly.TryParse(data.Daterotation, out DateOnly startdate);
+                                                        <span>@startdate</span>
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+
+                                            <RadzenDataGridColumn TItem="RotationModel" Title="Ngày kết thúc" Property="Dateend">
+                                                <Template Context="data">
+                                                    @{
+                                                        DateOnly.TryParse(data.Dateend, out DateOnly enddate);
+                                                        if (data.Status == true)
+                                                        {
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@enddate</span>
+                                                        }
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                            <RadzenDataGridColumn TItem="RotationModel" Filterable="false" Property="Status" Width="50px">
+                                                <Template Context="data">
+                                                    @{
+                                                        <RadzenCheckBox @bind-Value=@data.Status Disabled />
+                                                    }
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                        </Columns>
+                                    </RadzenDataGrid>
+                                </RadzenColumn>
+                            </RadzenRow>
+
                         }
                         else
                         {
-                            <span></span>
+                            <span>Không có dữ liệu</span>
                         }
-                    </Template>
-                </RadzenDataGridColumn>
+                    </RadzenCard>
+                </RadzenColumn>
+            </RadzenRow>
 
-                <RadzenDataGridColumn TItem="DeviceModel" Title="Loại thiết bị" Property="Devicetype">
-                    <Template Context="data">
-                        @{
-                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
-                        }
-                        @if (type != null)
-                        {
-                            <span>@type.Display</span>
-                        }
-                        else
-                        {
-                            <span></span>
-                        }
-                    </Template>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="DeviceModel" Property="Lr_code" Title="Lr_code" />
-                <RadzenDataGridColumn TItem="DeviceModel" Property="Company" Title="Công ty" />
-                <RadzenDataGridColumn TItem="DeviceModel" Title="Thiết bị chính" Property="Maindevice">
-                    <Template Context="data">
-                        @{
-                            ResponDeType type = listdetype.FirstOrDefault(item => item.Typeid == data.Devicetype);
-                            if (type.Typeid == 2)
-                            {
-                                <span>@data.Maindevice</span>
+        </RadzenColumn>
 
-                            }
-                            else if (type.Typeid == 1)
-                            {
-                                var main = listdevice.FirstOrDefault(item => item.Deviceid == data.Maindevice);
-                                var maindev = main.Devicename;
-                                <span>@maindev</span>
-
-                            }
-                        }
-                    </Template>
-                </RadzenDataGridColumn>
+        <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
 
 
-                <RadzenDataGridColumn TItem="DeviceModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
-                    <Template Context="DeviceModel">
+            @if (devicedetails != null)
+            {
 
-                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => ViewDevice(DeviceModel.Deviceid ) )"></RadzenButton>
-                        |
-                        <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => EditDevice(DeviceModel.Deviceid ) )"></RadzenButton>
+                <RadzenCard>
+
+                    <RadzenTemplateForm TItem="DeviceModel" Data=@devicedetails Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                     <RadzenRow>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenText TextStyle="TextStyle.H6"> Thông tin thiết bị</RadzenText>
+                        </RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                        <RadzenColumn>
+                            <RadzenButton Text="Thêm mới" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
+                            @* <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="buttonsaveDevice" class="rz-background-color-success-dark rz-mr-2"></RadzenButton> *@
+                            
+                            <RadzenButton Text="Lưu" Style="float:right" Icon="save" ButtonType="ButtonType.Submit" class="rz-background-color-success-dark rz-mr-2"></RadzenButton>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-2">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Tên thiết bị" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Devicename" Name="Devicename" />
+                                </RadzenFormField>
+                            </RadzenStack>
+                             <RadzenRequiredValidator Component="Devicename" Text="Tên thiết bị không được trống" Popup=false  Style="position: absolute" />
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+
+                                @if (listdetype != null)
+                                {
+                                    <RadzenFormField Text="Loại thiết bị" Variant="@variant">
+                                        <RadzenDropDown @bind-Value="devicedetails.Devicetype" Name="Devicetype" Change="ChangeDeviceType"  Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Chọn loại thiết bị"  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true" />
+                                        
+                                    </RadzenFormField>
+                                }
+                            </RadzenStack>
+                            <RadzenRequiredValidator  Component="Devicetype" Text="Loại thiết bị không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Ngày bắt đầu" Variant="@variant">
+                                    <RadzenDatePicker @bind-Value="startdate" Name="Startdate" />
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Startdate" Text="Ngày bắt đầu không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+
+                                @if (listprogroup != null)
+                                {
+                                    <RadzenFormField Text="Nhóm sản phẩm" Variant="@variant">
+                                        <RadzenDropDown @bind-Value="@devicedetails.Productgroup" Data=@listprogroup Name="Productgroup" TextProperty="Display" ValueProperty="Id" Placeholder="Chọn nhóm sản phẩm" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true" />
+                                        
+
+                                    </RadzenFormField>
+                                }
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Productgroup" Text="Nhóm sản phẩm không đc trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Mô hình thiết bị" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Devicemodel" Name="Devicemodel" />
+                                    
+                                </RadzenFormField>
+
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Devicemodel" Text="Mode không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Số serial" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Serialnumber" Name="Serialnumber" />
+                                    
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Serialnumber" Text="Số serial không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Lr_code" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Lr_code" Name="Lr_code" />
 
 
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    }
-    else
-    {
-        <span>Không có dữ liệu</span>
-    }
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Lr_code" Text="Lr_code không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Công ty" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Company" Name="Company" />
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Company" Text="Công ty không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                @if (listget != null)
+                                {
+                                    <RadzenFormField Text="Quốc gia" Variant="@variant">
+                                        <RadzenDropDown @bind-Value="@devicedetails.National" Name="National" Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Chọn quốc gia" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true" />
+
+                                    </RadzenFormField>
+                                }
+
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="National" Text="Quốc gia không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Thông tin" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Info" Name="Info"/>
+                                    
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Info" Text="Thông tin không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Mã liên thông" Variant="@variant">
+                                    <RadzenTextBox @bind-Value="devicedetails.Comcode" Name="Comcode" />
+
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Comcode" Text="Mã liên thông không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+
+                                @if (devicedetails.Devicetype == null || devicedetails.Devicetype == 2)
+                                
+                                {
+                                    <RadzenFormField Text="Thiết bị chính" Variant="@variant">
+                                        <RadzenNumeric @bind-Value="devicedetails.Maindevice" Name="Maindevice" />
+
+
+                                    </RadzenFormField>
+                                }
+
+                                else if (devicedetails.Devicetype == 1)
+                                {
+                                    @if (listdevice != null)
+                                    {
+                                        <RadzenFormField Text="Thiết bị chính" Variant="@variant">
+                                            <RadzenDropDown @bind-Value="@devicedetails.Maindevice" Name="Maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Chọn thiết bị chính" AllowClear="true" AllowFiltering="true" />
+
+                                        </RadzenFormField>
+                                    }
+                                }
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Maindevice" Text="Thiết bị chính không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Giới hạn sử dụng/1 tháng" Variant="@variant">
+                                    <RadzenNumeric @bind-Value="devicedetails.Limit" Name="Limit"/>
+
+                                </RadzenFormField>
+                            </RadzenStack>
+
+                            <RadzenRequiredValidator Component="Limit" Text="Giới hạn không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Số tháng khấu hao" Variant="@variant">
+                                    <RadzenNumeric @bind-Value="devicedetails.Wastage" Name="Wastage" />
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Wastage" Text="Số tháng không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4">
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Ngày mua" Variant="@variant">
+                                    <RadzenDatePicker @bind-Value="buydate" Name="Buydate" />
+
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                            <RadzenRequiredValidator Component="Buydate" Text="Ngày mua không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                        <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Ngày hết hạn" Variant="@variant">
+                                    <RadzenDatePicker @bind-Value="expdate" Name="Expdate"/>
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                             <RadzenRequiredValidator Component="Expdate" Text="Ngày hết hạn không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="rz-mt-4 rz-pb-3">
+                        <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+                            <RadzenStack>
+                                <RadzenFormField Text="Ghi chú" Variant="@variant">
+                                    <RadzenTextArea @bind-Value="devicedetails.Note" Rows="3" Name="Note"/>
+
+                                </RadzenFormField>
+                            </RadzenStack>
+                             <RadzenRequiredValidator Component="Note" Text="Ghi chú không được trống" Popup=false  Style="position: absolute"/>
+
+                        </RadzenColumn>
+
+                    </RadzenRow>
+                    
+                    </RadzenTemplateForm>
+                   
+                </RadzenCard>
+            }
+      
+        </RadzenColumn>
+    </RadzenRow>
+
 }
 else
 {
-    <EditDevice id="@device_id" ButtonCallBack="NavCallBack"></EditDevice>
+    <span>Không có dữ liệu</span>
 }
 
 
-
 @code {
+
+
+    async void OnSubmit(DeviceModel device)
+    {
+        //console.Log($"Submit: {JsonSerializer.Serialize(model, new JsonSerializerOptions() {  WriteIndented = true })}");
+        if (isupdate == false)
+        {
+            await SaveDeviceModel(devicedetails);
+        }
+        else
+        {
+            await UpdateDeviceModel(devicedetails);
+        }
+    }
+
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() {  WriteIndented = true })}");
+    }
+    void ChangeDeviceType()
+    {
+        devicedetails.Maindevice = 0;
+    }
+
+
+
+    IList<DeviceModel> selectedDevice;
+    private DateOnly startdate = new DateOnly();
+    private DateOnly buydate = new DateOnly();
+    private DateOnly expdate = new DateOnly();
+
+    private bool isupdate = false;
+    private async Task ChangeDevice()
+    {
+        var id = 0;
+        if (selectedDevice != null)
+        {
+
+            foreach (var item in selectedDevice)
+            {
+                id = item.Deviceid;
+            }
+
+            await ViewDevice(id);
+            await GetRotation(id);
+
+            await GetDepartment();
+            depart_id = "";
+            isupdate = true;
+
+        }
+
+
+    }
+    private async Task ViewDevice(int id)
+    {
+      
+            var result = await ApiService.DetailsDevice(id.ToString(), us.Token);
+            if (result != null && result.Code == 200)
+            {
+                devicedetails = JsonConvert.DeserializeObject<DeviceModel>(result.Value.ToString());
+                DateOnly.TryParse(devicedetails.Startdate, out startdate);
+                DateOnly.TryParse(devicedetails.Buydate, out buydate);
+                DateOnly.TryParse(devicedetails.Expdate, out expdate);
+            }
+        
+        
+    }
+
     private Variant variant = Variant.Outlined;
     private bool isConnected;
     private ResponLogin us = new ResponLogin();
@@ -159,6 +583,8 @@ else
 
         if (firstRender)
         {
+            //CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("vi-VN");
+
             bool isReturn = await ReturnIndex();
             if (isReturn)
             {
@@ -166,11 +592,17 @@ else
             }
             else
             {
+
+                CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("vi-VN");
+
+
                 isConnected = true;
                 await GetNation();
                 await GetDeType();
                 await GetProGroup();
                 await GetDevice();
+                await GetDepartment();
 
             }
             StateHasChanged();
@@ -190,82 +622,66 @@ else
         }
     }
 
-    //Edit
-    private bool isshowedit = false;
-    private int device_id = 0;
-    private void EditDevice(int id)
-    {
-        if (id != 0)
-        {
-            isshowedit = true;
-            device_id = id;
-        }
-    }
-    private void NavCallBack()
-    {
-        isshowedit = false;
-    }
 
 
-    private void AddDevice()
+    private async Task AddDevice()
     {
-        NavigationManager.NavigateTo("/adddevice");
+        //Set lại cái giá trị thêm mới
+        devicedetails = new DeviceModel();
+        listrotation = new List<RotationModel>();
+
+        selectedDevice = null;
+        isupdate = false;
+
+        //Set lại ngày để thêm mới
+        startdate = new DateOnly();
+        buydate = new DateOnly();
+        expdate = new DateOnly();
+
+        //Load lại các dropdown để chọn
+        await GetNation();
+        await GetDeType();
+        await GetProGroup();
+
     }
 
     private List<ResponNation> listget = new List<ResponNation>();
     private async Task GetNation()
     {
-        try
-        {
-           
+      
             var result = await ApiService.ApiConfig("nation ", us.Token);
             if (result != null && result.Code == 200)
             {
                 listget = JsonConvert.DeserializeObject<List<ResponNation>>(result.Value.ToString());
             }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 
     private List<ResponDeType> listdetype = new List<ResponDeType>();
     private async Task GetDeType()
     {
-        try
-        {
-            
+       
             var result = await ApiService.ApiConfig("devicetype", us.Token);
 
             if (result != null && result.Code == 200)
             {
                 listdetype = JsonConvert.DeserializeObject<List<ResponDeType>>(result.Value.ToString());
             }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 
     private List<ResponProGroup> listprogroup = new List<ResponProGroup>();
     private async Task GetProGroup()
     {
-        try
-        {
-          
+       
             var result = await ApiService.ApiConfig("productgroup", us.Token);
             if (result != null && result.Code == 200)
             {
                 listprogroup = JsonConvert.DeserializeObject<List<ResponProGroup>>(result.Value.ToString());
             }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
+     
     }
+
 
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
@@ -282,193 +698,146 @@ else
         }
     }
 
+
+    private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
+    private string depart_id = "";
+    private async Task GetDepartment()
+    {
+        var result = await ApiService.GetDepartment(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
+        }
+
+    }
+
+
     private async Task Reload()
     {
         await GetDevice();
+        await AddDevice();
+
         StateHasChanged();
     }
 
     private DeviceModel devicedetails = new DeviceModel();
-    private async Task ViewDevice(int id)
-    {
-        try
-        {
 
-            var result = await ApiService.DetailsDevice(id.ToString(), us.Token);
+
+    private async void buttonsaveDevice()
+    {
+        if (isupdate == false)
+        {
+            await SaveDeviceModel(devicedetails);
+        }
+        else
+        {
+            await UpdateDeviceModel(devicedetails);
+        }
+    }
+
+
+    private async Task SaveDeviceModel(DeviceModel device)
+    {
+
+        device.Startdate = startdate.ToString("yyyy-MM-dd");
+        device.Buydate = buydate.ToString("yyyy-MM-dd");
+        device.Expdate = expdate.ToString("yyyy-MM-dd");
+        var result = await ApiService.SaveDevice(device, us.Token);
+        if (result.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            await Reload();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.Message);
+        }
+
+    }
+
+
+    private async Task UpdateDeviceModel(DeviceModel device)
+    {
+
+        device.Startdate = startdate.ToString("yyyy-MM-dd");
+        device.Buydate = buydate.ToString("yyyy-MM-dd");
+        device.Expdate = expdate.ToString("yyyy-MM-dd");
+        var result = await ApiService.UpdateDevice(device, us.Token);
+        if (result.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            await Reload();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.Message);
+        }
+    }
+
+
+    private List<RotationModel> listrotation = new List<RotationModel>();
+    private async Task GetRotation(int id)
+    {
+        if (id != 0)
+        {
+            var result = await ApiService.GetRotation(id, us.Token);
             if (result != null && result.Code == 200)
             {
-                devicedetails = JsonConvert.DeserializeObject<DeviceModel>(result.Value.ToString());
-                if (devicedetails != null)
-                {
-                    var resultdialog = await DialogService.OpenAsync("Chi tiết trang thiết bị", ds =>
-                                                            {
-       DateTime.TryParse(devicedetails.Startdate, out DateTime startdate);
-       DateTime.TryParse(devicedetails.Buydate, out DateTime buydate);
-       DateTime.TryParse(devicedetails.Expdate, out DateTime expdate);
-
-
-       return @<RadzenStack Gap="1.5rem">
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Tên thiết bị" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Devicename" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-
-                    @if (listdetype != null)
-                {
-                    <RadzenFormField Text="Loại thiết bị" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="devicedetails.Devicetype" Disabled Data=@listdetype TextProperty="Display" ValueProperty="Typeid" Placeholder="Select Device Type" />
-                    </RadzenFormField>
-                }
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Ngày bắt đầu" Variant="@variant">
-                        <RadzenDatePicker @bind-Value="startdate" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-
-                    @if (listprogroup != null)
-                {
-                    <RadzenFormField Text="Nhóm sản phẩm" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@devicedetails.Productgroup" Disabled Data=@listprogroup TextProperty="Display" ValueProperty="Id" Placeholder="Select Product Group" />
-                    </RadzenFormField>
-                }
-                </RadzenStack>
-
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Mô hình thiết bị" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Devicemodel" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Số serial" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Serialnumber" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Lr_code" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Lr_code" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Công ty" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Company" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    @if (listget != null)
-                {
-                    <RadzenFormField Text="Quốc gia" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@devicedetails.National" Disabled Data=@listget TextProperty="Nationnamevie" ValueProperty="Nationid" Placeholder="Select Nation" />
-                    </RadzenFormField>
-                }
-
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Thông tin" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Info" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Comcode" Variant="@variant">
-                        <RadzenTextBox @bind-Value="devicedetails.Comcode" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-
-                    @if (devicedetails.Devicetype == 0 || devicedetails.Devicetype == 2)
-                {
-                    <RadzenFormField Text="Thiết bị chính" Variant="@variant">
-                        <RadzenNumeric @bind-Value="devicedetails.Maindevice" Disabled />
-                    </RadzenFormField>
-                }
-                else if(devicedetails.Devicetype == 1)
-                {
-                    @if (listdevice != null)
-                {
-                    <RadzenFormField Text="Thiết bị chính" Variant="@variant">
-                        <RadzenDropDownDataGrid @bind-Value="@devicedetails.Maindevice" Data=@listdevice TextProperty="Devicename" ValueProperty="Deviceid" Placeholder="Select Main Device" Disabled />
-                    </RadzenFormField>
-                }
-                }
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Ngày mua" Variant="@variant">
-                        <RadzenDatePicker @bind-Value="buydate" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Ngày hết hạn" Variant="@variant">
-                        <RadzenDatePicker @bind-Value="expdate" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-                <RadzenStack>
-                    <RadzenFormField Text="Ghi chú" Variant="@variant">
-                        <RadzenTextArea @bind-Value="devicedetails.Note" Disabled />
-                    </RadzenFormField>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-
-        </RadzenStack>
-    </RadzenStack>
-                    ;
-                });
-                }
+                listrotation = JsonConvert.DeserializeObject<List<RotationModel>>(result.Value.ToString());
+            }
+            else if (result.Code == 404)
+            {
+                listrotation = new List<RotationModel>();
             }
         }
-        catch (Exception ex)
+        else
         {
-            throw new NotImplementedException();
+            listrotation = new List<RotationModel>();
         }
+
+
+    }
+
+
+    private async Task saveRotation()
+    {
+        int id = 0;
+
+        if (selectedDevice != null)
+        {
+            foreach (var item in selectedDevice)
+            {
+                id = item.Deviceid;
+            }
+
+        }
+        if (depart_id == null || depart_id == "")
+        {
+            notification.Notify(NotificationSeverity.Warning, "Chưa chọn bộ phận");
+
+        }
+        else if (id == null || id == 0)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Chưa chọn thiết bị");
+
+        }
+        else
+        {
+            var result = await ApiService.SaveRotation(id, depart_id, us.Token);
+            if (result != null && result.Code == 200)
+            {
+
+                notification.Notify(NotificationSeverity.Success, result.Message);
+                await GetRotation(id);
+
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Warning, result.Message);
+            }
+        }
+
+
+
     }
 }

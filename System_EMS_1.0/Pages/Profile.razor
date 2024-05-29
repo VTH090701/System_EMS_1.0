@@ -129,20 +129,19 @@
         }
     }
 
-    private ResponLogout responChangePassword = new ResponLogout();
     private async Task SavePassword(string passold, string passnew)
     {
-        responChangePassword = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);
+        var result = await ApiService.ChangePassword(us.Username, passold, passnew, us.Token);
 
-        if (responChangePassword.Code == 200)
+        if (result.Code == 200)
         {
             DialogService.Close();
-            notification.Notify(NotificationSeverity.Success, responChangePassword.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
         }
         else
         {
 
-            notification.Notify(NotificationSeverity.Warning, responChangePassword.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
 
     }
@@ -160,17 +159,16 @@
             {
                 isConnected = true;
                 await GetListUser();
-                await GetUser();
+                GetUser();
             }
             StateHasChanged();
         }
     }
 
     private UserModel user;
-    private async Task GetUser()
+    private void GetUser()
     {
-        var result = responGetUser.FirstOrDefault(item => item.Userid == us.Userid);
-        user = result;
+        user  = responGetUser.FirstOrDefault(item => item.Userid == us.Userid);
     }
     private List<UserModel> responGetUser = new List<UserModel>();
     private async Task GetListUser()

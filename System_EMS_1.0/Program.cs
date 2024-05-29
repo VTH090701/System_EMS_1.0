@@ -1,7 +1,9 @@
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Localization;
 using Radzen;
+using System.Globalization;
 using System_EMS_1._0.Data;
 using System_EMS_1._0.Services;
 
@@ -34,7 +36,20 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+//Set datetime VietNam
+var supportedCultures = new[] { new CultureInfo("vi-VN") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("vi-VN"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+app.UseRequestLocalization(localizationOptions);
+//
+
+
+
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
 app.Run();

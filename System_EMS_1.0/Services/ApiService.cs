@@ -9,6 +9,9 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Options;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net.Http;
+using Microsoft.VisualBasic;
+using Radzen;
+using Microsoft.Extensions.Hosting;
 namespace System_EMS_1._0.Services
 {
     public class ApiService : IApiService
@@ -24,30 +27,35 @@ namespace System_EMS_1._0.Services
             _sessionStorageService = sessionStorageService;
             apiSettings = apiSettingsOptions.Value;
         }
-        public async Task<ResponLogout> SaveUser(string name, string pass, string display, string email, string phone, string de, string token)
+        public async Task<ResponseApi> SaveUser(UserModel user,string password, string token)
         {
             try
             {
                 var request = new
                 {
-                    username = name,
-                    password = pass,
-                    displayname = display,
-                    email = email,
-                    phonenumber = phone,
-                    departmentid = de,
+                    username = user.Username,
+                    password = password,
+                    displayname = user.Displayname,
+                    email = user.Email,
+                    phonenumber = user.Phonenumber,
+                    departmentid = user.Departmentid,
                     token = token
                 };
                 var jsonContent = JsonConvert.SerializeObject(request);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetDepartment(string token)
@@ -58,12 +66,16 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetGroup(string token)
@@ -74,12 +86,17 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetUser(string token)
@@ -90,12 +107,17 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponLogin> Login(string userName, string passWord)
@@ -114,7 +136,7 @@ namespace System_EMS_1._0.Services
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user/login", content);
                 response.EnsureSuccessStatusCode();
 
-                var result = await response.Content.ReadFromJsonAsync<ResponLogin>();
+                ResponLogin? result = await response.Content.ReadFromJsonAsync<ResponLogin>();
                 if (result != null)
                 {
                     if (result.Code == 200)
@@ -134,10 +156,14 @@ namespace System_EMS_1._0.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponLogin response = new ResponLogin()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> Logout(string userId)
+        public async Task<ResponseApi> Logout(string userId)
         {
             try
             {
@@ -146,8 +172,8 @@ namespace System_EMS_1._0.Services
 
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
-                if(result.Code == 200)
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                if (result != null && result.Code == 200)
                 {
                     await _sessionStorageService.RemoveItemAsync("us");
                 }
@@ -155,59 +181,73 @@ namespace System_EMS_1._0.Services
                 {
 
                 }
+
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponSaveDepartment> SaveDepartment(string name, string desc, string sort, string token)
+        public async Task<ResponseApi> SaveDepartment(DepartmentModel department, string token)
         {
             try
             {
                 var request = new
                 {
-                    departmentname = name,
-                    departmentdescription = desc,
-                    departmentsortname = sort,
+                    departmentname = department.Departmentname,
+                    departmentdescription = department.Departmentdescription,
+                    departmentsortname = department.Departmentsortname,
                     token = token
                 };
                 var jsonContent = JsonConvert.SerializeObject(request);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/department", content);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ResponSaveDepartment>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> SaveGroup(string name, string desc, string token)
+        public async Task<ResponseApi> SaveGroup(GroupModel group, string token)
         {
             try
             {
                 var request = new
                 {
-                    groupname = name,
-                    groupdescription = desc,
+                    groupname = group.Groupname,
+                    groupdescription = group.Groupdescription,
                     token = token
                 };
                 var jsonContent = JsonConvert.SerializeObject(request);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> UpdateDepartment(string id, string name, string desc, string sort, string token)
+        public async Task<ResponseApi> UpdateDepartment(string id, string name, string desc, string sort, string token)
         {
             try
             {
@@ -223,14 +263,19 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/department", content);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> UpdateGroup(string id, string name, string desc, string token)
+        public async Task<ResponseApi> UpdateGroup(string id, string name,string desc, string token)
         {
             try
             {
@@ -245,14 +290,20 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups", content);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> UpdateUser(string id, string display, string email, string  phone, string deid, string token)
+        public async Task<ResponseApi> UpdateUser(string id, string display, string email, string phone, string deid, string token)
         {
             try
             {
@@ -269,12 +320,16 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> ListRoles(string token)
@@ -285,12 +340,16 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> ListRolesUser(string id, string token)
@@ -302,15 +361,19 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> GrantRolesUser(string type, string id, string rolename, string token)
+        public async Task<ResponseApi> GrantRolesUser(string type, string id, string rolename, string token)
         {
             try
             {
@@ -325,13 +388,21 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/roles/user", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                if (result == null)
+                {
+                    throw new Exception("Failed to deserialize the response content.");
+                }
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetUsersInGroup(string id, string token)
@@ -343,16 +414,20 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("groupid", id);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
 
         }
-        public async Task<ResponLogout> Add_RemoveUserInGroup(string type,string idgr, string iduser, string token)
+        public async Task<ResponseApi> Add_RemoveUserInGroup(string type, string idgr, string iduser, string token)
         {
 
             try
@@ -368,12 +443,16 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/groups/user", content);
                 response.EnsureSuccessStatusCode();
-                var result =  await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> ListRolesGroup(string groupid, string token)
@@ -385,15 +464,19 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("groupid", groupid);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> GrantRolesGroup(string type, string id, string rolename, string token)
+        public async Task<ResponseApi> GrantRolesGroup(string type, string id, string rolename, string token)
         {
             try
             {
@@ -408,16 +491,20 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/Roles/Group", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> ChangePassword(string username, string passold, string passnew, string token)
+        public async Task<ResponseApi> ChangePassword(string username, string passold, string passnew, string token)
         {
             try
             {
@@ -432,16 +519,20 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/User/change_pass", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-        public async Task<ResponLogout> ChangeStatus(string userid, bool status, string token)
+        public async Task<ResponseApi> ChangeStatus(string userid, bool status, string token)
         {
             try
             {
@@ -455,13 +546,17 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/User/status", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponLogout>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> ResetPass(string userid, string token)
@@ -477,13 +572,17 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/user/reset_pass", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetRotation(int deid, string token)
@@ -495,12 +594,16 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("deviceid", deid.ToString());
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> SaveRotation(int deid, string departid, string token)
@@ -517,13 +620,17 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/rotation", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> GetDeviceDepartment(string deid, string token)
@@ -535,12 +642,16 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("departmentid", deid);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> SaveRepairDevice(string token)
@@ -551,12 +662,16 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> UpdateRepairDevice(string id, int deviceid, string desc, double cost, string type, string token)
@@ -576,13 +691,17 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
         public async Task<ResponseApi> DetailsRepairDevice(string id, string token)
@@ -594,15 +713,18 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("repairid", id);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> ApprovedRepairDevice(string id, string status, string token)
         {
             try
@@ -617,16 +739,19 @@ namespace System_EMS_1._0.Services
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/status", content);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
 
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> DetailsRepair(string id, string token)
         {
             try
@@ -636,15 +761,18 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("repairid", id);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> StatusRepair(string status, string token)
         {
             try
@@ -654,15 +782,18 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> GetListDevice(string token)
         {
             try
@@ -671,33 +802,39 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> DetailsDevice(string deviceid, string token)
         {
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/details");
                 request.Headers.Add("deviceid", deviceid);
-                request.Headers.Add("token",token);
+                request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
-
         public async Task<ResponseApi> ApiConfig(string type, string token)
         {
             try
@@ -707,12 +844,100 @@ namespace System_EMS_1._0.Services
                 request.Headers.Add("token", token);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
+            }
+        }
+        public async Task<ResponseApi> SaveDevice(DeviceModel device, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    devicename = device.Devicename == null ? "" : device.Devicename,
+                    devicetype = device.Devicetype,
+                    productgroup = device.Productgroup,
+                    startdate = device.Startdate,
+                    devicemodel = device.Devicemodel == null ? "" : device.Devicemodel,
+                    serialnumber = device.Serialnumber == null ? "" : device.Serialnumber,
+                    lr_code = device.Lr_code == null ? "" : device.Lr_code,
+                    company = device.Company == null ? "" : device.Company,
+                    national = device.National,
+                    info = device.Info == null ? "" : device.Info,
+                    comcode = device.Comcode == null ? "" : device.Comcode,
+                    maindevice = device.Maindevice,
+                    limit = device.Limit,
+                    wastage = device.Wastage,
+                    buydate = device.Buydate,
+                    expdate = device.Expdate,
+                    note = device.Note == null ? "" : device.Note,
+                    token = token
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices", content);
+                response.EnsureSuccessStatusCode();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
+            }
+        }
+        public async Task<ResponseApi> UpdateDevice(DeviceModel device, string token)
+        {
+            try
+            {
+                var request = new
+                {
+                    id = device.Deviceid,
+                    devicename = device.Devicename,
+                    devicetype = device.Devicetype,
+                    productgroup = device.Productgroup,
+                    startdate = device.Startdate,
+                    devicemodel = device.Devicemodel,
+                    serialnumber = device.Serialnumber,
+                    lr_code = device.Lr_code,
+                    company = device.Company,
+                    national = device.National,
+                    info = device.Info,
+                    comcode = device.Comcode,
+                    maindevice = device.Maindevice,
+                    limit = device.Limit,
+                    wastage = device.Wastage,
+                    buydate = device.Buydate,
+                    expdate = device.Expdate,
+                    note = device.Note,
+                    token = token
+                };
+                var jsonContent = JsonConvert.SerializeObject(request);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices", content);
+                response.EnsureSuccessStatusCode();
+                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                ResponseApi response = new ResponseApi()
+                {
+                    Message = ex.Message,
+                };
+                return response;
             }
         }
     }

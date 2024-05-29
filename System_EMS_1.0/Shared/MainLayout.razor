@@ -65,7 +65,6 @@
             <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" Click="NavitemSiber" />
             <RadzenPanelMenuItem Text="Thiết bị" Icon="list" Click="NavitemSiber">
                 <RadzenPanelMenuItem Text="Danh mục thiết bị" Icon="build" Path="devices" Click="NavitemSiber" />
-                <RadzenPanelMenuItem Text="Luân chuyển" Icon="3d_rotation" Path="rotation" Click="NavitemSiber" />
                 <RadzenPanelMenuItem Text="Tìm kiếm thiết bị" Icon="find_replace" Path="searchdevice" Click="NavitemSiber" />
             </RadzenPanelMenuItem>
 
@@ -100,9 +99,8 @@
 @code {
     private bool isprofile = false;
     private bool sidebarExpanded = false;
-    private ResponLogin us;
+    private ResponLogin us = new ResponLogin();
     private bool isConnected;
-    private ResponLogout responlogout = new ResponLogout();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -145,15 +143,15 @@
     {
         if (us.Userid != null)
         {
-            responlogout = await ApiService.Logout(us.Userid);
-            if (responlogout.Code == 200)
+            var result = await ApiService.Logout(us.Userid);
+            if (result.Code == 200)
             {
-                notification.Notify(NotificationSeverity.Success, responlogout.Message);
+                notification.Notify(NotificationSeverity.Success, result.Message);
                 NavigationManager.NavigateTo("/");
             }
             else
             {
-                notification.Notify(NotificationSeverity.Warning, responlogout.Message);
+                notification.Notify(NotificationSeverity.Warning, result.Message);
             }
         }
     }

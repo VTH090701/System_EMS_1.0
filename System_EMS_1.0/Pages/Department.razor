@@ -21,11 +21,11 @@
 
 @if (responDepartment != null && responDepartment.Count > 0)
 {
-    <RadzenDataGrid  AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                     Data="@responDepartment" TItem="DepartmentModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
-    
-                    <Columns>
-            @* <RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" /> *@
+
+        <Columns>
+            @*<RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" /> *@
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentname" Title="Tên phòng ban" />
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentdescription" Title="Mô tả" />
             <RadzenDataGridColumn TItem="DepartmentModel" Property="Departmentsortname" Title="Tên ngắn" />
@@ -33,7 +33,7 @@
             <RadzenDataGridColumn TItem="DepartmentModel" Title="Người tạo" Property="Createdby">
                 <Template Context="data">
                     @{
-                        UserModel user = responGetUser.FirstOrDefault(item => item.Userid == data.Createdby);
+                        UserModel? user = responGetUser.FirstOrDefault(item => item.Userid == data.Createdby);
                     }
                     @if (user != null)
                     {
@@ -48,9 +48,9 @@
 
 
             <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
-                <Template Context="DepartmentModel">
-                    <RadzenButton Icon="edit" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
-                    EditDepartment(DepartmentModel.Departmentid , DepartmentModel.Departmentname, DepartmentModel.Departmentdescription,DepartmentModel.Departmentsortname) )"></RadzenButton>
+                <Template Context="data">
+                    <RadzenButton Icon="edit" Shade="Shade.Lighter" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
+                    EditDepartment(data.Departmentid, data.Departmentname, data.Departmentdescription , data.Departmentsortname) )"></RadzenButton>
 
                 </Template>
             </RadzenDataGridColumn>
@@ -69,10 +69,6 @@ else
 @code {
     private Variant variant = Variant.Outlined;
     private ResponLogin us = new ResponLogin();
-    //private ResponseApi responDepartment;
-    private ResponSaveDepartment responSaveDepartment = new ResponSaveDepartment();
-    private ResponLogout responUpdateDepartment = new ResponLogout();
-
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -127,7 +123,7 @@ else
         {
             responDepartment = JsonConvert.DeserializeObject<List<DepartmentModel>>(result.Value.ToString());
         }
-        else if(result.Code == 401)
+        else if (result.Code == 401)
         {
             notification.Notify(NotificationSeverity.Warning, result.Message);
 
@@ -138,60 +134,71 @@ else
     private async Task AddDepartment()
     {
         var result = await DialogService.OpenAsync("Thêm phòng ban", ds =>
-            {
-            
-    string departmentname = "";
-    string departmentdescription = "";
-    string departmentsortname = "";
+                    {
 
 
-    return @<RadzenStack Gap="1.5rem">
-        <RadzenStack>
-            <RadzenFormField Text="Tên phòng ban" Variant="@variant">
-                <RadzenTextBox @bind-Value="@departmentname" />
-            </RadzenFormField>
-        </RadzenStack>
-        <RadzenStack>
-            <RadzenFormField Text="Mô tả" Variant="@variant">
-                <RadzenTextBox @bind-Value="@departmentdescription" />
-            </RadzenFormField>
-        </RadzenStack>
-        <RadzenStack>
-            <RadzenFormField Text="Tên ngắn" Variant="@variant">
-                <RadzenTextBox @bind-Value="@departmentsortname" />
-            </RadzenFormField>
-        </RadzenStack>
-        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-            <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-            <RadzenButton Text="Thêm" Click="() => SaveDepartmentinModal(departmentname,departmentdescription,departmentsortname)" Style="width: 80px;" />
-        </RadzenStack>
-    </RadzenStack>
-            ;
-            });
+    DepartmentModel department = new DepartmentModel();
+    return @<RadzenRow>
+        <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
+            <RadzenTemplateForm TItem="DepartmentModel" Data=@department Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenStack>
+                    <RadzenFormField Text="Tên phòng ban" Variant="@variant">
+                        <RadzenTextBox @bind-Value="@department.Departmentname" Name="Departmentname" />
+                    </RadzenFormField>
+
+                </RadzenStack>
+                <RadzenRequiredValidator Component="Departmentname" Text="Tên phòng ban không được trống" Popup=false Style="position: absolute" />
+                <RadzenStack class="rz-mt-3">
+                    <RadzenFormField Text="Mô tả" Variant="@variant">
+                        <RadzenTextBox @bind-Value="@department.Departmentdescription"  />
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <RadzenStack class="rz-mt-3">
+                    <RadzenFormField Text="Tên ngắn" Variant="@variant">
+                        <RadzenTextBox @bind-Value="@department.Departmentsortname" />
+                    </RadzenFormField>
+                </RadzenStack>
+                <hr />
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+                    <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    <RadzenButton Text="Thêm" ButtonType="ButtonType.Submit" Style="width: 80px;" />
+                </RadzenStack>
+
+            </RadzenTemplateForm>
+        </RadzenColumn>
+
+    </RadzenRow>
+                    ;
+                    });
 
     }
-
-    private async Task SaveDepartmentinModal(string name, string desc, string sort)
+    async Task OnSubmit(DepartmentModel department)
     {
-        responSaveDepartment = await ApiService.SaveDepartment(name, desc, sort, us.Token);
-        if (responSaveDepartment.Code == 200)
+        //console.Log($"Submit: {JsonSerializer.Serialize(model, new JsonSerializerOptions() { WriteIndented = true })}");
+        var result = await ApiService.SaveDepartment(department, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responSaveDepartment.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
             DialogService.Close();
             await GetDepartment();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responSaveDepartment.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
-
-
-
     }
 
-    private DepartmentModel departmentEdit = new DepartmentModel();
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+    }
+
+ 
+
     private async Task EditDepartment(string id, string name, string desc, string sort)
     {
+
         var result = await DialogService.OpenAsync("Cập nhật phòng ban", ds =>
     @<RadzenStack Gap="1.5rem">
         <RadzenStack>
@@ -213,25 +220,26 @@ else
             <RadzenStack Orientation="Orientation.Horizontal">
                 <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
-            <RadzenButton Text="Cập nhật" Click="() => UpdateDepartmentinModal(id,name,desc,sort)" Style="width: 120px;" />
+            <RadzenButton Text="Cập nhật" Click="() => UpdateDepartmentinModal( id, name, desc, sort)" Style="width: 120px;" />
         </RadzenStack>
     </RadzenStack>
     );
     }
 
+
     private async Task UpdateDepartmentinModal(string id, string name, string desc, string sort)
     {
-        responUpdateDepartment = await ApiService.UpdateDepartment(id, name, desc, sort, us.Token);
-        if (responUpdateDepartment.Code == 200)
+        var result = await ApiService.UpdateDepartment(id, name, desc, sort, us.Token);
+        if (result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, responUpdateDepartment.Message);
+            notification.Notify(NotificationSeverity.Success, result.Message);
 
             DialogService.Close();
             await GetDepartment();
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, responUpdateDepartment.Message);
+            notification.Notify(NotificationSeverity.Warning, result.Message);
         }
     }
 }

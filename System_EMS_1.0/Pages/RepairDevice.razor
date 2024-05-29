@@ -18,17 +18,10 @@
                 <RadzenText TextStyle="TextStyle.H5">Danh sách phiếu :</RadzenText>
 
 
-@*                 <InputSelect id="status" @bind-Value="status_repair" class="form-control" style="width:30%" @onclick="GetRepairStatus">
-                    @foreach (var status in Status)
-                    {
-                        <option value="@status.Key">@status.Value</option>
-                    }
-                </InputSelect> *@
+                <RadzenDropDown @bind-Value=status_repair Data=@statusRepair AllowVirtualization="true" Name="DropDownVirtualizationLoadData"
+                                TextProperty="Status" ValueProperty="Key" Style="width: 100%; max-width: 300px;" Placeholder="Chọn trạng thái phiếu" Change="GetRepairStatus" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowClear="true" AllowFiltering="true" />
 
-                <RadzenDropDown @bind-Value=status_repair Data=@statusRepair AllowVirtualization="true" AllowClear="true" Name="DropDownVirtualizationLoadData"
-                                AllowFiltering="true" TextProperty="Status" ValueProperty="Key" Style="width: 100%; max-width: 300px;" Placeholder="Chọn trạng thái phiếu" Change="GetRepairStatus" />
 
-            
 
             </RadzenRow>
         </RadzenColumn>
@@ -40,14 +33,14 @@
 
     @if (listrepairstatus != null && listrepairstatus.Count > 0)
     {
-        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true" PageSize="8" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                         Data="@listrepairstatus" TItem="RepairStatus" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
             <Columns>
                 <RadzenDataGridColumn TItem="RepairStatus" Property="Id" Title="Id" />
                 <RadzenDataGridColumn TItem="RepairStatus" Title="Người tạo" Property="Uid">
                     <Template Context="data">
                         @{
-                            UserModel user = responGetUser.FirstOrDefault(item => item.Userid == data.Uid);
+                            UserModel? user = responGetUser.FirstOrDefault(item => item.Userid == data.Uid);
                             if (user != null)
                             {
                                 <span>@user.Displayname</span>
@@ -65,7 +58,7 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="RepairStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
                     <Template Context="data">
-                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => DetailsRepairDevice(data.Id ) )"></RadzenButton>
+                        <RadzenButton Icon="camera_enhance" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@(() => DetailsRepairDevice(data.Id ) )" Shade="Shade.Lighter"></RadzenButton>
                         @if (status_repair == "approved")
                         {
 
@@ -73,7 +66,7 @@
                         else
                         {
                             <span>|</span>
-                            <RadzenButton Icon="done" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => ApprovedRepair(data.Id ) )"></RadzenButton>
+                            <RadzenButton Icon="done" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@(() => ApprovedRepair(data.Id ) )" Shade="Shade.Lighter"></RadzenButton>
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -147,7 +140,7 @@ else
         public string Status { set; get; }
     }
     private List<StaRepair> statusRepair = new List<StaRepair>();
-    private async Task LoadStaRe()
+    private void LoadStaRe()
     {
         statusRepair.Add(new StaRepair() { Key = "request", Status = "Yêu cầu" });
         statusRepair.Add(new StaRepair() { Key = "sending", Status = "Đang gửi duyệt" });
@@ -156,7 +149,7 @@ else
 
 
 
-    private Variant variant = Variant.Outlined;
+    //private Variant variant = Variant.Outlined;
     private string status_repair = "";
     private bool isConnected;
     private ResponLogin us = new ResponLogin();
@@ -179,7 +172,7 @@ else
 
 
                 //await GetRepairStatus();
-                await LoadStaRe();
+                LoadStaRe();
             }
             StateHasChanged();
         }
@@ -234,21 +227,13 @@ else
     private List<TypeRepair> listtypere = new List<TypeRepair>();
     private async Task GetTypeRepair()
     {
-       
 
-        try
+        var result = await ApiService.ApiConfig("typerepair", us.Token);
+        if (result != null && result.Code == 200)
         {
+            listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
+        }
 
-            var result = await ApiService.ApiConfig("typerepair", us.Token);
-            if (result != null && result.Code == 200)
-            {
-                listtypere = JsonConvert.DeserializeObject<List<TypeRepair>>(result.Value.ToString());
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 
@@ -257,7 +242,7 @@ else
     private List<RepairStatus> listrepairstatus = new List<RepairStatus>();
     private async Task GetRepairStatus()
     {
-        
+
         if (status_repair != "" && status_repair != null)
         {
             var result = await ApiService.StatusRepair(status_repair, us.Token);
