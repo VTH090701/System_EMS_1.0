@@ -24,7 +24,7 @@
     <hr />
     @if (responGroup != null && responGroup.Count > 0)
     {
-        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="9" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+        <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="8" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                         Data="@responGroup" TItem="GroupModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
             <Columns>
                 <RadzenDataGridColumn TItem="GroupModel" Property="Groupname" Title="Tên nhóm " />

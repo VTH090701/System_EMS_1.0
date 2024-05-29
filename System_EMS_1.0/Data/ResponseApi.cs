@@ -6,6 +6,7 @@
         public string? Status { get; set; }
         public string? Hint { get; set; }
         public string? Message { get; set; }
+
         //public List<T> Value { get; set; }
         public dynamic Value { get; set; }
     }
