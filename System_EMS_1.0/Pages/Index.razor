@@ -1,14 +1,12 @@
 ﻿@page "/"
 @layout Login
-
-
 @inject IApiService ApiService
 @inject NavigationManager navigationmanager
 @inject NotificationService notification
 @using Data
 @using Services
 
-<PageTitle>Login</PageTitle>
+<PageTitle>Đăng nhập</PageTitle>
 
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 550px;">
@@ -29,30 +27,32 @@
 </RadzenCard>
 
 
+
+
+
 @code {
+
+
 
     private string userName = "";
     private string passWord = "";
     bool rememberMe = false;
-    private ResponLogin response = new ResponLogin();
+
     async Task OnLogin(LoginArgs args, string name)
     {
 
         if (!string.IsNullOrEmpty(args.Username) && !string.IsNullOrEmpty(args.Password))
         {
-            response = await ApiService.Login(userName = args.Username, args.Password);
-            if (response.Code == 200)
+            var result = await ApiService.Login(userName = args.Username, args.Password);
+            if (result.Code == 200)
             {
-                notification.Notify(NotificationSeverity.Success, response.Message);
+                notification.Notify(NotificationSeverity.Success, result.Message);
                 navigationmanager.NavigateTo("/dashboard");
             }
-            else if (response.Code == 401)
-            {
-                notification.Notify(NotificationSeverity.Warning, "Tài khoản không đúng");
-            }
+           
             else
             {
-                notification.Notify(NotificationSeverity.Warning, response.Message);
+                notification.Notify(NotificationSeverity.Warning, result.Message);
             }
         }
     }

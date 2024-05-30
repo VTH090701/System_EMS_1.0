@@ -45,9 +45,8 @@
         public string? Users { get; set; }
     }
 
-    //Xóa
-    
 
+    //Xóa
     public class GroupModel
     {
         public string? Groupid { get; set; }
