@@ -10,8 +10,8 @@
 <PageTitle>System_EMS_1.0</PageTitle>
 <RadzenLayout style="position: relative;grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
     <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0" class="rz-background-color-info-dark">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0" >
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0"  >
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
                 <RadzenLabel Text="VASD" Style="font-weight:600;font-size:22px" />
             </RadzenStack>
@@ -20,7 +20,7 @@
                 {
                     if (us.Displayname != null)
                     {
-                        <RadzenText Style="color:white;font-size:18px" class="rz-mt-2">@us.Displayname </RadzenText>
+                        <RadzenText Style="font-size:18px" class="rz-mt-2 rz-mr-1">@us.Displayname </RadzenText>
                     }
                     else
                     {
@@ -31,21 +31,21 @@
                 {
                     <RadzenText>Chưa đăng nhập</RadzenText>
                 }
-                <RadzenProfileMenu class="rz-background-color-info-dark">
+                <RadzenProfileMenu >
                     
                     <Template>
 
                         @*<RadzenGravatar>
                         </RadzenGravatar>*@
                         
-                        <div><RadzenIcon Icon="face" Style="font-size:25px" class="rz-mt-1 rz-pr-1"/></div>
+                        <div><RadzenIcon Icon="account_circle" Style="font-size:25px;" class="rz-mt-1 rz-pr-1" /></div>
                     </Template>
 
-                    <ChildContent>
+                    <ChildContent >
                         <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
 
                             <div style="display:flex;">
-                                <RadzenIcon Icon="account_circle" />Hồ sơ
+                                <RadzenIcon Icon=" assignment_ind" />Hồ sơ
                             </div>
                         </button>
                         <br />
@@ -69,14 +69,12 @@
             <RadzenPanelMenuItem Text="Nhóm" Icon="group_work" Path="group" Click="NavitemSiber" />
             <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" Click="NavitemSiber" />
             <RadzenPanelMenuItem Text="Thiết bị" Icon="list" Click="NavitemSiber">
-                <RadzenPanelMenuItem Text="Danh mục thiết bị" Icon="build" Path="devices" Click="NavitemSiber" />
-                <RadzenPanelMenuItem Text="Tìm kiếm thiết bị" Icon="find_replace" Path="searchdevice" Click="NavitemSiber" />
+                <RadzenPanelMenuItem Text="Danh mục thiết bị" Icon="" Path="devices" Click="NavitemSiber" />
+                <RadzenPanelMenuItem Text="Tìm kiếm thiết bị" Icon="" Path="searchdevice" Click="NavitemSiber" />
             </RadzenPanelMenuItem>
 
 
-            <RadzenPanelMenuItem Text="Sửa chữa" Icon="gavel" Path="repairdevice" Click="NavitemSiber" />
-
-
+            <RadzenPanelMenuItem Text="Sửa chữa" Icon="build" Path="repairdevice" Click="NavitemSiber" />
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>

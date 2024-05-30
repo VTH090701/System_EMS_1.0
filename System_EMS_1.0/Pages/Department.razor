@@ -22,7 +22,7 @@
 @if (responDepartment != null && responDepartment.Count > 0)
 {
     <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="8" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                    Data="@responDepartment" TItem="DepartmentModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px">
+                    Data="@responDepartment" TItem="DepartmentModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:550px" >
 
         <Columns>
             @*<RadzenDataGridColumn Filterable="false" Frozen="true" Width="80px" TextAlign="TextAlign.Center" TItem="DepartmentModel" Property="Departmentid" Title="Department Id" /> *@
@@ -47,7 +47,7 @@
             </RadzenDataGridColumn>
 
 
-            <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Width="120px">
+            <RadzenDataGridColumn TItem="DepartmentModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" FrozenPosition="FrozenColumnPosition.Right" Width="110px">
                 <Template Context="data">
                     <RadzenButton Icon="edit" Shade="Shade.Lighter" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" Click="@((args) =>
                     {
