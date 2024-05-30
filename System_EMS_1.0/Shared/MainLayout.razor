@@ -20,22 +20,27 @@
                 {
                     if (us.Displayname != null)
                     {
-                        <radzentext>@us.Displayname </radzentext>
+                        <RadzenText Style="color:white;font-size:18px" class="rz-mt-2">@us.Displayname </RadzenText>
                     }
                     else
                     {
-                        <radzentext>chưa lấy được tên</radzentext>
+                        <RadzenText>chưa lấy được tên</RadzenText>
                     }
                 }
                 else
                 {
-                    <radzentext>Chưa đăng nhập</radzentext>
+                    <RadzenText>Chưa đăng nhập</RadzenText>
                 }
                 <RadzenProfileMenu class="rz-background-color-info-dark">
+                    
                     <Template>
-                        <RadzenGravatar>
-                        </RadzenGravatar>
+
+                        @*<RadzenGravatar>
+                        </RadzenGravatar>*@
+                        
+                        <div><RadzenIcon Icon="face" Style="font-size:25px" class="rz-mt-1 rz-pr-1"/></div>
                     </Template>
+
                     <ChildContent>
                         <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
 
