@@ -250,7 +250,6 @@
             {
 
                 <RadzenCard>
-
                     <RadzenTemplateForm TItem="DeviceModel" Data=@devicedetails Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
                         <RadzenRow>
                             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
@@ -318,7 +317,7 @@
                         <RadzenRow class="rz-mt-4">
                             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                                 <RadzenStack>
-                                    <RadzenFormField Text="Mô hình thiết bị" Variant="@variant">
+                                    <RadzenFormField Text="Mode" Variant="@variant">
                                         <RadzenTextBox @bind-Value="devicedetails.Devicemodel" Name="Devicemodel" />
 
                                     </RadzenFormField>
@@ -394,7 +393,6 @@
                                     <RadzenFormField Text="Mã liên thông" Variant="@variant">
                                         <RadzenTextBox @bind-Value="devicedetails.Comcode" Name="Comcode" />
 
-
                                     </RadzenFormField>
                                 </RadzenStack>
                                 <RadzenRequiredValidator Component="Comcode" Text="Mã liên thông không được trống" Popup=false Style="position: absolute" />
@@ -408,7 +406,6 @@
                                     {
                                         <RadzenFormField Text="Thiết bị chính" Variant="@variant">
                                             <RadzenNumeric @bind-Value="devicedetails.Maindevice" Name="Maindevice" />
-
 
                                         </RadzenFormField>
                                     }

@@ -239,8 +239,7 @@
         var result = await ApiService.GetUsersInGroup(id!, us.Token);
         if (result.Code == 200)
         {
-            var result1 = JsonConvert.DeserializeObject<List<UsersinGroup>>(result.Value.ToString());
-            responUserinGroup = result1;
+            responUserinGroup = JsonConvert.DeserializeObject<List<UsersinGroup>>(result.Value.ToString());
         }
         else if (result.Code == 404)
         {
@@ -319,7 +318,7 @@
             notification.Notify(NotificationSeverity.Success, result.Message);
 
             DialogService.Close();
-            await GetUserinGr();
+            await Reload();
         }
         else
         {
