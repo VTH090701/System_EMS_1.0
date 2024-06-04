@@ -143,8 +143,8 @@ else
         if (result != null && result.Code == 200)
         {
             notification.Notify(NotificationSeverity.Success, result.Message);
-            await GetRepairStatus();
-
+            //await GetRepairStatus();
+            await Reload();
         }
         else
         {
@@ -153,6 +153,14 @@ else
 
 
     }
+
+    async Task Reload()
+    {
+        await GetRepairStatus();
+        StateHasChanged();
+    }
+
+
 
     public class StaRepair
     {
