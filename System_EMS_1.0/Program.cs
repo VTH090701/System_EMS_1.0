@@ -15,7 +15,6 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddRadzenComponents();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddHttpClient();
-<<<<<<< HEAD
 
 
 
@@ -23,9 +22,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IApi, Api>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 
-=======
 builder.Services.AddTransient<IDeviceService, DeviceService>();
->>>>>>> d088689498e06b14070d15528bbe44d2090ce9b8
 
 
 //Config
