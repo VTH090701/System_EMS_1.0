@@ -57,14 +57,11 @@ namespace System_EMS_1._0.Services
 
 
         //Task<ResponseApi> ApprovedRepairDevice(string id, string status, string token);
-
         //Task<ResponseApi> DetailsRepair(string id, string token);
         //Task<ResponseApi> StatusRepair(string status, string token);
         //Task<ResponseApi> GetListDevice(string token);
-
         //Task<ResponseApi> DetailsDevice(string deviceid, string token);
         //Task<ResponseApi> ApiConfig(string type, string token);
-
         //Task<ResponseApi> SaveDevice(DeviceModel device, string token);
         //Task<ResponseApi> UpdateDevice(DeviceModel device, string token);
     }
@@ -564,49 +561,16 @@ namespace System_EMS_1._0.Services
 
 
 
-        public async Task<ResponseApi> DetailsRepair(string id, string token)
-        {
-            try
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/repair/details");
-                request.Headers.Add("token", token);
-                request.Headers.Add("repairid", id);
-                var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result!;
-            }
-            catch (Exception ex)
-            {
-                ResponseApi response = new ResponseApi()
-                {
-                    Message = ex.Message,
-                };
-                return response;
-            }
-        }
-
-
         public async Task<ResponseApi> DetailsDevice(string deviceid, string token)
         {
-            try
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{apiSettings.BaseUrl}:{apiSettings.PortUrl}/api/devices/details");
-                request.Headers.Add("deviceid", deviceid);
-                request.Headers.Add("token", token);
-                var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                ResponseApi? result = await response.Content.ReadFromJsonAsync<ResponseApi>();
-                return result!;
-            }
-            catch (Exception ex)
-            {
-                ResponseApi response = new ResponseApi()
-                {
-                    Message = ex.Message,
-                };
-                return response;
-            }
+   
+
+            Dictionary<string, string> header = new Dictionary<string, string>();
+            header.Add("token", token);
+            header.Add("deviceid", deviceid);
+
+            ResponseApi result = await callapi!.Get("devices/details", header);
+            return result;
         }
 
     }
