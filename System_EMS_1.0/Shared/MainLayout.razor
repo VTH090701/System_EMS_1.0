@@ -2,12 +2,12 @@
 @using Data
 @using Services
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 
 <RadzenComponents />
-<PageTitle>System_EMS_1.0</PageTitle>
+<PageTitle>System EMS</PageTitle>
 <RadzenLayout style="position: relative;grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="0" >
@@ -43,7 +43,6 @@
 
                     <ChildContent >
                         <button @onclick="NaveProfile" class="rz-background-color-white" style="border: none;">
-
                             <div style="display:flex;">
                                 <RadzenIcon Icon=" assignment_ind" />Hồ sơ
                             </div>

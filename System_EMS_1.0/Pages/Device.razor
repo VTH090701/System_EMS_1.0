@@ -3,7 +3,7 @@
 @using Services
 @using Newtonsoft.Json
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
@@ -31,11 +31,10 @@
                                 Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.And" SelectionMode="DataGridSelectionMode.Single" Style="height:500px" @bind-Value=@selectedDevice @onclick="ChangeDevice" EmptyText="Không có dữ liệu">
 
 
-                    @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
-                FilterMode="FilterMode.Simple" AllowPaging="true" AllowSorting="true" Data="@listdevice"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And" Style="height:600px" PagerHorizontalAlign="HorizontalAlign.Left" PageSize="10" @bind-Value=@selectedDevice @onclick="ChangeDevice"> *@
-
-                    @*<GroupHeaderTemplate>
+                @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                    FilterMode="FilterMode.Simple" AllowPaging="true" AllowSorting="true" Data="@listdevice"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And" Style="height:600px" PagerHorizontalAlign="HorizontalAlign.Left" PageSize="10" @bind-Value=@selectedDevice @onclick="ChangeDevice"> *@
+                @*<GroupHeaderTemplate>
                 @{
 
 
@@ -151,13 +150,12 @@
                                             ValueProperty="Departmentid" Placeholder="Chọn bộ phận" Style="width: 100%; max-width: 280px;" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
 
                             <RadzenButton Text="Cập nhật" Style="float:right ;" Click="saveRotation" class="rz-background-color-warning rz-mr-2"></RadzenButton>
-
                         </RadzenRow>
                         @if (listrotation != null && listrotation.Count > 0)
                         {
                             <RadzenRow class="rz-mt-3">
                                 <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12" Size="12">
-                                    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="8" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="8" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                                                     Data="@listrotation" TItem="RotationModel" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Style="height:200px">
                                         <Columns>
                                             <RadzenDataGridColumn TItem="RotationModel" Title="Bộ phận" Property="Departmentid">
@@ -257,8 +255,6 @@
                             </RadzenColumn>
                             <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
                                 <RadzenButton Text="Thêm mới" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
-                                @* <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="buttonsaveDevice" class="rz-background-color-success-dark rz-mr-2"></RadzenButton> *@
-
                                 <RadzenButton Text="Lưu" Style="float:right" Icon="save" ButtonType="ButtonType.Submit" class="rz-background-color-success-dark rz-mr-2"></RadzenButton>
                             </RadzenColumn>
                         </RadzenRow>
@@ -566,8 +562,6 @@ else
             DateOnly.TryParse(devicedetails.Buydate, out buydate);
             DateOnly.TryParse(devicedetails.Expdate, out expdate);
         }
-
-
     }
 
     private Variant variant = Variant.Outlined;

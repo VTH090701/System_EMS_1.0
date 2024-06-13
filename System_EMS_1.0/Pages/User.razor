@@ -2,7 +2,7 @@
 @using Data
 @using Services
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
@@ -127,7 +127,6 @@
                                     var checkfalse = false;
                                     <RadzenCheckBox TriState="false" Value="checkfalse"
                                                     TValue="bool" Change="()=>
-                                   
 
                                       {
                                         if (data.Rolename != null)
@@ -435,9 +434,6 @@
     //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
     }
 
-
-
-
     private async Task Edituser()
     {
         if (user != null)
@@ -480,9 +476,9 @@
             <RadzenButton Text="Trở lại" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             <RadzenButton Text="Cập nhật" Style="width: 120px;" Click="() =>
             {
-                        if (user.Userid != null && dis != null && email != null && phone != null && deid != null)
+                         if (user.Userid != null && dis != null  && deid != null)
                         {
-                        UpdateUserinModal( user.Userid ,dis,email,phone,deid);
+                        UpdateUserinModal( user.Userid ,dis,email!,phone!,deid);
                         }
                     }
 
@@ -490,8 +486,7 @@
         </RadzenStack>
 
     </RadzenStack>
-    ;
-                                                        });
+    ;});
 
         }
         else
@@ -511,7 +506,7 @@
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result.Message);
+            notification.Notify(NotificationSeverity.Warning, "Cập nhật thất bại");
 
         }
         await ReloadUser(user?.Userid);

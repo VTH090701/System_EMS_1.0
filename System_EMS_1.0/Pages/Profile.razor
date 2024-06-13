@@ -1,12 +1,13 @@
 ﻿@page "/profile/{id}"
 @using Data
 @using Services
+@using Newtonsoft.Json
+
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
-@using Newtonsoft.Json
 @inject HttpClient _httpclient
 
 
@@ -59,7 +60,6 @@
                 <RadzenFormField Text="Id" Variant="@variant">
                     <RadzenTextBox @bind-Value="@user.Userid" Disabled />
                 </RadzenFormField>
-
             }
         </RadzenStack>
     </RadzenColumn>

@@ -3,7 +3,7 @@
 @using Services
 @using Newtonsoft.Json
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
@@ -142,9 +142,10 @@ else
         var result = await ApiService.ApprovedRepairDevice(id, sta, us.Token);
         if (result != null && result.Code == 200)
         {
-            notification.Notify(NotificationSeverity.Success, result.Message);
-            await GetRepairStatus();
 
+            notification.Notify(NotificationSeverity.Success, result.Message);
+
+            await Reload();
         }
         else
         {
@@ -152,6 +153,12 @@ else
         }
 
 
+    }
+
+    async Task Reload()
+    {
+        await GetRepairStatus();
+        StateHasChanged();
     }
 
     public class StaRepair

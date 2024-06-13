@@ -2,7 +2,7 @@
 @using Data
 @using Services
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
@@ -12,7 +12,7 @@
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
 
         <div style="display:flex">
-            <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavUserGr" />
+            @* <RadzenIcon Icon="exit_to_app" class="rz-mt-1 rz-mr-2" Style="font-size:xx-large;transform: rotate(180deg);cursor:pointer" @onclick="NavUserGr" /> *@
 
             <RadzenText TextStyle="TextStyle.H4"> Thông tin trong nhóm</RadzenText>
 
@@ -20,96 +20,111 @@
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
         <RadzenButton Text="Thêm người dùng" Style="float:right" Icon="add" Click="AddUserInGr" class="rz-background-color-info-dark"></RadzenButton>
+        <RadzenButton Text="Trở lại" Style="float:right" Icon="exit_to_app" class="rz-mr-2" Click="NavUserGr"></RadzenButton>
+
     </RadzenColumn>
 </RadzenRow>
 <hr />
 <RadzenRow>
     <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
-        @if (responUserinGroup != null && responUserinGroup.Count > 0)
-        {
-            <RadzenDataGrid Data="@responUserinGroup" TItem="UsersinGroup" AllowVirtualization=" true"
-                            AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
-                            AllowSorting="true">
-                <Columns>
-                    @* <RadzenDataGridColumn TItem="UsersinGroup" Property="Userid" Title=" Id" /> *@
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Displayname" Title="Tên" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Phonenumber" Title="Số điện thoại" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Email" Title="Email" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Thời gian vào" />
-                    <RadzenDataGridColumn TItem="UsersinGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-                        <Template Context="UsersinGroup">
-                            <RadzenButton Shade="Shade.Lighter" Icon="delete" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
 
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H6" class="rz-mb-4">Danh sách người dùng trong nhóm</RadzenText>
+            @if (responUserinGroup != null && responUserinGroup.Count > 0)
+            {
+
+                <RadzenDataGrid Data="@responUserinGroup" TItem="UsersinGroup" AllowVirtualization=" true"
+                                AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                AllowSorting="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="UsersinGroup" Property="Displayname" Title="Tên" />
+                        <RadzenDataGridColumn TItem="UsersinGroup" Property="Phonenumber" Title="Số điện thoại" />
+                        <RadzenDataGridColumn TItem="UsersinGroup" Property="Email" Title="Email" />
+                        <RadzenDataGridColumn TItem="UsersinGroup" Property="Timejoin" Title="Thời gian vào" />
+                        <RadzenDataGridColumn TItem="UsersinGroup" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                            <Template Context="UsersinGroup">
+                                <RadzenButton Shade="Shade.Lighter" Icon="delete" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
                             {
                                 if (UsersinGroup.Userid != null)
                                 {
                                 DeleteUserInGr(UsersinGroup.Userid);
                                 }
                             }
-
                             )">
-                            </RadzenButton>
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-        }
-        else
-        {
-            <span>Không có dữ liệu</span>
-        }
+                                </RadzenButton>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            }
+            else
+            {
+                <span>Không có dữ liệu</span>
+            }
+        </RadzenCard>
+
+
 
     </RadzenColumn>
     <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
-        @if (listRoles != null)
-        {
 
-            <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:550px"
-                            AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
-                            AllowSorting="true">
-                <Columns>
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Tên quyền" />
-                    <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Mô tả quyền" />
-                    <RadzenDataGridColumn TItem="RoleUser" Width="70px">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H6" class="rz-mb-4">Danh sách quyền nhóm</RadzenText>
 
-                        <Template Context="data">
+            @if (listRoles != null)
+            {
+                <RadzenDataGrid Data="@listRoles" TItem="RoleUser" AllowVirtualization="true" Style="height:550px"
+                                AllowFiltering="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                AllowSorting="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="RoleUser" Property="Rolename" Title="Tên quyền" />
+                        <RadzenDataGridColumn TItem="RoleUser" Property="Description" Title="Mô tả quyền" />
+                        <RadzenDataGridColumn TItem="RoleUser" Width="70px">
 
-                            @if (listRolesGroup != null)
-                            {
-                                @if (listRolesGroup.Any(item1 => item1.Rolename == data.Rolename) == true)
+                            <Template Context="data">
+
+                                @if (listRolesGroup != null)
                                 {
-                                    var checktrue = true;
-                                    <RadzenCheckBox TriState="false" Value="checktrue"
-                                                    TValue="bool" Change="()=>
+                                    @if (listRolesGroup.Any(item1 => item1.Rolename == data.Rolename) == true)
+                                    {
+                                        var checktrue = true;
+                                        <RadzenCheckBox TriState="false" Value="checktrue"
+                                                        TValue="bool" Change="()=>
                                     {
                                         if (data.Rolename != null)
                                         {
                                         RevokeGroup(data.Rolename);
                                         }
                                     }
-                                     
-                                " />
-                                }
-                                else
-                                {
-                                    var checkfalse = false;
-                                    <RadzenCheckBox TriState="false" Value="checkfalse"
-                                                    TValue="bool" Change="()=>
+
+                                                        " />
+                                    }
+                                    else
+                                    {
+                                        var checkfalse = false;
+                                        <RadzenCheckBox TriState="false" Value="checkfalse"
+                                                        TValue="bool" Change="()=>
  {
                                         if (data.Rolename != null)
                                         {
                                             GrantGroup(data.Rolename);
                                         }
                                     }
-                                " />
+                                                        " />
+                                    }
                                 }
-                            }
-                        </Template>
-                    </RadzenDataGridColumn>
+                            </Template>
+                        </RadzenDataGridColumn>
 
-                </Columns>
-            </RadzenDataGrid>
-        }
+                    </Columns>
+                </RadzenDataGrid>
+            }
+            else
+            {
+                <span>Không có dữ liệu</span>
+            }
+        </RadzenCard>
+
     </RadzenColumn>
 </RadzenRow>
 
@@ -299,7 +314,7 @@
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result.Message);
+            notification.Notify(NotificationSeverity.Warning, "Thêm thất bại");
         }
     }
 

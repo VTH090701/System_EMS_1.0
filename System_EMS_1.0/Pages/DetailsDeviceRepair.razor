@@ -5,7 +5,7 @@
 @using Newtonsoft.Json
 @using System.Globalization
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject IApiService ApiService
+@inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
 @inject NotificationService notification
 @inject DialogService DialogService
@@ -28,7 +28,6 @@
         else
         {
             <RadzenButton Text="Lưu" Style="float:right" Icon="save" Click="SaveRepair" class="rz-background-color-success-dark"></RadzenButton>
-            @*<RadzenButton Text="Thêm phiếu" Style="float:right" Icon="add" Click="AddRepair" class="rz-background-color-info-dark rz-mr-2"></RadzenButton> *@
         }
         <RadzenButton Text="Trở lại" Style="float:right" Icon="exit_to_app" Click="NavRepair" class="rz-background-color-info-primary rz-mr-2"></RadzenButton>
 
@@ -164,6 +163,21 @@
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="RepairDetails" Property="Description" Title="Mô tả" />
+            @if (status == "request")
+            {
+                <RadzenDataGridColumn TItem="RepairDetails" Property="Type" Width="80px">
+                    <Template Context="data">
+                        <RadzenButton Icon="delete" Shade="Shade.Lighter" Variant="Variant.Flat" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@((args) =>
+                    {
+                        if (data.Id != "" && data.Deviceid != 0)
+                        {
+                            DeleteDeDetails(data.Id! ,data.Deviceid);
+                        }
+
+                    } )"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            }
         </Columns>
     </RadzenDataGrid>
 }
@@ -246,6 +260,11 @@ else
             notification.Notify(NotificationSeverity.Success, result.Message);
 
         }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, "Thêm thất bại");
+
+        }
 
     }
 
@@ -257,20 +276,29 @@ else
 
     private async Task SaveRepair()
     {
-        var result = await ApiService.UpdateRepairDevice(id!, deviceid, desc, cost, type, us.Token);
-        if (result != null && result.Code == 200)
+        if (deviceid != 0 && type != "")
         {
-            notification.Notify(NotificationSeverity.Success, result.Message);
-            await Reloadrepair();
-            await GetDetails();
+            var result = await ApiService.UpdateRepairDevice(id!, deviceid, desc, cost, type, us.Token);
+            if (result != null && result.Code == 200)
+            {
+                notification.Notify(NotificationSeverity.Success, result.Message);
+                await Reloadrepair();
+                await GetDetails();
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Warning, result?.Message);
+
+            }
         }
         else
         {
-            notification.Notify(NotificationSeverity.Warning, result?.Message);
+            notification.Notify(NotificationSeverity.Warning, "Hãy chọn thiết bị và loại");
 
         }
     }
 
+        
     private async Task Reloadrepair()
     {
         deviceid = 0;
@@ -295,7 +323,7 @@ else
             }
             else
             {
-                ///repairDetails = new List<RepairDetails>();
+                repairDetails = new List<RepairDetails>();
             }
         }
     }
@@ -316,5 +344,30 @@ else
     }
 
 
+
+    private async Task Reloaddetailsrepair()
+    {
+        await GetDetails();
+        StateHasChanged();
+
+    }
+
+    private async void DeleteDeDetails(string reid, int deid)
+    {
+        var result = await ApiService.DeleteDetailsRepairDevice(reid, deid, us.Token);
+        if (result != null && result.Code == 200)
+        {
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            await Reloadrepair();
+            await Reloaddetailsrepair();
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result?.Message);
+
+        }
+
+
+    }
 
 }

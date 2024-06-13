@@ -6,10 +6,10 @@
         public string? Status { get; set; }
         public string? Hint { get; set; }
         public string? Message { get; set; }
-
-        //public List<T> Value { get; set; }
         public dynamic Value { get; set; }
     }
+
+
 
 
 
@@ -22,7 +22,7 @@
         public string? Username { get; set; }
         public string? Displayname { get; set; }
         public string? Message { get; set; }
-        public dynamic? Role { get; set; }
+        public dynamic? Role { get; set; }  
 
     }
     public class RoleUser
@@ -30,8 +30,6 @@
         public string? Rolename { get; set; }
         public string? Description { get; set; }
     }
-
-
 
 
     public class DepartmentModel
