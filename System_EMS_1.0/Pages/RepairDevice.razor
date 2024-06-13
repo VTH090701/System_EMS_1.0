@@ -142,9 +142,14 @@ else
         var result = await ApiService.ApprovedRepairDevice(id, sta, us.Token);
         if (result != null && result.Code == 200)
         {
+<<<<<<< HEAD
 
             notification.Notify(NotificationSeverity.Success, result.Message);
 
+=======
+            notification.Notify(NotificationSeverity.Success, result.Message);
+            //await GetRepairStatus();
+>>>>>>> d088689498e06b14070d15528bbe44d2090ce9b8
             await Reload();
         }
         else
@@ -161,6 +166,11 @@ else
         StateHasChanged();
     }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> d088689498e06b14070d15528bbe44d2090ce9b8
     public class StaRepair
     {
         public string? Key { set; get; }
