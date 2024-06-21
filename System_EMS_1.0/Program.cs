@@ -21,7 +21,6 @@ builder.Services.AddHttpClient();
 //builder.Services.AddScoped<Api>();
 builder.Services.AddScoped<IApi, Api>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
-
 builder.Services.AddTransient<IDeviceService, DeviceService>();
 
 

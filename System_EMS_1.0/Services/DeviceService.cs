@@ -55,7 +55,6 @@ namespace System_EMS_1._0.Services
         Task<ResponseApi> UpdateDevice(DeviceModel device, string token);
         Task<ResponseApi> DeleteDetailsRepairDevice(string repa_id, int deid, string token);
 
-
         //Task<ResponseApi> ApprovedRepairDevice(string id, string status, string token);
         //Task<ResponseApi> DetailsRepair(string id, string token);
         //Task<ResponseApi> StatusRepair(string status, string token);
@@ -64,14 +63,13 @@ namespace System_EMS_1._0.Services
         //Task<ResponseApi> ApiConfig(string type, string token);
         //Task<ResponseApi> SaveDevice(DeviceModel device, string token);
         //Task<ResponseApi> UpdateDevice(DeviceModel device, string token);
+
     }
     public class DeviceService : IDeviceService
     {
-
         private readonly HttpClient _httpClient;
         private readonly ISessionStorageService _sessionStorageService;
         private readonly ApiSettings apiSettings;
-
         private readonly IApi callapi;
 
         public DeviceService(HttpClient http, ISessionStorageService sessionStorageService, IOptions<ApiSettings> apiSettingsOptions, IApi api)
@@ -84,7 +82,6 @@ namespace System_EMS_1._0.Services
             _sessionStorageService = sessionStorageService;
 
         }
-
         public async Task<ResponseApi> DetailsRepairDevice(string id, string token)
         {
             Dictionary<string, string> header = new Dictionary<string, string>();
@@ -109,7 +106,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Post("user", request);
             return result;
         }
-
         public async Task<ResponseApi> GetDepartment(string token)
         {
             Dictionary<string, string> header = new Dictionary<string, string>();
@@ -125,8 +121,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Get("groups", header);
             return result;
         }
-
-
         public async Task<ResponseApi> GetUser(string token)
         {
             Dictionary<string, string> header = new Dictionary<string, string>();
@@ -134,7 +128,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Get("user", header);
             return result;
         }
-
         public async Task<ResponLogin> Login(string userName, string passWord)
         {
             try
@@ -152,6 +145,7 @@ namespace System_EMS_1._0.Services
                 response.EnsureSuccessStatusCode();
 
                 ResponLogin? result = await response.Content.ReadFromJsonAsync<ResponLogin>();
+
                 if (result != null)
                 {
                     if (result.Code == 200)
@@ -178,7 +172,6 @@ namespace System_EMS_1._0.Services
                 return response;
             }
         }
-
         public async Task<ResponseApi> Logout(string userId)
         {
             var request = new
@@ -197,7 +190,6 @@ namespace System_EMS_1._0.Services
             return result!;
 
         }
-
         public async Task<ResponseApi> SaveDepartment(DepartmentModel department, string token)
         {
 
@@ -211,9 +203,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Post("department", request);
             return result;
         }
-
-
-
         public async Task<ResponseApi> SaveGroup(GroupModel group, string token)
         {
 
@@ -226,7 +215,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Post("groups", request);
             return result;
         }
-
         public async Task<ResponseApi> UpdateDepartment(string id, string name, string desc, string sort, string token)
         {
 
@@ -243,7 +231,6 @@ namespace System_EMS_1._0.Services
         }
         public async Task<ResponseApi> UpdateGroup(string id, string name, string desc, string token)
         {
-
             var request = new
             {
                 groupid = id,
@@ -309,8 +296,6 @@ namespace System_EMS_1._0.Services
             return result;
 
         }
-
-
         public async Task<ResponseApi> Add_RemoveUserInGroup(string type, string idgr, string iduser, string token)
         {
 
@@ -415,8 +400,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Get("devices/department", header);
             return result;
         }
-
-
         public async Task<ResponseApi> SaveRepairDevice(string token)
         {
             try
@@ -446,7 +429,7 @@ namespace System_EMS_1._0.Services
                 id = id,
                 deviceid = deviceid,
                 description = desc,
-                cost = cost,
+                cost = cost,    
                 type = type,
                 token = token
             };
@@ -558,9 +541,6 @@ namespace System_EMS_1._0.Services
             ResponseApi result = await callapi!.Delete("devices/repair/details", request);
             return result;
         }
-
-
-
         public async Task<ResponseApi> DetailsDevice(string deviceid, string token)
         {
    
