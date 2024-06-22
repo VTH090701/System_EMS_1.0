@@ -64,6 +64,7 @@ namespace System_EMS_1._0.Services
         //Task<ResponseApi> SaveDevice(DeviceModel device, string token);
         //Task<ResponseApi> UpdateDevice(DeviceModel device, string token);
 
+        Task<ResponseApi> PostDeviceForeach(List<DeviceModel> devices, string token);
     }
     public class DeviceService : IDeviceService
     {
@@ -550,6 +551,43 @@ namespace System_EMS_1._0.Services
             header.Add("deviceid", deviceid);
 
             ResponseApi result = await callapi!.Get("devices/details", header);
+            return result;
+        }
+
+        public async Task<ResponseApi> PostDeviceForeach(List<DeviceModel> devices, string token)
+        {
+
+            foreach(var device in devices)
+            {
+                var request = new
+                {
+                    devicename = device.Devicename == null ? "" : device.Devicename,
+                    devicetype = device.Devicetype,
+                    productgroup = device.Productgroup,
+                    startdate = device.Startdate,
+                    devicemodel = device.Devicemodel == null ? "" : device.Devicemodel,
+                    serialnumber = device.Serialnumber == null ? "" : device.Serialnumber,
+                    lr_code = device.Lr_code == null ? "" : device.Lr_code,
+                    company = device.Company == null ? "" : device.Company,
+                    national = device.National,
+                    info = device.Info == null ? "" : device.Info,
+                    comcode = device.Comcode == null ? "" : device.Comcode,
+                    maindevice = device.Maindevice,
+                    limit = device.Limit,
+                    wastage = device.Wastage,
+                    buydate = device.Buydate,
+                    expdate = device.Expdate,
+                    note = device.Note == null ? "" : device.Note,
+                    token = token
+                };
+                var response = await callapi!.Post("devices", request);
+            }
+
+            ResponseApi result = new ResponseApi()
+            {
+                Code = 200,
+                Message = "Xử lý thành công"
+            };
             return result;
         }
 

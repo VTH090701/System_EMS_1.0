@@ -10,6 +10,8 @@
 @inject HttpClient _httpclient
 
 @using System.Globalization
+@using ClosedXML.Excel;
+
 
 
 
@@ -31,10 +33,10 @@
                                 Data="@listdevice" TItem="DeviceModel" LogicalFilterOperator="LogicalFilterOperator.And" SelectionMode="DataGridSelectionMode.Single" Style="height:500px" @bind-Value=@selectedDevice @onclick="ChangeDevice" EmptyText="Không có dữ liệu">
 
 
-                @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
-                    FilterMode="FilterMode.Simple" AllowPaging="true" AllowSorting="true" Data="@listdevice"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And" Style="height:600px" PagerHorizontalAlign="HorizontalAlign.Left" PageSize="10" @bind-Value=@selectedDevice @onclick="ChangeDevice"> *@
-                @*<GroupHeaderTemplate>
+                    @*<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                FilterMode="FilterMode.Simple" AllowPaging="true" AllowSorting="true" Data="@listdevice"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And" Style="height:600px" PagerHorizontalAlign="HorizontalAlign.Left" PageSize="10" @bind-Value=@selectedDevice @onclick="ChangeDevice"> *@
+                    @*<GroupHeaderTemplate>
                 @{
 
 
@@ -229,7 +231,6 @@
                                     </RadzenDataGrid>
                                 </RadzenColumn>
                             </RadzenRow>
-
                         }
                         else
                         {
@@ -246,16 +247,20 @@
 
             @if (devicedetails != null)
             {
-
                 <RadzenCard>
                     <RadzenTemplateForm TItem="DeviceModel" Data=@devicedetails Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
                         <RadzenRow>
-                            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenColumn SizeLG="5" SizeMD="5" SizeSM="12" Size="12">
                                 <RadzenText TextStyle="TextStyle.H6"> Thông tin thiết bị</RadzenText>
                             </RadzenColumn>
-                            <RadzenColumn SizeLG="6" SizeMD="6" SizeSM="12" Size="12">
+                            <RadzenColumn SizeLG="7" SizeMD="7" SizeSM="12" Size="12">
                                 <RadzenButton Text="Thêm mới" Style="float:right" Icon="add" Click="AddDevice" class="rz-background-color-info-dark"></RadzenButton>
                                 <RadzenButton Text="Lưu" Style="float:right" Icon="save" ButtonType="ButtonType.Submit" class="rz-background-color-success-dark rz-mr-2"></RadzenButton>
+
+
+                                <RadzenButton Text="Excel" Style="float:right" Icon="description" Click="modeAddFile" class="rz-background-color-series-1 rz-mr-2"></RadzenButton>
+
+
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow class="rz-mt-2">
@@ -498,10 +503,8 @@ else
 
 @code {
 
-
     async void OnSubmit(DeviceModel device)
     {
-        //console.Log($"Submit: {JsonSerializer.Serialize(model, new JsonSerializerOptions() {  WriteIndented = true })}");
         if (isupdate == false)
         {
             await SaveDeviceModel(devicedetails);
@@ -514,13 +517,11 @@ else
 
     void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
     {
-        //console.Log($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() {  WriteIndented = true })}");
     }
     void ChangeDeviceType()
     {
         devicedetails.Maindevice = 0;
     }
-
 
 
     IList<DeviceModel>? selectedDevice;
@@ -548,7 +549,6 @@ else
             isupdate = true;
 
         }
-
 
     }
     private async Task ViewDevice(int id)
@@ -613,8 +613,6 @@ else
         }
     }
 
-
-
     private async Task AddDevice()
     {
         //Set lại cái giá trị thêm mới
@@ -640,7 +638,7 @@ else
     private async Task GetNation()
     {
 
-        var result = await ApiService.ApiConfig("nation ", us.Token);
+        var result = await ApiService.ApiConfig("nation", us.Token);
         if (result != null && result.Code == 200)
         {
             listget = JsonConvert.DeserializeObject<List<ResponNation>>(result.Value.ToString());
@@ -673,7 +671,6 @@ else
 
     }
 
-
     private List<DeviceModel> listdevice = new List<DeviceModel>();
     private async Task GetDevice()
     {
@@ -689,7 +686,6 @@ else
         }
     }
 
-
     private List<DepartmentModel> responDepartment = new List<DepartmentModel>();
     private string depart_id = "";
     private async Task GetDepartment()
@@ -702,7 +698,6 @@ else
 
     }
 
-
     private async Task Reload()
     {
         await GetDevice();
@@ -712,7 +707,6 @@ else
     }
 
     private DeviceModel devicedetails = new DeviceModel();
-
 
     private async void buttonsaveDevice()
     {
@@ -726,10 +720,8 @@ else
         }
     }
 
-
     private async Task SaveDeviceModel(DeviceModel device)
     {
-
         device.Startdate = startdate.ToString("yyyy-MM-dd");
         device.Buydate = buydate.ToString("yyyy-MM-dd");
         device.Expdate = expdate.ToString("yyyy-MM-dd");
@@ -745,7 +737,6 @@ else
         }
 
     }
-
 
     private async Task UpdateDeviceModel(DeviceModel device)
     {
@@ -764,7 +755,6 @@ else
             notification.Notify(NotificationSeverity.Warning, result.Message);
         }
     }
-
 
     private List<RotationModel> listrotation = new List<RotationModel>();
     private async Task GetRotation(int id)
@@ -788,7 +778,6 @@ else
 
 
     }
-
 
     private async Task saveRotation()
     {
@@ -828,7 +817,126 @@ else
             }
         }
 
-
-
     }
+
+    private async Task modeAddFile()
+    {
+    var result = await DialogService.OpenAsync("Upload File", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <InputFile OnChange="@HandleFileSelected" class="form-control" accept=".xlsx" />
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Trở về" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            </RadzenStack>
+            <RadzenButton Text="Thêm" Click="HandleSubmit" Style="width: 80px;" />
+        </RadzenStack>
+    </RadzenStack>
+    );
+    }
+
+
+    //Add file excel list device
+    private IBrowserFile? selectedFile;
+    List<DeviceModel> devices = new List<DeviceModel>();
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (selectedFile != null)
+        {
+            using var memoryStream = new MemoryStream();
+            await selectedFile.OpenReadStream().CopyToAsync(memoryStream);
+            memoryStream.Position = 0; // Reset the position to the beginning of the stream
+
+            devices = ReadExcelFile(memoryStream);
+            if (devices != null && devices.Count > 0)
+            {
+                var result = await ApiService.PostDeviceForeach(devices, us.Token);
+                if (result.Code == 200)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.Message);
+                    DialogService.Close();
+                    await Reload();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Warning, result?.Message);
+                }
+
+            }
+            else
+            {
+                
+            }
+
+        }
+    }
+
+    private List<DeviceModel> ReadExcelFile(Stream fileStream)
+    {
+        var deviceList = new List<DeviceModel>();
+        try
+        {
+            using (var workbook = new XLWorkbook(fileStream))
+            {
+                var worksheet = workbook.Worksheet(1); // Assuming data is in the first worksheet
+                                                       // Read the rows used in the worksheet, skipping the first row (header)
+                foreach (var row in worksheet.RowsUsed().Skip(1))
+                {
+                    try
+                    {
+                        var device = new DeviceModel
+                            {
+                                Devicename = row.Cell(1).GetValue<string>(),
+                                Devicetype = row.Cell(2).GetValue<int?>(),
+                                Startdate = GetFormattedDate(row.Cell(3)),
+                                Productgroup = row.Cell(4).GetValue<int?>(),
+                                Devicemodel = row.Cell(5).GetValue<string>(),
+                                Serialnumber = row.Cell(6).GetValue<string>(),
+                                Lr_code = row.Cell(7).GetValue<string>(),
+                                Company = row.Cell(8).GetValue<string>(),
+                                National = row.Cell(9).GetValue<int?>(),
+                                Info = row.Cell(10).GetValue<string>(),
+                                Comcode = row.Cell(11).GetValue<string>(),
+                                Maindevice = row.Cell(12).GetValue<int?>(),
+                                Limit = row.Cell(13).GetValue<int?>(),
+                                Wastage = row.Cell(14).GetValue<int?>(),
+                                Buydate = GetFormattedDate(row.Cell(15)),
+                                Expdate = GetFormattedDate(row.Cell(16)),
+                                Note = row.Cell(17).GetValue<string>(),
+                            };
+
+                        deviceList.Add(device);
+                    }
+                    catch (Exception ex)
+                    {
+                        notification.Notify(NotificationSeverity.Warning, $"Error in row {row.RowNumber()}: {ex.Message}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, ex.Message);
+
+            return new List<DeviceModel>();
+        }
+
+        return deviceList;
+    }
+
+
+    private string GetFormattedDate(IXLCell cell)
+    {
+        if (DateTime.TryParse(cell.GetValue<string>(), out DateTime date))
+        {
+            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        }
+        return null!;
+    }
+
+
 }
