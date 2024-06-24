@@ -843,6 +843,7 @@ else
         selectedFile = e.File;
     }
 
+
     private async Task HandleSubmit()
     {
         if (selectedFile != null)
@@ -869,11 +870,16 @@ else
             }
             else
             {
-                
+                notification.Notify(NotificationSeverity.Warning, "Danh sách trống  ");
+
             }
+
+        }else{
+            notification.Notify(NotificationSeverity.Warning,"Hãy chọn file");
 
         }
     }
+
 
     private List<DeviceModel> ReadExcelFile(Stream fileStream)
     {
@@ -937,6 +943,8 @@ else
         }
         return null!;
     }
+
+
 
 
 }

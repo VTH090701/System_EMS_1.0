@@ -581,6 +581,7 @@ namespace System_EMS_1._0.Services
                     token = token
                 };
                 var response = await callapi!.Post("devices", request);
+                //var test = response;
             }
 
             ResponseApi result = new ResponseApi()
