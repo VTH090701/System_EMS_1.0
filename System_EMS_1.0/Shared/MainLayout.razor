@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using Data
 @using Services
+@using Newtonsoft.Json
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject IDeviceService ApiService
 @inject NavigationManager NavigationManager
@@ -66,7 +67,14 @@
             <RadzenPanelMenuItem Text="Trang chủ" Icon="dashboard" Path="dashboard" Click="NavitemSiber" />
             <RadzenPanelMenuItem Text="Phòng ban" Icon="class" Path="department" Click="NavitemSiber" />
             <RadzenPanelMenuItem Text="Nhóm" Icon="group_work" Path="group" Click="NavitemSiber" />
-            <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" Click="NavitemSiber" />
+            
+            @if(isCreateUser == true)
+            {
+                <RadzenPanelMenuItem Text="Người dùng" Icon="account_box" Path="user" Click="NavitemSiber" />
+
+            }
+
+
             <RadzenPanelMenuItem Text="Thiết bị" Icon="list" >
                 <RadzenPanelMenuItem Text="Danh mục thiết bị" Icon="" Path="devices" Click="NavitemSiber" />
                 <RadzenPanelMenuItem Text="Tìm kiếm thiết bị" Icon="" Path="searchdevice" Click="NavitemSiber" />
@@ -103,7 +111,7 @@
     private bool sidebarExpanded = false;
     private ResponLogin us = new ResponLogin();
     private bool isConnected;
-
+    private bool isCreateUser = false;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -119,6 +127,9 @@
             else
             {
                 isConnected = true;
+                await GetListUser();
+                GetUser();
+                await GetListRolesUser();
 
             }
             StateHasChanged();
@@ -177,6 +188,46 @@
         }
     }
 
+    private UserModel? user = new UserModel();
+    private void GetUser()
+    {
+        user = responGetUser.FirstOrDefault(item => item.Userid == us.Userid);
+    }
+    private List<UserModel> responGetUser = new List<UserModel>();
+    private async Task GetListUser()
+    {
+        var result = await ApiService.GetUser(us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<UserModel>>(result.Value.ToString());
+            responGetUser = res;
+        }
+    }
+
+    private List<RoleUser> listRolesUser = new List<RoleUser>();
+    private async Task GetListRolesUser()
+    {
+        //Lấy ds quyền người dùng
+        var result = await ApiService.ListRolesUser(user?.Userid, us.Token);
+        if (result != null && result.Code == 200)
+        {
+            var res = JsonConvert.DeserializeObject<List<RoleUser>>(result.Value.ToString());
+            listRolesUser = res;
+        }
+        else if (result?.Code == 404)
+        {
+            listRolesUser = new List<RoleUser>();
+        }
+        //Check coi có quyền thêm user không
+        @foreach (var item in listRolesUser)
+        {
+            if (item.Rolename == "create_user")
+            {
+                isCreateUser = true;
+            }
+        }
+
+    }
 
 
 }
